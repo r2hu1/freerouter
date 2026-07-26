@@ -1,11 +1,11 @@
 "use client"
 
-import * as React from "react"
 import { Dialog as DialogPrimitive } from "radix-ui"
+import type * as React from "react"
 
-import { cn } from "@workspace/ui/lib/utils"
-import { Button } from "@workspace/ui/components/button"
 import { IconX } from "@tabler/icons-react"
+import { Button } from "@workspace/ui/components/button"
+import { cn } from "@workspace/ui/lib/utils"
 
 function Dialog({
   ...props
@@ -74,8 +74,7 @@ function DialogContent({
               className="absolute top-4 right-4 bg-secondary"
               size="icon-sm"
             >
-              <IconX
-              />
+              <IconX />
               <span className="sr-only">Close</span>
             </Button>
           </DialogPrimitive.Close>
@@ -129,10 +128,7 @@ function DialogTitle({
   return (
     <DialogPrimitive.Title
       data-slot="dialog-title"
-      className={cn(
-        "text-base leading-none font-medium",
-        className
-      )}
+      className={cn("text-base leading-none font-medium", className)}
       {...props}
     />
   )
