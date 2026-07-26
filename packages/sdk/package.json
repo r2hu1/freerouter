@@ -1,5 +1,5 @@
 {
-  "name": "sdk",
+  "name": "@workspace/sdk",
   "module": "index.ts",
   "type": "module",
   "devDependencies": {
