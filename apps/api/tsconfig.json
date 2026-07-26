@@ -1,8 +1,19 @@
 {
   "compilerOptions": {
     "strict": true,
+    "skipLibCheck": true,
     "types": ["bun"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "target": "esnext",
+    "verbatimModuleSyntax": true,
     "jsx": "react-jsx",
-    "jsxImportSource": "hono/jsx"
-  }
+    "jsxImportSource": "hono/jsx",
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@freerouter/sdk": ["../../packages/sdk/src/index.ts"]
+    }
+  },
+  "include": ["src"]
 }
