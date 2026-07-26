@@ -1,8 +1,4 @@
 {
-  "compilerOptions": {
-    "strict": true,
-    "types": ["bun"],
-    "jsx": "react-jsx",
-    "jsxImportSource": "hono/jsx"
-  }
+  "extends": "@workspace/typescript-config/base.json"
 }
+
