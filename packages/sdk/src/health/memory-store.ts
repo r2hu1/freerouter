@@ -2,7 +2,7 @@ import type { HealthKey } from "../types"
 import type { HealthStore, ProviderHealth } from "./store"
 
 const DEFAULT_DOWN_AFTER = 3
-const COOLDOWN_MS = 30_000
+const COOLDOWN_MS = 10_000
 
 function keyToString(key: HealthKey): string {
   return `${key.provider}:${key.keyFingerprint}`

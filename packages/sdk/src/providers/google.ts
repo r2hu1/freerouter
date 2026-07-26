@@ -23,6 +23,22 @@ const MODELS: ModelInfo[] = [
     contextWindow: 1048576,
     free: true,
   },
+  {
+    provider: "google",
+    modelId: "gemini-3.6-flash",
+    capabilities: ["fast", "vision", "tool-use", "long-context"],
+    contextWindow: 1048576,
+    free: true,
+    deprecated: true,
+  },
+  {
+    provider: "google",
+    modelId: "gemini-3.5-flash",
+    capabilities: ["fast", "vision", "tool-use", "long-context"],
+    contextWindow: 1048576,
+    free: true,
+    deprecated: true,
+  },
 ]
 
 export function googleAdapter(): ProviderAdapter {

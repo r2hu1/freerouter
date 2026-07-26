@@ -89,13 +89,16 @@ BYOK (Bring Your Own Key) — pass provider keys via headers:
 
 | Provider | Free Models | Key Required |
 |----------|-------------|-------------|
-| Groq | `llama-3.3-70b-versatile`, `llama-3.1-8b-instant`, `mixtral-8x7b-32768`, `gemma2-9b-it`, `llama-4-scout-17b-16e-instruct`, `llama-4-maverick-17b-128e-instruct` | ✅ |
-| Google Gemini | `gemini-2.5-flash`, `gemini-2.5-flash-lite`, `gemini-2.5-pro` | ✅ |
-| OpenRouter | `meta-llama/llama-3.3-70b-instruct:free`, `nvidia/nemotron-3-ultra-550b-a55b:free`, `qwen/qwen3-coder:free`, `google/gemma-4-31b-it:free`, `openai/gpt-oss-120b:free`, `poolside/laguna-m.1:free`, `cohere/north-mini-code:free` | ✅ |
-| GitHub Models† | `gpt-4o-mini`, `gpt-4o`, `Meta-Llama-3.1-405B-Instruct`, `Meta-Llama-3.3-70B-Instruct`, `DeepSeek-V3` +3 more | ✅ |
-| Cloudflare Workers AI | `@cf/meta/llama-3.3-70b-instruct-fp8-fast`, `@cf/meta/llama-3.1-8b-instruct`, `@cf/mistral/mistral-7b-instruct-v0.3`, `@cf/mistral/mistral-small-3.1-24b-instruct`, `@cf/meta/llama-4-scout-17b-16e-instruct`, `@cf/qwen/qwen3-32b`, `@cf/deepseek/deepseek-r1-distill-qwen-32b` | ✅ |
+| Groq | `llama-3.3-70b-versatile`, `llama-3.1-8b-instant`, `llama-4-scout-17b-16e-instruct` †, `llama-4-maverick-17b-128e-instruct` † | ✅ |
+| Google Gemini | `gemini-2.5-flash`, `gemini-2.5-flash-lite`, `gemini-2.5-pro`, `gemini-3.6-flash` †, `gemini-3.5-flash` † | ✅ |
+| OpenRouter | `nvidia/nemotron-3-ultra-550b-a55b:free`, `nvidia/nemotron-3-super-120b-a12b:free`, `openai/gpt-oss-120b:free`, `openai/gpt-oss-20b:free`, `google/gemma-4-31b-it:free`, `google/gemma-4-26b-a4b-it:free`, `poolside/laguna-m.1:free`, `poolside/laguna-xs-2.1:free`, `cohere/north-mini-code:free`, `qwen/qwen3-next-80b-a3b-instruct:free`, `nvidia/nemotron-3-nano-30b-a3b:free` +2 deprecated | ✅ |
+| NVIDIA NIM | `deepseek-ai/deepseek-v4-pro`, `deepseek-ai/deepseek-v4-flash`, `z-ai/glm-5.2`, `minimaxai/minimax-m3`, `moonshotai/kimi-k2.6`, `nvidia/nemotron-4`, `qwen/qwen3.6-27b` | ✅ |
+| Cerebras | `gpt-oss-120b`, `zai-glm-4.7` † | ✅ |
+| GitHub Models‡ | `gpt-4o-mini`, `gpt-4o`, `Meta-Llama-3.1-405B-Instruct`, `Meta-Llama-3.3-70B-Instruct`, `DeepSeek-V3` +3 more | ✅ |
+| Cloudflare Workers AI | `@cf/meta/llama-3.3-70b-instruct-fp8-fast`, `@cf/meta/llama-3.1-8b-instruct-fp8`, `@cf/meta/llama-4-scout-17b-16e-instruct`, `@cf/meta/llama-3.2-11b-vision-instruct`, `@cf/mistralai/mistral-small-3.1-24b-instruct`, `@cf/qwen/qwen2.5-coder-32b-instruct`, `@cf/qwen/qwq-32b`, `@cf/qwen/qwen3-30b-a3b-fp8`, `@cf/deepseek-ai/deepseek-r1-distill-qwen-32b`, `@cf/google/gemma-4-26b-a4b-it`, `@cf/nvidia/nemotron-3-120b-a12b`, `@cf/openai/gpt-oss-120b`, `@cf/openai/gpt-oss-20b`, `@cf/moonshotai/kimi-k2.7-code`, `@cf/zai-org/glm-5.2` +4 more | ✅ |
 
-† GitHub Models being retired Jul 30, 2026. Models remain listed for existing users until then.
+† Deprecated or preview — excluded from alias routing but accessible via pinned model.
+‡ GitHub Models retiring Jul 30, 2026.
 
 ## SDK
 
@@ -126,7 +129,7 @@ See `packages/sdk/DOCS.md` for full SDK docs.
 
 ## Status
 
-Working. 25 API tests + 37 SDK tests pass.
+Working. 34 API tests + 37 SDK tests pass across 7 providers.
 
 ## Stack
 

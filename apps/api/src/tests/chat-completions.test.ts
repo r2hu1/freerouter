@@ -29,6 +29,21 @@ describe("POST /v1/chat/completions", () => {
     expect(body.error.type).toBe("freerouter_all_providers_failed")
   })
 
+  test("provider-prefixed alias like freerouter/free:auto treated as alias", async () => {
+    const app = createApp()
+    const res = await app.request("/v1/chat/completions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "freerouter/free:auto",
+        messages: [{ role: "user", content: "hello" }],
+      }),
+    })
+    expect(res.status).toBe(502)
+    const body = await res.json()
+    expect(body.error.type).toBe("freerouter_all_providers_failed")
+  })
+
   test("returns 502 when no key for pinned provider", async () => {
     const app = createApp()
     const res = await app.request("/v1/chat/completions", {

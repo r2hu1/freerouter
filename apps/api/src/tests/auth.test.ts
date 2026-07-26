@@ -28,4 +28,37 @@ describe("resolveKeysFromHeaders", () => {
     expect(keys.google).toBeUndefined()
     expect(keys.openrouter).toBeUndefined()
   })
+
+  test("Authorization Bearer with gsk_ prefix extracts as groq key", () => {
+    const headers = new Headers({
+      authorization: "Bearer gsk_bearerToken123",
+    })
+    const { keys } = resolveKeysFromHeaders(headers)
+    expect(keys.groq).toBe("gsk_bearerToken123")
+  })
+
+  test("X-Groq-Key header takes priority over Authorization Bearer", () => {
+    const headers = new Headers({
+      "x-groq-key": "gsk_explicitKey",
+      authorization: "Bearer gsk_bearerKey",
+    })
+    const { keys } = resolveKeysFromHeaders(headers)
+    expect(keys.groq).toBe("gsk_explicitKey")
+  })
+
+  test("non-gsk Bearer token is ignored", () => {
+    const headers = new Headers({
+      authorization: "Bearer AIza_something",
+    })
+    const { keys } = resolveKeysFromHeaders(headers)
+    expect(keys.groq).toBeUndefined()
+  })
+
+  test("invalid Authorization header is ignored", () => {
+    const headers = new Headers({
+      authorization: "Basic dXNlcjpwYXNz",
+    })
+    const { keys } = resolveKeysFromHeaders(headers)
+    expect(keys.groq).toBeUndefined()
+  })
 })

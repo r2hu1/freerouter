@@ -22,6 +22,8 @@ export type ProviderId =
   | "github-models"
   | "cloudflare"
   | "openrouter"
+  | "nvidia"
+  | "cerebras"
 
 export interface ProviderAdapter {
   id: ProviderId

@@ -82,7 +82,7 @@ An alias is a `free:${string}` string that maps to a set of models by capability
 | `free:tool-use` | `tool-use` | Function/tool calling |
 
 The sort order for `free:auto` is:
-1. Healthy providers (by priority: Groq → Google → OpenRouter → GitHub Models → Cloudflare)
+1. Healthy providers (by priority: Groq → Google → OpenRouter → NVIDIA NIM → Cerebras → GitHub Models → Cloudflare)
 2. Rate-limited providers (after healthy, still usable)
 3. Down providers (excluded entirely)
 
@@ -97,33 +97,39 @@ If no model matches the alias + caller's keys + health state, the resolver retur
 ### Groq
 
 | modelId | capabilities | context |
-|---|---|---|---|
+|---|---|---|
 | `llama-3.3-70b-versatile` | fast, tool-use | 131K |
 | `llama-3.1-8b-instant` | fast, tool-use | 131K |
-| `mixtral-8x7b-32768` | fast, tool-use | 32K |
-| `gemma2-9b-it` | fast, tool-use | 8K |
-| `llama-4-scout-17b-16e-instruct` | fast, tool-use | 131K |
-| `llama-4-maverick-17b-128e-instruct` | fast, tool-use, vision | 131K |
+| `llama-4-scout-17b-16e-instruct` ⚠️ preview | fast, tool-use | 131K |
+| `llama-4-maverick-17b-128e-instruct` ⚠️ preview | fast, tool-use, vision | 131K |
 
 ### Google (Gemini)
 
 | modelId | capabilities | context |
-|---|---|---|---|
+|---|---|---|
 | `gemini-2.5-flash` | fast, vision, tool-use, long-context | 1M |
 | `gemini-2.5-flash-lite` | fast, tool-use | 1M |
 | `gemini-2.5-pro` | reasoning, vision, tool-use, long-context | 1M |
+| `gemini-3.6-flash` ⚠️ preview | fast, vision, tool-use, long-context | 1M |
+| `gemini-3.5-flash` ⚠️ preview | fast, vision, tool-use, long-context | 1M |
 
 ### OpenRouter (free models only — list changes frequently)
 
 | modelId | capabilities | context |
 |---|---|---|
-| `meta-llama/llama-3.3-70b-instruct:free` | fast, tool-use, long-context | 131K |
-| `nvidia/nemotron-3-ultra-550b-a55b:free` | tool-use, long-context | 1M |
-| `qwen/qwen3-coder:free` | tool-use, long-context | 1M |
+| `nvidia/nemotron-3-ultra-550b-a55b:free` | reasoning, tool-use, long-context | 1M |
+| `nvidia/nemotron-3-super-120b-a12b:free` | reasoning, tool-use, long-context | 262K |
+| `openai/gpt-oss-120b:free` | reasoning, tool-use | 131K |
+| `openai/gpt-oss-20b:free` | fast, tool-use | 131K |
 | `google/gemma-4-31b-it:free` | vision, tool-use | 262K |
-| `openai/gpt-oss-120b:free` | tool-use, reasoning | 131K |
-| `poolside/laguna-m.1:free` | tool-use | 262K |
+| `google/gemma-4-26b-a4b-it:free` | vision, tool-use | 262K |
+| `poolside/laguna-m.1:free` | tool-use, long-context | 262K |
+| `poolside/laguna-xs-2.1:free` | tool-use | 262K |
 | `cohere/north-mini-code:free` | tool-use | 262K |
+| `qwen/qwen3-next-80b-a3b-instruct:free` | tool-use, long-context | 262K |
+| `nvidia/nemotron-3-nano-30b-a3b:free` | fast, tool-use | 262K |
+| `meta-llama/llama-3.3-70b-instruct:free` ⚠️ deprecated | fast, tool-use, long-context | 131K |
+| `qwen/qwen3-coder:free` ⚠️ deprecated | tool-use, long-context | 1M |
 
 ### GitHub Models (retiring Jul 30, 2026)
 
@@ -141,13 +147,44 @@ If no model matches the alias + caller's keys + health state, the resolver retur
 
 | modelId | capabilities | context |
 |---|---|---|
-| `@cf/meta/llama-3.3-70b-instruct-fp8-fast` | fast, tool-use, long-context | 131K |
-| `@cf/meta/llama-3.1-8b-instruct` | fast, tool-use | 131K |
-| `@cf/mistral/mistral-7b-instruct-v0.3` | fast | 32K |
-| `@cf/mistral/mistral-small-3.1-24b-instruct` | fast, tool-use | 131K |
+| `@cf/meta/llama-3.3-70b-instruct-fp8-fast` | fast, tool-use, long-context | 24K |
+| `@cf/meta/llama-3.1-8b-instruct-fp8` | fast, tool-use | 32K |
 | `@cf/meta/llama-4-scout-17b-16e-instruct` | fast, tool-use | 131K |
-| `@cf/qwen/qwen3-32b` | fast, tool-use | 131K |
-| `@cf/deepseek/deepseek-r1-distill-qwen-32b` | reasoning | 32K |
+| `@cf/meta/llama-3.2-11b-vision-instruct` | vision, tool-use | 128K |
+| `@cf/meta/llama-3.2-3b-instruct` | fast | 80K |
+| `@cf/mistralai/mistral-small-3.1-24b-instruct` | fast, tool-use | 128K |
+| `@cf/qwen/qwen2.5-coder-32b-instruct` | fast, tool-use | 33K |
+| `@cf/qwen/qwq-32b` | reasoning | 24K |
+| `@cf/qwen/qwen3-30b-a3b-fp8` | fast, tool-use | 33K |
+| `@cf/deepseek-ai/deepseek-r1-distill-qwen-32b` | reasoning | 80K |
+| `@cf/google/gemma-4-26b-a4b-it` | tool-use, long-context | 256K |
+| `@cf/nvidia/nemotron-3-120b-a12b` | tool-use, long-context | 256K |
+| `@cf/openai/gpt-oss-120b` | tool-use, reasoning | 128K |
+| `@cf/openai/gpt-oss-20b` | fast, tool-use | 128K |
+| `@cf/moonshotai/kimi-k2.7-code` | tool-use, long-context | 262K |
+| `@cf/zai-org/glm-5.2` | reasoning, tool-use, long-context | 262K |
+| `@cf/aisingapore/gemma-sea-lion-v4-27b-it` | tool-use, long-context | 128K |
+| `@cf/ibm-granite/granite-4.0-h-micro` | tool-use | 131K |
+| `@cf/meta/llama-guard-3-8b` | tool-use | 131K |
+
+### NVIDIA NIM
+
+| modelId | capabilities | context |
+|---|---|---|
+| `deepseek-ai/deepseek-v4-pro` | reasoning, tool-use, long-context | 1M |
+| `deepseek-ai/deepseek-v4-flash` | reasoning, tool-use, long-context | 1M |
+| `z-ai/glm-5.2` | reasoning, tool-use, long-context | 1M |
+| `minimaxai/minimax-m3` | reasoning, tool-use, long-context | 1M |
+| `moonshotai/kimi-k2.6` | reasoning, tool-use, long-context | 262K |
+| `nvidia/nemotron-4` | reasoning, tool-use, long-context | 262K |
+| `qwen/qwen3.6-27b` | fast, tool-use | 131K |
+
+### Cerebras
+
+| modelId | capabilities | context |
+|---|---|---|
+| `gpt-oss-120b` | fast, reasoning, tool-use | 131K |
+| `zai-glm-4.7` ⚠️ deprecated | reasoning, tool-use, long-context | 262K |
 
 ---
 
@@ -158,10 +195,12 @@ FreeRouter is **BYOK-only** — users supply their own provider API keys. The SD
 ### Key format per provider
 
 | Provider | Key format |
-|---|---|
+|---|---|---|
 | Groq | `gsk_...` |
 | Google | `AIza...` |
 | OpenRouter | Standard API key |
+| NVIDIA NIM | `nvapi-...` |
+| Cerebras | Standard API key |
 | GitHub Models | GitHub PAT (`ghp_...`) |
 | Cloudflare | `account_id:api_token` (colon-separated) |
 

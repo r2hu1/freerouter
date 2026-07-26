@@ -16,26 +16,14 @@ const MODELS: ModelInfo[] = [
     contextWindow: 131072,
     free: true,
   },
-  {
-    provider: "groq",
-    modelId: "mixtral-8x7b-32768",
-    capabilities: ["fast", "tool-use"],
-    contextWindow: 32768,
-    free: true,
-  },
-  {
-    provider: "groq",
-    modelId: "gemma2-9b-it",
-    capabilities: ["fast", "tool-use"],
-    contextWindow: 8192,
-    free: true,
-  },
+
   {
     provider: "groq",
     modelId: "llama-4-scout-17b-16e-instruct",
     capabilities: ["fast", "tool-use"],
     contextWindow: 131072,
     free: true,
+    deprecated: true,
   },
   {
     provider: "groq",
@@ -43,6 +31,7 @@ const MODELS: ModelInfo[] = [
     capabilities: ["fast", "tool-use", "vision"],
     contextWindow: 131072,
     free: true,
+    deprecated: true,
   },
 ]
 

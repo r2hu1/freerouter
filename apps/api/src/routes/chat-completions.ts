@@ -15,15 +15,20 @@ function parseModel(model: string): {
   provider?: string
   modelId?: string
 } {
-  if (model.startsWith(ALIAS_PREFIX)) {
-    return { type: "alias", modelId: model }
-  }
+  // Client (e.g. opencode) may prefix model with provider name like
+  // "freerouter/free:auto". Strip provider prefix and re-check.
   const slashIdx = model.indexOf("/")
+  const stripped = slashIdx > 0 ? model.slice(slashIdx + 1) : model
+
+  if (stripped.startsWith(ALIAS_PREFIX)) {
+    return { type: "alias", modelId: stripped }
+  }
+
   if (slashIdx > 0) {
     return {
       type: "pinned",
       provider: model.slice(0, slashIdx),
-      modelId: model.slice(slashIdx + 1),
+      modelId: stripped,
     }
   }
   return { type: "alias", modelId: model }
