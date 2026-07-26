@@ -11,11 +11,11 @@
   },
   "iconLibrary": "tabler",
   "aliases": {
-    "components": "@workspace/ui/components",
-    "utils": "@workspace/ui/lib/utils",
-    "hooks": "@workspace/ui/hooks",
-    "lib": "@workspace/ui/lib",
-    "ui": "@workspace/ui/components"
+    "components": "@freerouter/ui/components",
+    "utils": "@freerouter/ui/lib/utils",
+    "hooks": "@freerouter/ui/hooks",
+    "lib": "@freerouter/ui/lib",
+    "ui": "@freerouter/ui/components"
   },
   "rtl": false,
   "menuColor": "default",

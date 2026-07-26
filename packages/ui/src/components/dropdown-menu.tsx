@@ -4,7 +4,7 @@ import { DropdownMenu as DropdownMenuPrimitive } from "radix-ui"
 import type * as React from "react"
 
 import { IconCheck, IconChevronRight } from "@tabler/icons-react"
-import { cn } from "@workspace/ui/lib/utils"
+import { cn } from "@freerouter/ui/lib/utils"
 
 function DropdownMenu({
   ...props

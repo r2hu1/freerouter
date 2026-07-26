@@ -4,8 +4,8 @@ import { Dialog as DialogPrimitive } from "radix-ui"
 import type * as React from "react"
 
 import { IconX } from "@tabler/icons-react"
-import { Button } from "@workspace/ui/components/button"
-import { cn } from "@workspace/ui/lib/utils"
+import { Button } from "@freerouter/ui/components/button"
+import { cn } from "@freerouter/ui/lib/utils"
 
 function Dialog({
   ...props

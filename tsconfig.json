@@ -1,3 +1,3 @@
 {
-  "extends": "@workspace/typescript-config/base.json"
+  "extends": "@freerouter/typescript-config/base.json"
 }

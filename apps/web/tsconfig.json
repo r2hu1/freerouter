@@ -1,9 +1,9 @@
 {
-  "extends": "@workspace/typescript-config/nextjs.json",
+  "extends": "@freerouter/typescript-config/nextjs.json",
   "compilerOptions": {
     "paths": {
       "@/*": ["./*"],
-      "@workspace/ui/*": ["../../packages/ui/src/*"]
+      "@freerouter/ui/*": ["../../packages/ui/src/*"]
     },
     "plugins": [
       {

@@ -1,5 +1,5 @@
 {
-  "name": "@workspace/types",
+  "name": "@freerouter/types",
   "module": "index.ts",
   "type": "module",
   "devDependencies": {

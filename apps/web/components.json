@@ -14,8 +14,8 @@
     "components": "@/components",
     "hooks": "@/hooks",
     "lib": "@/lib",
-    "utils": "@workspace/ui/lib/utils",
-    "ui": "@workspace/ui/components"
+    "utils": "@freerouter/ui/lib/utils",
+    "ui": "@freerouter/ui/components"
   },
   "rtl": false,
   "menuColor": "default",

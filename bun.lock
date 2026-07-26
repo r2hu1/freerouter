@@ -6,7 +6,7 @@
       "name": "next-monorepo",
       "devDependencies": {
         "@biomejs/biome": "^1.9.4",
-        "@workspace/typescript-config": "workspace:*",
+        "@freerouter/typescript-config": "workspace:*",
         "turbo": "^2.9.18",
         "typescript": "^5",
       },
@@ -24,23 +24,23 @@
       "name": "web",
       "version": "0.0.1",
       "dependencies": {
-        "@workspace/ui": "workspace:*",
+        "@freerouter/ui": "workspace:*",
         "next": "16.2.6",
         "next-themes": "^0.4.6",
         "react": "19.2.4",
         "react-dom": "19.2.4",
       },
       "devDependencies": {
+        "@freerouter/typescript-config": "workspace:*",
         "@tailwindcss/postcss": "^4",
         "@types/node": "^20",
         "@types/react": "^19",
         "@types/react-dom": "^19",
-        "@workspace/typescript-config": "workspace:*",
         "typescript": "^5",
       },
     },
     "packages/db": {
-      "name": "@workspace/db",
+      "name": "@freerouter/db",
       "devDependencies": {
         "@types/bun": "latest",
       },
@@ -49,7 +49,7 @@
       },
     },
     "packages/sdk": {
-      "name": "@workspace/sdk",
+      "name": "@freerouter/sdk",
       "devDependencies": {
         "@types/bun": "latest",
       },
@@ -58,7 +58,7 @@
       },
     },
     "packages/types": {
-      "name": "@workspace/types",
+      "name": "@freerouter/types",
       "devDependencies": {
         "@types/bun": "latest",
       },
@@ -67,15 +67,14 @@
       },
     },
     "packages/typescript-config": {
-      "name": "@workspace/typescript-config",
+      "name": "@freerouter/typescript-config",
       "version": "0.0.0",
     },
     "packages/ui": {
-      "name": "@workspace/ui",
+      "name": "@freerouter/ui",
       "version": "0.0.0",
       "dependencies": {
         "@tabler/icons-react": "^3.45.0",
-        "@workspace/ui": "workspace:*",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "next-themes": "^0.4.6",
@@ -88,12 +87,12 @@
         "zod": "^4.4.3",
       },
       "devDependencies": {
+        "@freerouter/typescript-config": "workspace:*",
         "@tailwindcss/postcss": "^4",
         "@turbo/gen": "^2.9.15",
         "@types/node": "^20",
         "@types/react": "^19",
         "@types/react-dom": "^19",
-        "@workspace/typescript-config": "workspace:*",
         "tailwindcss": "^4",
         "typescript": "^5",
       },
@@ -181,6 +180,16 @@
     "@floating-ui/react-dom": ["@floating-ui/react-dom@2.1.9", "", { "dependencies": { "@floating-ui/dom": "^1.8.0" }, "peerDependencies": { "react": ">=16.8.0", "react-dom": ">=16.8.0" } }, "sha512-JDjEFGCpImxDCA7JJKviA0M9+RtmJdj0m/NVU5IMgBK+AmZouAQQ7/+2GLH0GXXY0YMw9oXPB8hKdbPYg5QLYg=="],
 
     "@floating-ui/utils": ["@floating-ui/utils@0.2.12", "", {}, "sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww=="],
+
+    "@freerouter/db": ["@freerouter/db@workspace:packages/db"],
+
+    "@freerouter/sdk": ["@freerouter/sdk@workspace:packages/sdk"],
+
+    "@freerouter/types": ["@freerouter/types@workspace:packages/types"],
+
+    "@freerouter/typescript-config": ["@freerouter/typescript-config@workspace:packages/typescript-config"],
+
+    "@freerouter/ui": ["@freerouter/ui@workspace:packages/ui"],
 
     "@img/colour": ["@img/colour@1.1.0", "", {}, "sha512-Td76q7j57o/tLVdgS746cYARfSyxk8iEfRxewL9h4OMzYhbW4TAcppl0mT4eyqXddh6L/jwoM75mo7ixa/pCeQ=="],
 
@@ -469,16 +478,6 @@
     "@types/react": ["@types/react@19.2.17", "", { "dependencies": { "csstype": "^3.2.2" } }, "sha512-MXfmqaVPEVgkBT/aY0aGCkRWWtByiYQXo3xdQ8r5RzuFrPiRn8Gar2tQdXSUQ2GKV3bkXckek89V8wQBY2Q/Aw=="],
 
     "@types/react-dom": ["@types/react-dom@19.2.3", "", { "peerDependencies": { "@types/react": "^19.2.0" } }, "sha512-jp2L/eY6fn+KgVVQAOqYItbF0VY/YApe5Mz2F0aykSO8gx31bYCZyvSeYxCHKvzHG5eZjc+zyaS5BrBWya2+kQ=="],
-
-    "@workspace/db": ["@workspace/db@workspace:packages/db"],
-
-    "@workspace/sdk": ["@workspace/sdk@workspace:packages/sdk"],
-
-    "@workspace/types": ["@workspace/types@workspace:packages/types"],
-
-    "@workspace/typescript-config": ["@workspace/typescript-config@workspace:packages/typescript-config"],
-
-    "@workspace/ui": ["@workspace/ui@workspace:packages/ui"],
 
     "ansi-regex": ["ansi-regex@5.0.1", "", {}, "sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ=="],
 
