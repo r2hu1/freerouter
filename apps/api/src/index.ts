@@ -1,9 +1,8 @@
-import { Hono } from "hono"
+import { createApp } from "./app"
+import { loadEnv } from "./env"
 
-const app = new Hono()
+const env = loadEnv()
+const app = createApp()
 
-app.get("/", (c) => {
-  return c.text("Hello Hono!")
-})
-
-export default app
+console.log(`Server starting on port ${env.PORT}`)
+Bun.serve({ fetch: app.fetch, port: env.PORT })
