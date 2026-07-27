@@ -2,9 +2,18 @@ import { z } from "zod"
 
 const envSchema = z.object({
   PORT: z.coerce.number().default(3000),
+  HOST: z.string().default("0.0.0.0"),
+  NODE_ENV: z
+    .enum(["development", "production", "test"])
+    .default("development"),
+  LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
+  CORS_ORIGINS: z.string().default("*"),
+  RATE_LIMIT_MAX: z.coerce.number().default(100),
+  RATE_LIMIT_WINDOW_MS: z.coerce.number().default(60_000),
   DASHBOARD_ENCRYPTION_KEY: z.string().optional(),
-  CORS_ORIGINS: z.string().optional(),
 })
+
+export type Env = z.infer<typeof envSchema>
 
 let _env: z.infer<typeof envSchema> | null = null
 

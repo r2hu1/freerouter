@@ -1,3 +1,8 @@
+import type {
+  JSONSchema7,
+  LanguageModelV4CallOptions,
+  LanguageModelV4FunctionTool,
+} from "@ai-sdk/provider"
 import type { z } from "zod"
 import type { ChatCompletionRequestSchema } from "../schemas/chat-completions"
 
@@ -6,7 +11,12 @@ type ChatRequest = z.input<typeof ChatCompletionRequestSchema>
 type ContentPart =
   | { type: "text"; text: string }
   | { type: "file"; data: { type: "url"; url: string }; mediaType?: string }
-  | { type: "tool-call"; toolCallId: string; toolName: string; args: string }
+  | {
+      type: "tool-call"
+      toolCallId: string
+      toolName: string
+      input: Record<string, unknown>
+    }
 
 interface AiSdkMessage {
   role: "system" | "user" | "assistant"
@@ -15,32 +25,22 @@ interface AiSdkMessage {
 
 interface AiSdkToolMessage {
   role: "tool"
-  content: { type: "tool-result"; toolCallId: string; content: string }[]
+  content: {
+    type: "tool-result"
+    toolCallId: string
+    toolName: string
+    output: { type: "text"; value: string }
+  }[]
 }
 
 type PromptMessage = AiSdkMessage | AiSdkToolMessage
-
-interface AiSdkParams {
-  prompt: PromptMessage[]
-  temperature?: number
-  maxTokens?: number
-  tools?: {
-    type: "function"
-    name: string
-    description?: string
-    parameters: unknown
-  }[]
-  toolChoice?:
-    | { type: "auto" | "none" | "required" }
-    | { type: "tool"; toolName: string }
-}
 
 function toAiSdkContent(
   content: string | Record<string, unknown>[] | null | undefined,
   role: string
 ): string | ContentPart[] {
   if (role === "system") {
-    return content ?? ""
+    return typeof content === "string" ? content : ""
   }
   if (typeof content === "string" && content.length > 0) {
     return [{ type: "text", text: content }]
@@ -66,20 +66,40 @@ function toAiSdkContent(
   return []
 }
 
-export function toAiSdkParams(body: ChatRequest): AiSdkParams {
+function buildToolNameMap(
+  messages: ChatRequest["messages"]
+): Map<string, string> {
+  const map = new Map<string, string>()
+  for (const m of messages) {
+    if (m.role === "assistant" && m.tool_calls) {
+      for (const tc of m.tool_calls) {
+        map.set(tc.id, tc.function.name)
+      }
+    }
+  }
+  return map
+}
+
+export function toAiSdkParams(body: ChatRequest): LanguageModelV4CallOptions {
+  const toolNameMap = buildToolNameMap(body.messages)
+
   const prompt: PromptMessage[] = body.messages.map((m) => {
     if (m.role === "tool") {
+      const toolCallId = m.tool_call_id ?? ""
       const msg: AiSdkToolMessage = {
         role: "tool",
         content: [
           {
             type: "tool-result",
-            toolCallId: m.tool_call_id ?? "",
-            toolName: "",
-            content:
-              typeof m.content === "string"
-                ? m.content
-                : JSON.stringify(m.content),
+            toolCallId,
+            toolName: toolNameMap.get(toolCallId) ?? "",
+            output: {
+              type: "text",
+              value:
+                typeof m.content === "string"
+                  ? m.content
+                  : JSON.stringify(m.content),
+            },
           },
         ],
       }
@@ -95,12 +115,20 @@ export function toAiSdkParams(body: ChatRequest): AiSdkParams {
         : [{ type: "text" as const, text: parts as string }]
       content = [
         ...base,
-        ...m.tool_calls.map((tc) => ({
-          type: "tool-call" as const,
-          toolCallId: tc.id,
-          toolName: tc.function.name,
-          args: tc.function.arguments,
-        })),
+        ...m.tool_calls.map((tc) => {
+          let input: Record<string, unknown>
+          try {
+            input = JSON.parse(tc.function.arguments) as Record<string, unknown>
+          } catch {
+            input = {}
+          }
+          return {
+            type: "tool-call" as const,
+            toolCallId: tc.id,
+            toolName: tc.function.name,
+            input,
+          }
+        }),
       ]
     }
 
@@ -111,17 +139,19 @@ export function toAiSdkParams(body: ChatRequest): AiSdkParams {
     return msg
   })
 
-  const params: AiSdkParams = { prompt }
+  const params: LanguageModelV4CallOptions = {
+    prompt: prompt as LanguageModelV4CallOptions["prompt"],
+  }
 
   if (body.temperature !== undefined) params.temperature = body.temperature
-  if (body.max_tokens !== undefined) params.maxTokens = body.max_tokens
+  if (body.max_tokens !== undefined) params.maxOutputTokens = body.max_tokens
 
   if (body.tools) {
     params.tools = body.tools.map((tool) => ({
       type: "function" as const,
       name: tool.function.name,
       description: tool.function.description,
-      parameters: tool.function.parameters,
+      inputSchema: tool.function.parameters as JSONSchema7,
     }))
   }
 

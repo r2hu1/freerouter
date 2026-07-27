@@ -29,7 +29,7 @@ describe("toAiSdkParams", () => {
       max_tokens: 100,
     } as Req)
     expect(params.temperature).toBe(0.5)
-    expect(params.maxTokens).toBe(100)
+    expect(params.maxOutputTokens).toBe(100)
   })
 
   test("maps tools to record format", () => {
@@ -53,7 +53,13 @@ describe("toAiSdkParams", () => {
     } as Req)
     expect(params.tools).toHaveLength(1)
     expect(params.tools![0].name).toBe("get_weather")
-    expect(params.tools![0].description).toBe("Get weather")
+    expect((params.tools![0] as Record<string, unknown>).description).toBe(
+      "Get weather"
+    )
+    expect((params.tools![0] as Record<string, unknown>).inputSchema).toEqual({
+      type: "object",
+      properties: { location: { type: "string" } },
+    })
     expect(params.toolChoice).toEqual({ type: "auto" })
   })
 
@@ -80,12 +86,12 @@ describe("toAiSdkParams", () => {
       type: string
       toolCallId?: string
       toolName?: string
-      args?: string
+      input?: string
     }[]
     expect(parts).toHaveLength(1)
     expect(parts[0].type).toBe("tool-call")
     expect(parts[0].toolCallId).toBe("call_123")
     expect(parts[0].toolName).toBe("get_weather")
-    expect(parts[0].args).toBe('{"loc":"SF"}')
+    expect((parts[0] as Record<string, unknown>).input).toEqual({ loc: "SF" })
   })
 })

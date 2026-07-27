@@ -1,5 +1,8 @@
 {
   "name": "api",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
   "scripts": {
     "dev": "bun run --hot src/index.ts",
     "lint": "biome lint .",
@@ -8,6 +11,7 @@
     "test": "bun test"
   },
   "dependencies": {
+    "@ai-sdk/provider": "^4.0.3",
     "@freerouter/sdk": "workspace:*",
     "hono": "^4.12.32",
     "zod": "^3.24.4"

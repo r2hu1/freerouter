@@ -1,13 +1,18 @@
 export interface GenerateResult {
-  content?: { type: string; text?: string }[]
+  content?: {
+    type: string
+    text?: string
+    toolCallId?: string
+    toolName?: string
+    input?: string
+  }[]
   text?: string
-  finishReason?: { unified?: string }
+  finishReason?: { unified?: string; type?: string }
   usage?: {
     inputTokens?: { total?: number }
     outputTokens?: { total?: number }
     totalTokens?: number
   }
-  toolCalls?: { toolCallId: string; toolName: string; args: string }[]
 }
 
 interface OpenAiChatCompletion {
@@ -43,30 +48,35 @@ export function toOpenAiResponse(
   result: GenerateResult,
   model: string
 ): OpenAiChatCompletion {
-  const finishReason = result.finishReason?.unified ?? "stop"
+  const finishReason =
+    result.finishReason?.unified ?? result.finishReason?.type ?? "stop"
 
   const text =
     result.text ??
     result.content
-      ?.filter((c): c is { type: "text"; text: string } => c.type === "text")
-      .map((c) => c.text)
+      ?.filter((c) => c.type === "text")
+      .map((c) => c.text ?? "")
       .join("") ??
     null
+
+  const toolCalls = result.content
+    ?.filter((c) => c.type === "tool-call")
+    .map((c) => ({
+      id: c.toolCallId ?? "",
+      type: "function" as const,
+      function: {
+        name: c.toolName ?? "",
+        arguments: c.input ?? "{}",
+      },
+    }))
 
   const message: OpenAiChatCompletion["choices"][0]["message"] = {
     role: "assistant",
     content: text,
   }
 
-  if (result.toolCalls && result.toolCalls.length > 0) {
-    message.tool_calls = result.toolCalls.map((tc) => ({
-      id: tc.toolCallId,
-      type: "function" as const,
-      function: {
-        name: tc.toolName,
-        arguments: tc.args,
-      },
-    }))
+  if (toolCalls && toolCalls.length > 0) {
+    message.tool_calls = toolCalls
   }
 
   return {
