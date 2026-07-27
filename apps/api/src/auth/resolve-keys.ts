@@ -11,6 +11,8 @@ const HEADER_MAP: Record<ProviderId, string> = {
   together: "x-together-key",
   fireworks: "x-fireworks-key",
   mistral: "x-mistral-key",
+  sambanova: "x-sambanova-key",
+  deepseek: "x-deepseek-key",
 }
 
 export function resolveKeysFromHeaders(headers: Headers): {

@@ -32,6 +32,8 @@ const PRIORITY: Record<string, number> = {
   mistral: 7,
   cloudflare: 8,
   cerebras: 9,
+  sambanova: 10,
+  deepseek: 11,
 }
 
 function rank(

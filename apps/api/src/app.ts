@@ -36,6 +36,8 @@ export function createApp(env: ReturnType<typeof loadEnv>) {
         "X-Together-Key",
         "X-Fireworks-Key",
         "X-Mistral-Key",
+        "X-SambaNova-Key",
+        "X-DeepSeek-Key",
       ],
       exposeHeaders: ["Retry-After"],
     })

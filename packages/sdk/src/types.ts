@@ -27,6 +27,8 @@ export type ProviderId =
   | "together"
   | "fireworks"
   | "mistral"
+  | "sambanova"
+  | "deepseek"
 
 export interface ProviderAdapter {
   id: ProviderId

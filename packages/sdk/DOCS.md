@@ -82,7 +82,7 @@ An alias is a `free:${string}` string that maps to a set of models by capability
 | `free:tool-use` | `tool-use` | Function/tool calling |
 
 The sort order for `free:auto` is:
-1. Healthy providers (by priority: Groq → Google → NVIDIA NIM → OpenRouter → Together AI → Fireworks AI → GitHub Models → Mistral → Cloudflare → Cerebras)
+1. Healthy providers (by priority: Groq → Google → NVIDIA NIM → OpenRouter → Together AI → Fireworks AI → GitHub Models → Mistral → Cloudflare → Cerebras → SambaNova → DeepSeek)
 2. Rate-limited providers (after healthy, still usable)
 3. Down providers (excluded entirely)
 
@@ -119,7 +119,6 @@ If no model matches the alias + caller's keys + health state, the resolver retur
 |---|---|---|
 | `nvidia/nemotron-3-ultra-550b-a55b:free` | reasoning, tool-use, long-context | 1M |
 | `nvidia/nemotron-3-super-120b-a12b:free` | reasoning, tool-use, long-context | 262K |
-| `openai/gpt-oss-20b:free` | fast, tool-use | 131K |
 | `google/gemma-4-31b-it:free` | vision, tool-use | 262K |
 | `google/gemma-4-26b-a4b-it:free` | vision, tool-use | 262K |
 | `poolside/laguna-m.1:free` | tool-use, long-context | 262K |
@@ -127,7 +126,6 @@ If no model matches the alias + caller's keys + health state, the resolver retur
 | `cohere/north-mini-code:free` | tool-use | 262K |
 | `qwen/qwen3-next-80b-a3b-instruct:free` | tool-use, long-context | 262K |
 | `nvidia/nemotron-3-nano-30b-a3b:free` | fast, tool-use | 262K |
-| `qwen/qwen3-coder:free` ⚠️ deprecated | tool-use, long-context | 1M |
 
 ### GitHub Models (retiring Jul 30, 2026)
 
@@ -213,6 +211,22 @@ If no model matches the alias + caller's keys + health state, the resolver retur
 | `codestral-latest` | tool-use | 256K |
 | `mistral-large-latest` | reasoning, tool-use, long-context | 128K |
 
+### SambaNova
+
+| modelId | capabilities | context |
+|---|---|---|
+| `Meta-Llama-3.3-70B-Instruct` | fast, tool-use, long-context | 131K |
+| `Meta-Llama-3.1-8B-Instruct` | fast, tool-use | 131K |
+| `DeepSeek-V3.1-0324` | reasoning, tool-use, long-context | 131K |
+| `Qwen3-32B` | reasoning, tool-use, long-context | 131K |
+
+### DeepSeek
+
+| modelId | capabilities | context |
+|---|---|---|
+| `deepseek-v4-flash` | fast, tool-use, long-context | 131K |
+| `deepseek-v4-pro` | reasoning, tool-use, long-context | 131K |
+
 ---
 
 ## Keys & Security
@@ -233,6 +247,8 @@ FreeRouter is **BYOK-only** — users supply their own provider API keys. The SD
 | Together AI | Standard API key |
 | Fireworks AI | Standard API key |
 | Mistral | `api_...` or `Hv...` |
+| SambaNova | Standard API key |
+| DeepSeek | Standard API key |
 
 ### Fingerprinting
 

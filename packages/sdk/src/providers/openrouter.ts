@@ -20,21 +20,6 @@ const MODELS: ModelInfo[] = [
   },
   {
     provider: "openrouter",
-    modelId: "openai/gpt-oss-120b:free",
-    capabilities: ["reasoning", "tool-use"],
-    contextWindow: 131072,
-    free: true,
-    deprecated: true,
-  },
-  {
-    provider: "openrouter",
-    modelId: "openai/gpt-oss-20b:free",
-    capabilities: ["fast", "tool-use"],
-    contextWindow: 131072,
-    free: true,
-  },
-  {
-    provider: "openrouter",
     modelId: "google/gemma-4-31b-it:free",
     capabilities: ["vision", "tool-use"],
     contextWindow: 262144,
@@ -81,29 +66,6 @@ const MODELS: ModelInfo[] = [
     capabilities: ["tool-use", "long-context"],
     contextWindow: 262144,
     free: true,
-  },
-  {
-    provider: "openrouter",
-    modelId: "openrouter/free",
-    capabilities: ["tool-use", "fast", "reasoning", "vision", "long-context"],
-    contextWindow: 204800,
-    free: true,
-  },
-  {
-    provider: "openrouter",
-    modelId: "meta-llama/llama-3.3-70b-instruct:free",
-    capabilities: ["fast", "tool-use", "long-context"],
-    contextWindow: 131072,
-    free: true,
-    deprecated: true,
-  },
-  {
-    provider: "openrouter",
-    modelId: "qwen/qwen3-coder:free",
-    capabilities: ["tool-use", "long-context"],
-    contextWindow: 1048576,
-    free: true,
-    deprecated: true,
   },
 ]
 
