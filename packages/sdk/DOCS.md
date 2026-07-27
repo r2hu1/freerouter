@@ -82,7 +82,7 @@ An alias is a `free:${string}` string that maps to a set of models by capability
 | `free:tool-use` | `tool-use` | Function/tool calling |
 
 The sort order for `free:auto` is:
-1. Healthy providers (by priority: Groq → Google → OpenRouter → NVIDIA NIM → Cerebras → GitHub Models → Cloudflare)
+1. Healthy providers (by priority: Groq → Google → NVIDIA NIM → OpenRouter → Together AI → Fireworks AI → GitHub Models → Mistral → Cloudflare → Cerebras)
 2. Rate-limited providers (after healthy, still usable)
 3. Down providers (excluded entirely)
 
@@ -119,7 +119,6 @@ If no model matches the alias + caller's keys + health state, the resolver retur
 |---|---|---|
 | `nvidia/nemotron-3-ultra-550b-a55b:free` | reasoning, tool-use, long-context | 1M |
 | `nvidia/nemotron-3-super-120b-a12b:free` | reasoning, tool-use, long-context | 262K |
-| `openai/gpt-oss-120b:free` | reasoning, tool-use | 131K |
 | `openai/gpt-oss-20b:free` | fast, tool-use | 131K |
 | `google/gemma-4-31b-it:free` | vision, tool-use | 262K |
 | `google/gemma-4-26b-a4b-it:free` | vision, tool-use | 262K |
@@ -128,7 +127,6 @@ If no model matches the alias + caller's keys + health state, the resolver retur
 | `cohere/north-mini-code:free` | tool-use | 262K |
 | `qwen/qwen3-next-80b-a3b-instruct:free` | tool-use, long-context | 262K |
 | `nvidia/nemotron-3-nano-30b-a3b:free` | fast, tool-use | 262K |
-| `meta-llama/llama-3.3-70b-instruct:free` ⚠️ deprecated | fast, tool-use, long-context | 131K |
 | `qwen/qwen3-coder:free` ⚠️ deprecated | tool-use, long-context | 1M |
 
 ### GitHub Models (retiring Jul 30, 2026)
@@ -183,8 +181,37 @@ If no model matches the alias + caller's keys + health state, the resolver retur
 
 | modelId | capabilities | context |
 |---|---|---|
-| `gpt-oss-120b` | fast, reasoning, tool-use | 131K |
-| `zai-glm-4.7` ⚠️ deprecated | reasoning, tool-use, long-context | 262K |
+| `llama-3.3-70b` | fast, tool-use | 131K |
+| `llama-3.1-8b` | fast, tool-use | 131K |
+| `qwen3-32b` | reasoning, tool-use, long-context | 131K |
+| `qwen3-235b` | reasoning, tool-use, long-context | 131K |
+
+### Together AI
+
+| modelId | capabilities | context |
+|---|---|---|
+| `meta-llama/Llama-3.3-70B-Instruct-Turbo-Free` | fast, tool-use, long-context | 131K |
+| `mistralai/Mixtral-8x22B-Instruct-v0.1` | fast, tool-use, long-context | 65K |
+| `deepseek-ai/DeepSeek-R1-Distill-Llama-70B-free` | reasoning, tool-use, long-context | 131K |
+| `Qwen/Qwen3-32B` | reasoning, tool-use, long-context | 131K |
+
+### Fireworks AI
+
+| modelId | capabilities | context |
+|---|---|---|
+| `accounts/fireworks/models/llama-v3p3-70b-instruct` | fast, tool-use, long-context | 131K |
+| `accounts/fireworks/models/firefunction-v2` | tool-use | 131K |
+| `accounts/fireworks/models/qwen3-32b` | reasoning, tool-use, long-context | 131K |
+| `accounts/fireworks/models/deepseek-r1` | reasoning | 131K |
+
+### Mistral AI
+
+| modelId | capabilities | context |
+|---|---|---|
+| `mistral-small-latest` | fast, tool-use, long-context | 32K |
+| `mistral-nemo-latest` | fast, tool-use | 128K |
+| `codestral-latest` | tool-use | 256K |
+| `mistral-large-latest` | reasoning, tool-use, long-context | 128K |
 
 ---
 
@@ -203,6 +230,9 @@ FreeRouter is **BYOK-only** — users supply their own provider API keys. The SD
 | Cerebras | Standard API key |
 | GitHub Models | GitHub PAT (`ghp_...`) |
 | Cloudflare | `account_id:api_token` (colon-separated) |
+| Together AI | Standard API key |
+| Fireworks AI | Standard API key |
+| Mistral | `api_...` or `Hv...` |
 
 ### Fingerprinting
 

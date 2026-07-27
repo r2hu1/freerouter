@@ -1,8 +1,10 @@
 import { createApp } from "./app"
 import { loadEnv } from "./env"
+import { logRoutes } from "./middleware/route-logger"
 
 const env = loadEnv()
 const app = createApp(env)
+logRoutes(app)
 
 const server = Bun.serve({
   fetch: app.fetch,

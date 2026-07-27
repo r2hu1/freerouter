@@ -26,9 +26,12 @@ const PRIORITY: Record<string, number> = {
   google: 1,
   nvidia: 2,
   openrouter: 3,
-  "github-models": 4,
-  cloudflare: 5,
-  cerebras: 6,
+  together: 4,
+  fireworks: 5,
+  "github-models": 6,
+  mistral: 7,
+  cloudflare: 8,
+  cerebras: 9,
 }
 
 function rank(

@@ -39,6 +39,9 @@ curl http://localhost:3000/v1/chat/completions \
 | `X-Cloudflare-Key` | Cloudflare Workers AI |
 | `X-Nvidia-Key` | NVIDIA NIM |
 | `X-Cerebras-Key` | Cerebras |
+| `X-Together-Key` | Together AI |
+| `X-Fireworks-Key` | Fireworks AI |
+| `X-Mistral-Key` | Mistral AI |
 
 ### Path A — Proxy key (coming with `packages/db` vault)
 
@@ -76,9 +79,8 @@ OpenAI-compatible chat completions. Supports both streaming and non-streaming.
 }
 ```
 
-**`model` field** accepts:
-- **Aliases**: `free:auto`, `free:fast`, `free:reasoning`, `free:long-context`, `free:vision`, `free:tool-use`
-- **Pinned models**: `groq/llama-3.3-70b-versatile`, `google/gemini-2.5-flash`, `cloudflare/@cf/meta/llama-3.3-70b-instruct-fp8-fast`, etc.
+**`model` field** accepts aliases:
+- `free:auto`, `free:fast`, `free:reasoning`, `free:long-context`, `free:vision`, `free:tool-use`
 
 **Non-streaming response** — OpenAI `chat.completion` format:
 
@@ -193,6 +195,7 @@ src/
 │   └── errors.ts             # Error → OpenAI error envelope
 ├── middleware/
 │   ├── request-logger.ts     # Logging with key redaction
+│   ├── route-logger.ts        # Chalk route logging
 │   └── rate-limit.ts         # Token bucket rate limiter
 ├── schemas/
 │   └── chat-completions.ts   # Zod request schema

@@ -24,6 +24,9 @@ export type ProviderId =
   | "openrouter"
   | "nvidia"
   | "cerebras"
+  | "together"
+  | "fireworks"
+  | "mistral"
 
 export interface ProviderAdapter {
   id: ProviderId

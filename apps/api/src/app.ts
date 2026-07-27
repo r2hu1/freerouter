@@ -33,6 +33,9 @@ export function createApp(env: ReturnType<typeof loadEnv>) {
         "X-Cloudflare-Key",
         "X-Nvidia-Key",
         "X-Cerebras-Key",
+        "X-Together-Key",
+        "X-Fireworks-Key",
+        "X-Mistral-Key",
       ],
       exposeHeaders: ["Retry-After"],
     })

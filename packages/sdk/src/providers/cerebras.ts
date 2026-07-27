@@ -6,6 +6,34 @@ const CEREBRAS_BASE_URL = "https://api.cerebras.ai/v1"
 const MODELS: ModelInfo[] = [
   {
     provider: "cerebras",
+    modelId: "llama-3.3-70b",
+    capabilities: ["fast", "tool-use"],
+    contextWindow: 131072,
+    free: true,
+  },
+  {
+    provider: "cerebras",
+    modelId: "llama-3.1-8b",
+    capabilities: ["fast", "tool-use"],
+    contextWindow: 131072,
+    free: true,
+  },
+  {
+    provider: "cerebras",
+    modelId: "qwen3-32b",
+    capabilities: ["fast", "reasoning", "tool-use"],
+    contextWindow: 131072,
+    free: true,
+  },
+  {
+    provider: "cerebras",
+    modelId: "qwen3-235b",
+    capabilities: ["reasoning", "tool-use"],
+    contextWindow: 32768,
+    free: true,
+  },
+  {
+    provider: "cerebras",
     modelId: "gpt-oss-120b",
     capabilities: ["fast", "reasoning", "tool-use"],
     contextWindow: 131072,

@@ -18,8 +18,11 @@ Open-source AI gateway that routes requests across free AI providers through a s
                     │  vault db    │     │  Groq / Google   │
                     │  (future)    │     │  OpenRouter /    │
                     └──────────────┘     │  GitHub Models†  │
-                                         │  Cloudflare      │
-                                         └──────────────────┘
+│  Cloudflare      │
+│  Together /      │
+│  Fireworks /     │
+│  Mistral         │
+                                          └──────────────────┘
 ```
 
 † GitHub Models retires July 30, 2026.
@@ -61,13 +64,6 @@ curl http://localhost:3000/v1/chat/completions \
 - `free:vision` — image inputs
 - `free:tool-use` — function calling
 
-**Pinned models** (specific provider/model):
-- `groq/llama-3.3-70b-versatile`
-- `google/gemini-2.5-flash`
-- `openrouter/meta-llama/llama-3.3-70b-instruct:free`
-- `cloudflare/@cf/meta/llama-3.3-70b-instruct-fp8-fast`
-- `cloudflare/@cf/mistral/mistral-small-3.1-24b-instruct`
-
 ### Authentication
 
 BYOK (Bring Your Own Key) — pass provider keys via headers:
@@ -79,6 +75,11 @@ BYOK (Bring Your Own Key) — pass provider keys via headers:
 | `x-openrouter-key` | OpenRouter |
 | `x-github-models-key` | GitHub Models |
 | `x-cloudflare-key` | Cloudflare Workers AI |
+| `x-nvidia-key` | NVIDIA NIM |
+| `x-cerebras-key` | Cerebras |
+| `x-together-key` | Together AI |
+| `x-fireworks-key` | Fireworks AI |
+| `x-mistral-key` | Mistral AI |
 
 ### Headers
 
@@ -91,14 +92,18 @@ BYOK (Bring Your Own Key) — pass provider keys via headers:
 |----------|-------------|-------------|
 | Groq | `llama-3.3-70b-versatile`, `llama-3.1-8b-instant`, `llama-4-scout-17b-16e-instruct` †, `llama-4-maverick-17b-128e-instruct` † | ✅ |
 | Google Gemini | `gemini-2.5-flash`, `gemini-2.5-flash-lite`, `gemini-2.5-pro`, `gemini-3.6-flash` †, `gemini-3.5-flash` † | ✅ |
-| OpenRouter | `nvidia/nemotron-3-ultra-550b-a55b:free`, `nvidia/nemotron-3-super-120b-a12b:free`, `openai/gpt-oss-120b:free`, `openai/gpt-oss-20b:free`, `google/gemma-4-31b-it:free`, `google/gemma-4-26b-a4b-it:free`, `poolside/laguna-m.1:free`, `poolside/laguna-xs-2.1:free`, `cohere/north-mini-code:free`, `qwen/qwen3-next-80b-a3b-instruct:free`, `nvidia/nemotron-3-nano-30b-a3b:free` +2 deprecated | ✅ |
+| OpenRouter | `nvidia/nemotron-3-ultra-550b-a55b:free`, `nvidia/nemotron-3-super-120b-a12b:free`, `openai/gpt-oss-20b:free`, `google/gemma-4-31b-it:free`, `google/gemma-4-26b-a4b-it:free`, `poolside/laguna-m.1:free`, `poolside/laguna-xs-2.1:free`, `cohere/north-mini-code:free`, `qwen/qwen3-next-80b-a3b-instruct:free`, `nvidia/nemotron-3-nano-30b-a3b:free` +1 deprecated | ✅ |
 | NVIDIA NIM | `deepseek-ai/deepseek-v4-pro`, `deepseek-ai/deepseek-v4-flash`, `z-ai/glm-5.2`, `minimaxai/minimax-m3`, `moonshotai/kimi-k2.6`, `nvidia/nemotron-4`, `qwen/qwen3.6-27b` | ✅ |
-| Cerebras | `gpt-oss-120b`, `zai-glm-4.7` † | ✅ |
+| Cerebras | `llama-3.3-70b`, `llama-3.1-8b`, `qwen3-32b`, `qwen3-235b` | ✅ |
 | GitHub Models‡ | `gpt-4o-mini`, `gpt-4o`, `Meta-Llama-3.1-405B-Instruct`, `Meta-Llama-3.3-70B-Instruct`, `DeepSeek-V3` +3 more | ✅ |
 | Cloudflare Workers AI | `@cf/meta/llama-3.3-70b-instruct-fp8-fast`, `@cf/meta/llama-3.1-8b-instruct-fp8`, `@cf/meta/llama-4-scout-17b-16e-instruct`, `@cf/meta/llama-3.2-11b-vision-instruct`, `@cf/mistralai/mistral-small-3.1-24b-instruct`, `@cf/qwen/qwen2.5-coder-32b-instruct`, `@cf/qwen/qwq-32b`, `@cf/qwen/qwen3-30b-a3b-fp8`, `@cf/deepseek-ai/deepseek-r1-distill-qwen-32b`, `@cf/google/gemma-4-26b-a4b-it`, `@cf/nvidia/nemotron-3-120b-a12b`, `@cf/openai/gpt-oss-120b`, `@cf/openai/gpt-oss-20b`, `@cf/moonshotai/kimi-k2.7-code`, `@cf/zai-org/glm-5.2` +4 more | ✅ |
+| Together AI† | `meta-llama/Llama-3.3-70B-Instruct-Turbo-Free`, `mistralai/Mixtral-8x22B-Instruct-v0.1`, `deepseek-ai/DeepSeek-R1-Distill-Llama-70B-free`, `Qwen/Qwen3-32B` | ✅ |
+| Fireworks AI | `accounts/fireworks/models/llama-v3p3-70b-instruct`, `accounts/fireworks/models/firefunction-v2`, `accounts/fireworks/models/qwen3-32b`, `accounts/fireworks/models/deepseek-r1` | ✅ |
+| Mistral AI§ | `mistral-small-latest`, `mistral-nemo-latest`, `codestral-latest`, `mistral-large-latest` | ✅ |
 
-† Deprecated or preview — excluded from alias routing but accessible via pinned model.
+† Deprecated or preview — excluded from alias routing.
 ‡ GitHub Models retiring Jul 30, 2026.
+§ Mistral API requires `@ai-sdk/mistral` dependency.
 
 ## SDK
 
@@ -115,9 +120,6 @@ const keys = { groq: { raw: "gsk_...", fingerprint: "..." } }
 // Use alias with failover
 const model = router.languageModel("free:auto", keys)
 
-// Or pin a specific provider/model
-const model = router.pinnedModel("groq", "llama-3.3-70b-versatile", keys)
-
 const result = await model.doGenerate({
   inputFormat: "messages",
   mode: { type: "regular" },
@@ -129,7 +131,7 @@ See `packages/sdk/DOCS.md` for full SDK docs.
 
 ## Status
 
-Working. 34 API tests + 37 SDK tests pass across 7 providers.
+Working. 30 API tests + 32 SDK tests pass across 10 providers.
 
 ## Stack
 
@@ -137,7 +139,7 @@ Working. 34 API tests + 37 SDK tests pass across 7 providers.
 - **Monorepo**: Turborepo
 - **Language**: TypeScript
 - **Linting**: Biome
-- **Framework**: Hono (API), Vercel AI SDK v7 (routing)
+- **Framework**: Hono (API), Vercel AI SDK v4 (routing)
 - **Auth**: BYOK via headers
 
 ## License

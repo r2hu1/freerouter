@@ -8,6 +8,9 @@ const HEADER_MAP: Record<ProviderId, string> = {
   cloudflare: "x-cloudflare-key",
   nvidia: "x-nvidia-key",
   cerebras: "x-cerebras-key",
+  together: "x-together-key",
+  fireworks: "x-fireworks-key",
+  mistral: "x-mistral-key",
 }
 
 export function resolveKeysFromHeaders(headers: Headers): {
