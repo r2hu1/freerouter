@@ -1,14 +1,16 @@
 import { describe, expect, test } from "bun:test"
 import OpenAI, { APIError } from "openai"
 import { createApp } from "../app"
+import { testEnv } from "./helper"
 
 function createSdkClient() {
-  const app = createApp()
+  const app = createApp(testEnv)
   const client = new OpenAI({
     apiKey: "sk-test",
     baseURL: "http://x.com/v1",
     fetch: async (input, init) => {
-      const request = input instanceof Request ? input : new Request(input, init)
+      const request =
+        input instanceof Request ? input : new Request(input, init)
       return app.fetch(request)
     },
   })
@@ -27,7 +29,7 @@ describe("OpenAI SDK compatibility", () => {
     } catch (err) {
       expect(err).toBeInstanceOf(APIError)
       expect((err as APIError).status).toBe(502)
-      expect((err as APIError).message).toContain("All providers failed")
+      expect((err as APIError).message).toContain("All providers failed:")
     }
   })
 
@@ -80,5 +82,4 @@ describe("OpenAI SDK compatibility", () => {
       expect((err as APIError).status).toBe(502)
     }
   })
-
 })

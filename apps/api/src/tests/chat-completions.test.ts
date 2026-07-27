@@ -1,9 +1,10 @@
 import { describe, expect, test } from "bun:test"
 import { createApp } from "../app"
+import { testEnv } from "./helper"
 
 describe("POST /v1/chat/completions", () => {
   test("returns 400 for invalid body", async () => {
-    const app = createApp()
+    const app = createApp(testEnv)
     const res = await app.request("/v1/chat/completions", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -15,7 +16,7 @@ describe("POST /v1/chat/completions", () => {
   })
 
   test("returns 502 when no keys provided (alias)", async () => {
-    const app = createApp()
+    const app = createApp(testEnv)
     const res = await app.request("/v1/chat/completions", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -30,7 +31,7 @@ describe("POST /v1/chat/completions", () => {
   })
 
   test("provider-prefixed alias like freerouter/free:auto treated as alias", async () => {
-    const app = createApp()
+    const app = createApp(testEnv)
     const res = await app.request("/v1/chat/completions", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -45,7 +46,7 @@ describe("POST /v1/chat/completions", () => {
   })
 
   test("returns 502 when no key for pinned provider", async () => {
-    const app = createApp()
+    const app = createApp(testEnv)
     const res = await app.request("/v1/chat/completions", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -58,7 +59,7 @@ describe("POST /v1/chat/completions", () => {
   })
 
   test("alias with fake key returns 502 (provider rejects)", async () => {
-    const app = createApp()
+    const app = createApp(testEnv)
     const res = await app.request("/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -76,7 +77,7 @@ describe("POST /v1/chat/completions", () => {
   })
 
   test("pinned model with fake key returns 502", async () => {
-    const app = createApp()
+    const app = createApp(testEnv)
     const res = await app.request("/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -92,7 +93,7 @@ describe("POST /v1/chat/completions", () => {
   })
 
   test("streaming with fake key returns 502", async () => {
-    const app = createApp()
+    const app = createApp(testEnv)
     const res = await app.request("/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -109,7 +110,7 @@ describe("POST /v1/chat/completions", () => {
   })
 
   test("key values never leak in error responses", async () => {
-    const app = createApp()
+    const app = createApp(testEnv)
     const res = await app.request("/v1/chat/completions", {
       method: "POST",
       headers: {
