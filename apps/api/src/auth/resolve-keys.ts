@@ -19,17 +19,5 @@ export function resolveKeysFromHeaders(headers: Headers): {
     const value = headers.get(headerName)
     if (value) keys[provider as ProviderId] = value
   }
-
-  // Fallback: Authorization: Bearer for clients (e.g. opencode) that
-  // send the API key via standard Bearer token. Detect provider by
-  // key prefix.
-  if (!keys.groq) {
-    const auth = headers.get("authorization")
-    if (auth?.startsWith("Bearer ")) {
-      const token = auth.slice(7)
-      if (token.startsWith("gsk_")) keys.groq = token
-    }
-  }
-
   return { keys, source: "headers" }
 }
