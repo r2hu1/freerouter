@@ -6,28 +6,7 @@ Open-source AI gateway that routes requests across free AI providers through a s
 
 ## Architecture
 
-```
-┌──────────────┐     ┌────────────────┐     ┌──────────────────┐
-│  OpenAI SDK  │ ──▶ │  apps/api      │ ──▶ │  packages/sdk    │
-│  (curl/any)  │     │  Hono + Zod    │     │  AI SDK v7       │
-└──────────────┘     └────────────────┘     └──────────────────┘
-                           │                        │
-                           │ proxy-key (future)     │ BYOK
-                           ▼                        ▼
-                     ┌──────────────┐     ┌──────────────────┐
-                     │  vault db    │     │  Groq / Google   │
-                     │  (future)    │     │  OpenRouter /    │
-                     └──────────────┘     │  GitHub Models†  │
-│  Cloudflare      │
-│  Together /      │
-│  Fireworks /     │
-│  Mistral /       │
-│  SambaNova /     │
-│  DeepSeek /      │
-│  DeepInfra /     │
-│  Cohere          │
-                                           └──────────────────┘
-```
+![FreeRouter Architecture](assets/diagram.png)
 
 † GitHub Models retires July 30, 2026.
 
