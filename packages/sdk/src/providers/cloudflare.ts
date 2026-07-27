@@ -100,6 +100,13 @@ const MODELS: ModelInfo[] = [
   },
   {
     provider: "cloudflare",
+    modelId: "@cf/nvidia/nemotron-3-super-120b-a12b",
+    capabilities: ["tool-use", "long-context"],
+    contextWindow: 256000,
+    free: true,
+  },
+  {
+    provider: "cloudflare",
     modelId: "@cf/google/gemma-4-26b-a4b-it",
     capabilities: ["tool-use", "long-context"],
     contextWindow: 256000,
@@ -107,9 +114,9 @@ const MODELS: ModelInfo[] = [
   },
   {
     provider: "cloudflare",
-    modelId: "@cf/nvidia/nemotron-3-120b-a12b",
-    capabilities: ["tool-use", "long-context"],
-    contextWindow: 256000,
+    modelId: "@cf/deepseek-ai/deepseek-r1-distill-qwen-32b",
+    capabilities: ["reasoning"],
+    contextWindow: 80000,
     free: true,
   },
   {

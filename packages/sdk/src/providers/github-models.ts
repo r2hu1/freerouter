@@ -1,48 +1,57 @@
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible"
 import type { ModelInfo, ProviderAdapter, ProviderKey } from "../types"
 
-const GITHUB_MODELS_BASE_URL = "https://models.inference.ai.azure.com"
+const GITHUB_MODELS_BASE_URL = "https://models.github.ai/inference"
 
 const MODELS: ModelInfo[] = [
   {
     provider: "github-models",
-    modelId: "gpt-4o-mini",
+    modelId: "openai/gpt-4o-mini",
     capabilities: ["fast", "vision", "tool-use"],
     contextWindow: 128000,
     free: true,
-    deprecated: true,
   },
   {
     provider: "github-models",
-    modelId: "gpt-4o",
+    modelId: "openai/gpt-4o",
     capabilities: ["vision", "tool-use", "long-context"],
     contextWindow: 128000,
     free: true,
-    deprecated: true,
   },
   {
     provider: "github-models",
-    modelId: "Meta-Llama-3.1-405B-Instruct",
+    modelId: "meta-llama/Llama-3.3-70B-Instruct",
     capabilities: ["fast", "tool-use", "long-context"],
     contextWindow: 131072,
     free: true,
-    deprecated: true,
   },
   {
     provider: "github-models",
-    modelId: "Meta-Llama-3.3-70B-Instruct",
+    modelId: "meta-llama/Llama-3.1-405B-Instruct",
     capabilities: ["fast", "tool-use", "long-context"],
     contextWindow: 131072,
     free: true,
-    deprecated: true,
   },
   {
     provider: "github-models",
-    modelId: "DeepSeek-V3",
+    modelId: "deepseek-ai/DeepSeek-V3",
     capabilities: ["reasoning", "tool-use", "long-context"],
     contextWindow: 128000,
     free: true,
-    deprecated: true,
+  },
+  {
+    provider: "github-models",
+    modelId: "Mistralai/Mistral-Nemo-Instruct-2407",
+    capabilities: ["fast", "tool-use"],
+    contextWindow: 128000,
+    free: true,
+  },
+  {
+    provider: "github-models",
+    modelId: "CohereForAI/c4ai-command-r-08-2024",
+    capabilities: ["fast", "tool-use", "long-context"],
+    contextWindow: 128000,
+    free: true,
   },
   {
     provider: "github-models",
@@ -50,15 +59,6 @@ const MODELS: ModelInfo[] = [
     capabilities: ["fast"],
     contextWindow: 8192,
     free: true,
-    deprecated: true,
-  },
-  {
-    provider: "github-models",
-    modelId: "cohere/command-r-08-2024",
-    capabilities: ["fast", "tool-use", "long-context"],
-    contextWindow: 128000,
-    free: true,
-    deprecated: true,
   },
 ]
 

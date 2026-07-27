@@ -24,9 +24,11 @@ function aliasToCapability(
 const PRIORITY: Record<string, number> = {
   groq: 0,
   google: 1,
-  openrouter: 2,
-  "github-models": 3,
-  cloudflare: 4,
+  nvidia: 2,
+  openrouter: 3,
+  "github-models": 4,
+  cloudflare: 5,
+  cerebras: 6,
 }
 
 function rank(

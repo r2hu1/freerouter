@@ -15,7 +15,7 @@ const MODELS: ModelInfo[] = [
     provider: "openrouter",
     modelId: "nvidia/nemotron-3-super-120b-a12b:free",
     capabilities: ["reasoning", "tool-use", "long-context"],
-    contextWindow: 262144,
+    contextWindow: 1048576,
     free: true,
   },
   {
@@ -24,6 +24,7 @@ const MODELS: ModelInfo[] = [
     capabilities: ["reasoning", "tool-use"],
     contextWindow: 131072,
     free: true,
+    deprecated: true,
   },
   {
     provider: "openrouter",
@@ -49,14 +50,14 @@ const MODELS: ModelInfo[] = [
   {
     provider: "openrouter",
     modelId: "poolside/laguna-m.1:free",
-    capabilities: ["tool-use", "long-context"],
+    capabilities: ["tool-use", "reasoning"],
     contextWindow: 262144,
     free: true,
   },
   {
     provider: "openrouter",
     modelId: "poolside/laguna-xs-2.1:free",
-    capabilities: ["tool-use"],
+    capabilities: ["tool-use", "fast"],
     contextWindow: 262144,
     free: true,
   },
@@ -69,6 +70,13 @@ const MODELS: ModelInfo[] = [
   },
   {
     provider: "openrouter",
+    modelId: "nvidia/nemotron-3-nano-30b-a3b:free",
+    capabilities: ["fast", "tool-use"],
+    contextWindow: 262144,
+    free: true,
+  },
+  {
+    provider: "openrouter",
     modelId: "qwen/qwen3-next-80b-a3b-instruct:free",
     capabilities: ["tool-use", "long-context"],
     contextWindow: 262144,
@@ -76,9 +84,9 @@ const MODELS: ModelInfo[] = [
   },
   {
     provider: "openrouter",
-    modelId: "nvidia/nemotron-3-nano-30b-a3b:free",
-    capabilities: ["fast", "tool-use"],
-    contextWindow: 262144,
+    modelId: "openrouter/free",
+    capabilities: ["tool-use", "fast", "reasoning", "vision", "long-context"],
+    contextWindow: 204800,
     free: true,
   },
   {
