@@ -3,10 +3,12 @@
 ## Install
 
 ```bash
+npm install @freerouter/sdk
+# or
 bun add @freerouter/sdk
 ```
 
-Requires `ai` (Vercel AI SDK v7) as a peer dependency — already a dependency of the SDK, no extra install needed.
+`ai` (Vercel AI SDK v7) installs automatically as a dependency.
 
 ---
 

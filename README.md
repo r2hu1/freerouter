@@ -33,6 +33,8 @@ Open-source AI gateway that routes requests across free AI providers through a s
 
 ## Quick Start
 
+### API Server
+
 ```bash
 # Start API server
 cd apps/api && bun install && bun run src/index.ts
@@ -48,6 +50,29 @@ curl http://localhost:3000/v1/chat/completions \
   -H "Content-Type: application/json" \
   -H "x-groq-key: gsk_..." \
   -d '{"model":"free:auto","messages":[{"role":"user","content":"hello"}],"stream":true}'
+```
+
+### SDK (Node.js / Bun)
+
+```bash
+npm install @freerouter/sdk
+```
+
+```ts
+import { createFreeRouter } from "@freerouter/sdk"
+import { generateText } from "ai"
+
+const freerouter = createFreeRouter()
+
+const { text } = await generateText({
+  model: freerouter.languageModel("free:auto", {
+    groq: process.env.GROQ_API_KEY,
+    google: process.env.GOOGLE_API_KEY,
+  }),
+  prompt: "Explain quantum computing in one paragraph",
+})
+
+console.log(text)
 ```
 
 ## API
