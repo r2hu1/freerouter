@@ -29,7 +29,6 @@ export function createApp(env: ReturnType<typeof loadEnv>) {
         "X-Groq-Key",
         "X-Google-Key",
         "X-OpenRouter-Key",
-        "X-GitHub-Key",
         "X-Cloudflare-Key",
         "X-Nvidia-Key",
         "X-Cerebras-Key",

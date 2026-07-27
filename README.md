@@ -8,8 +8,6 @@ Open-source AI gateway that routes requests across free AI providers through a s
 
 ![FreeRouter Architecture](assets/diagram.png)
 
-† GitHub Models retires July 30, 2026.
-
 ## Quick Start
 
 ### API Server
@@ -81,7 +79,6 @@ BYOK (Bring Your Own Key) — pass provider keys via headers:
 | `x-groq-key` | Groq |
 | `x-google-key` | Google Gemini |
 | `x-openrouter-key` | OpenRouter |
-| `x-github-models-key` | GitHub Models |
 | `x-cloudflare-key` | Cloudflare Workers AI |
 | `x-nvidia-key` | NVIDIA NIM |
 | `x-cerebras-key` | Cerebras |
@@ -107,9 +104,8 @@ BYOK (Bring Your Own Key) — pass provider keys via headers:
 | OpenRouter | `nvidia/nemotron-3-ultra-550b-a55b:free`, `nvidia/nemotron-3-super-120b-a12b:free`, `openai/gpt-oss-20b:free`, `google/gemma-4-31b-it:free`, `google/gemma-4-26b-a4b-it:free`, `poolside/laguna-m.1:free`, `poolside/laguna-xs-2.1:free`, `cohere/north-mini-code:free`, `qwen/qwen3-next-80b-a3b-instruct:free`, `nvidia/nemotron-3-nano-30b-a3b:free` +1 deprecated | ✅ |
 | NVIDIA NIM | `deepseek-ai/deepseek-v4-pro`, `deepseek-ai/deepseek-v4-flash`, `z-ai/glm-5.2`, `minimaxai/minimax-m3`, `moonshotai/kimi-k2.6`, `nvidia/nemotron-4`, `qwen/qwen3.6-27b` | ✅ |
 | Cerebras | `llama-3.3-70b`, `llama-3.1-8b`, `qwen3-32b`, `qwen3-235b` | ✅ |
-| GitHub Models‡ | `gpt-4o-mini`, `gpt-4o`, `Meta-Llama-3.1-405B-Instruct`, `Meta-Llama-3.3-70B-Instruct`, `DeepSeek-V3` +3 more | ✅ |
 | Cloudflare Workers AI | `@cf/meta/llama-3.3-70b-instruct-fp8-fast`, `@cf/meta/llama-3.1-8b-instruct-fp8`, `@cf/meta/llama-4-scout-17b-16e-instruct`, `@cf/meta/llama-3.2-11b-vision-instruct`, `@cf/mistralai/mistral-small-3.1-24b-instruct`, `@cf/qwen/qwen2.5-coder-32b-instruct`, `@cf/qwen/qwq-32b`, `@cf/qwen/qwen3-30b-a3b-fp8`, `@cf/deepseek-ai/deepseek-r1-distill-qwen-32b`, `@cf/google/gemma-4-26b-a4b-it`, `@cf/nvidia/nemotron-3-120b-a12b`, `@cf/openai/gpt-oss-120b`, `@cf/openai/gpt-oss-20b`, `@cf/moonshotai/kimi-k2.7-code`, `@cf/zai-org/glm-5.2` +4 more | ✅ |
-| Together AI† | `meta-llama/Llama-3.3-70B-Instruct-Turbo-Free`, `mistralai/Mixtral-8x22B-Instruct-v0.1`, `deepseek-ai/DeepSeek-R1-Distill-Llama-70B-free`, `Qwen/Qwen3-32B` | ✅ |
+| Together AI | `meta-llama/Llama-3.3-70B-Instruct-Turbo-Free`, `mistralai/Mixtral-8x22B-Instruct-v0.1`, `deepseek-ai/DeepSeek-R1-Distill-Llama-70B-free`, `Qwen/Qwen3-32B` | ✅ |
 | Fireworks AI | `accounts/fireworks/models/llama-v3p3-70b-instruct`, `accounts/fireworks/models/firefunction-v2`, `accounts/fireworks/models/qwen3-32b`, `accounts/fireworks/models/deepseek-r1` | ✅ |
 | Mistral AI§ | `mistral-small-latest`, `mistral-nemo-latest`, `codestral-latest`, `mistral-large-latest` | ✅ |
 | SambaNova | `Meta-Llama-3.3-70B-Instruct`, `Meta-Llama-3.1-8B-Instruct`, `DeepSeek-V3.1-0324`, `Qwen3-32B` | ✅ |
@@ -118,7 +114,6 @@ BYOK (Bring Your Own Key) — pass provider keys via headers:
 | Cohere§ | `command-a-plus-05-2026`, `command-a-reasoning-08-2025`, `command-r-plus-08-2024`, `command-r-08-2024`, `command-a-03-2025` | ✅ |
 
 † Deprecated or preview — excluded from alias routing.
-‡ GitHub Models retiring Jul 30, 2026.
 § Uses `@ai-sdk/mistral` or `@ai-sdk/openai-compatible` dependency.
 ¶ DeepSeek uses trial credits (free signup, 5M tokens, then pay-as-you-go).
 

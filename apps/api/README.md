@@ -35,7 +35,6 @@ curl http://localhost:3000/v1/chat/completions \
 | `X-Groq-Key` | Groq |
 | `X-Google-Key` | Google Gemini |
 | `X-OpenRouter-Key` | OpenRouter |
-| `X-GitHub-Key` | GitHub Models |
 | `X-Cloudflare-Key` | Cloudflare Workers AI |
 | `X-Nvidia-Key` | NVIDIA NIM |
 | `X-Cerebras-Key` | Cerebras |

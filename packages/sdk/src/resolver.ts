@@ -28,14 +28,13 @@ const PRIORITY: Record<string, number> = {
   openrouter: 3,
   together: 4,
   fireworks: 5,
-  "github-models": 6,
-  mistral: 7,
-  cloudflare: 8,
-  cerebras: 9,
-  sambanova: 10,
-  deepseek: 11,
-  deepinfra: 12,
-  cohere: 13,
+  mistral: 6,
+  cloudflare: 7,
+  cerebras: 8,
+  sambanova: 9,
+  deepseek: 10,
+  deepinfra: 11,
+  cohere: 12,
 }
 
 function rank(

@@ -1,6 +1,6 @@
 {
   "name": "@freerouter/sdk",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "BYOK multi-provider AI router — failover across free-tier LLMs",
   "type": "module",
   "main": "src/index.ts",

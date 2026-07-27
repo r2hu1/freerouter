@@ -5,7 +5,6 @@ import { cohereAdapter } from "./cohere"
 import { deepinfraAdapter } from "./deepinfra"
 import { deepseekAdapter } from "./deepseek"
 import { fireworksAdapter } from "./fireworks"
-import { githubModelsAdapter } from "./github-models"
 import { googleAdapter } from "./google"
 import { groqAdapter } from "./groq"
 import { mistralAdapter } from "./mistral"
@@ -22,7 +21,6 @@ export function buildAdapters(): ProviderAdapter[] {
     openrouterAdapter(),
     togetherAdapter(),
     fireworksAdapter(),
-    githubModelsAdapter(),
     mistralAdapter(),
     cloudflareAdapter(),
     cerebrasAdapter(),

@@ -41,7 +41,6 @@ const { text } = await generateText({
 - Groq (`@ai-sdk/groq`)
 - Google Gemini (`@ai-sdk/google`)
 - OpenRouter (OpenAI-compatible, free models only)
-- GitHub Models (OpenAI-compatible, free tier — retiring Jul 30, 2026)
 - Cloudflare Workers AI (OpenAI-compatible)
 
 ## Keys

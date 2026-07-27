@@ -84,11 +84,11 @@ An alias is a `free:${string}` string that maps to a set of models by capability
 | `free:tool-use` | `tool-use` | Function/tool calling |
 
 The sort order for `free:auto` is:
-1. Healthy providers (by priority: Groq → Google → NVIDIA NIM → OpenRouter → Together AI → Fireworks AI → GitHub Models → Mistral → Cloudflare → Cerebras → SambaNova → DeepSeek → DeepInfra → Cohere)
+1. Healthy providers (by priority: Groq → Google → NVIDIA NIM → OpenRouter → Together AI → Fireworks AI → Mistral → Cloudflare → Cerebras → SambaNova → DeepSeek → DeepInfra → Cohere)
 2. Rate-limited providers (after healthy, still usable)
 3. Down providers (excluded entirely)
 
-Deprecated models (GitHub Models, retiring Jul 30, 2026) are excluded from alias resolution.
+Models on deprecated or soon-to-be-removed providers are excluded from alias resolution.
 
 If no model matches the alias + caller's keys + health state, the resolver returns an empty list and the model wrapper throws `FreeRouterAllProvidersFailedError`.
 
@@ -128,18 +128,6 @@ If no model matches the alias + caller's keys + health state, the resolver retur
 | `cohere/north-mini-code:free` | tool-use | 262K |
 | `qwen/qwen3-next-80b-a3b-instruct:free` | tool-use, long-context | 262K |
 | `nvidia/nemotron-3-nano-30b-a3b:free` | fast, tool-use | 262K |
-
-### GitHub Models (retiring Jul 30, 2026)
-
-| modelId | capabilities | context |
-|---|---|---|
-| `gpt-4o-mini` | fast, vision, tool-use | 128K |
-| `gpt-4o` | vision, tool-use, long-context | 128K |
-| `Meta-Llama-3.1-405B-Instruct` | fast, tool-use, long-context | 131K |
-| `Meta-Llama-3.3-70B-Instruct` | fast, tool-use, long-context | 131K |
-| `DeepSeek-V3` | reasoning, tool-use, long-context | 128K |
-| `google/gemma-2-27b-it` | fast | 8K |
-| `cohere/command-r-08-2024` | fast, tool-use, long-context | 128K |
 
 ### Cloudflare Workers AI
 
@@ -267,7 +255,6 @@ FreeRouter is **BYOK-only** — users supply their own provider API keys. The SD
 | OpenRouter | Standard API key |
 | NVIDIA NIM | `nvapi-...` |
 | Cerebras | Standard API key |
-| GitHub Models | GitHub PAT (`ghp_...`) |
 | Cloudflare | `account_id:api_token` (colon-separated) |
 | Together AI | Standard API key |
 | Fireworks AI | Standard API key |

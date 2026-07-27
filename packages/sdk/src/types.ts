@@ -19,7 +19,6 @@ export interface ModelInfo {
 export type ProviderId =
   | "groq"
   | "google"
-  | "github-models"
   | "cloudflare"
   | "openrouter"
   | "nvidia"

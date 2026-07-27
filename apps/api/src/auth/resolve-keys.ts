@@ -4,7 +4,6 @@ const HEADER_MAP: Record<ProviderId, string> = {
   groq: "x-groq-key",
   google: "x-google-key",
   openrouter: "x-openrouter-key",
-  "github-models": "x-github-key",
   cloudflare: "x-cloudflare-key",
   nvidia: "x-nvidia-key",
   cerebras: "x-cerebras-key",
