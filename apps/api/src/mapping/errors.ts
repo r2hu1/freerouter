@@ -2,7 +2,8 @@ import { FreeRouterAllProvidersFailedError } from "@freerouter/sdk"
 import type { FreeRouterError } from "@freerouter/sdk"
 import { ZodError } from "zod"
 
-const KEY_PATTERN = /[A-Za-z0-9_-]{8,}/g
+const KEY_PATTERN =
+  /\b(?:gsk_|sk-or-|sk-|AIza|ghp_|gho_|ghu_|github_pat_|CF[A-Za-z0-9])[A-Za-z0-9_-]{8,}\b/g
 
 function sanitize(msg: string): string {
   return msg.replace(KEY_PATTERN, "[REDACTED]")
@@ -17,7 +18,7 @@ export function toOpenAiError(err: unknown): {
       status: 502,
       body: {
         error: {
-          message: "All providers failed",
+          message: sanitize(err.message),
           type: "freerouter_all_providers_failed",
           code: "all_providers_failed",
         },

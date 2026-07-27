@@ -11,7 +11,7 @@ describe("toOpenAiError", () => {
     expect(status).toBe(502)
     expect(body).toEqual({
       error: {
-        message: "All providers failed",
+        message: "All providers failed: ",
         type: "freerouter_all_providers_failed",
         code: "all_providers_failed",
       },
