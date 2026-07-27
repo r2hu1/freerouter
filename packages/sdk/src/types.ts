@@ -29,6 +29,8 @@ export type ProviderId =
   | "mistral"
   | "sambanova"
   | "deepseek"
+  | "deepinfra"
+  | "cohere"
 
 export interface ProviderAdapter {
   id: ProviderId

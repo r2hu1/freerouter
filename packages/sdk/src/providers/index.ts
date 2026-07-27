@@ -1,6 +1,8 @@
 import type { ProviderAdapter } from "../types"
 import { cerebrasAdapter } from "./cerebras"
 import { cloudflareAdapter } from "./cloudflare"
+import { cohereAdapter } from "./cohere"
+import { deepinfraAdapter } from "./deepinfra"
 import { deepseekAdapter } from "./deepseek"
 import { fireworksAdapter } from "./fireworks"
 import { githubModelsAdapter } from "./github-models"
@@ -26,5 +28,7 @@ export function buildAdapters(): ProviderAdapter[] {
     cerebrasAdapter(),
     sambanovaAdapter(),
     deepseekAdapter(),
+    deepinfraAdapter(),
+    cohereAdapter(),
   ]
 }

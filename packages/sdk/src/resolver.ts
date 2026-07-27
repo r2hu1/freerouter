@@ -34,6 +34,8 @@ const PRIORITY: Record<string, number> = {
   cerebras: 9,
   sambanova: 10,
   deepseek: 11,
+  deepinfra: 12,
+  cohere: 13,
 }
 
 function rank(

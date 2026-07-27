@@ -23,7 +23,9 @@ Open-source AI gateway that routes requests across free AI providers through a s
 │  Fireworks /     │
 │  Mistral /       │
 │  SambaNova /     │
-│  DeepSeek        │
+│  DeepSeek /      │
+│  DeepInfra /     │
+│  Cohere          │
                                            └──────────────────┘
 ```
 
@@ -84,6 +86,8 @@ BYOK (Bring Your Own Key) — pass provider keys via headers:
 | `x-mistral-key` | Mistral AI |
 | `x-sambanova-key` | SambaNova |
 | `x-deepseek-key` | DeepSeek |
+| `x-deepinfra-key` | DeepInfra |
+| `x-cohere-key` | Cohere |
 
 ### Headers
 
@@ -106,10 +110,12 @@ BYOK (Bring Your Own Key) — pass provider keys via headers:
 | Mistral AI§ | `mistral-small-latest`, `mistral-nemo-latest`, `codestral-latest`, `mistral-large-latest` | ✅ |
 | SambaNova | `Meta-Llama-3.3-70B-Instruct`, `Meta-Llama-3.1-8B-Instruct`, `DeepSeek-V3.1-0324`, `Qwen3-32B` | ✅ |
 | DeepSeek¶ | `deepseek-v4-flash`, `deepseek-v4-pro` | ✅ |
+| DeepInfra§ | `meta-llama/Meta-Llama-3.3-70B-Instruct`, `deepseek-ai/DeepSeek-V3`, `deepseek-ai/DeepSeek-R1`, `Qwen/Qwen3-32B`, `mistralai/Mistral-Small-3.1-24B-Instruct` +3 more | ✅ |
+| Cohere§ | `command-a-plus-05-2026`, `command-a-reasoning-08-2025`, `command-r-plus-08-2024`, `command-r-08-2024`, `command-a-03-2025` | ✅ |
 
 † Deprecated or preview — excluded from alias routing.
 ‡ GitHub Models retiring Jul 30, 2026.
-§ Mistral API requires `@ai-sdk/mistral` dependency.
+§ Uses `@ai-sdk/mistral` or `@ai-sdk/openai-compatible` dependency.
 ¶ DeepSeek uses trial credits (free signup, 5M tokens, then pay-as-you-go).
 
 ## SDK
@@ -138,7 +144,7 @@ See `packages/sdk/DOCS.md` for full SDK docs.
 
 ## Status
 
-Working. 30 API tests + 32 SDK tests pass across 12 providers.
+Working. 30 API tests + 32 SDK tests pass across 14 providers.
 
 ## Stack
 

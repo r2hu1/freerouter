@@ -44,6 +44,8 @@ curl http://localhost:3000/v1/chat/completions \
 | `X-Mistral-Key` | Mistral AI |
 | `X-SambaNova-Key` | SambaNova |
 | `X-DeepSeek-Key` | DeepSeek |
+| `X-DeepInfra-Key` | DeepInfra |
+| `X-Cohere-Key` | Cohere |
 
 ### Path A — Proxy key (coming with `packages/db` vault)
 

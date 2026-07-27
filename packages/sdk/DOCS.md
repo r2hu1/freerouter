@@ -82,7 +82,7 @@ An alias is a `free:${string}` string that maps to a set of models by capability
 | `free:tool-use` | `tool-use` | Function/tool calling |
 
 The sort order for `free:auto` is:
-1. Healthy providers (by priority: Groq → Google → NVIDIA NIM → OpenRouter → Together AI → Fireworks AI → GitHub Models → Mistral → Cloudflare → Cerebras → SambaNova → DeepSeek)
+1. Healthy providers (by priority: Groq → Google → NVIDIA NIM → OpenRouter → Together AI → Fireworks AI → GitHub Models → Mistral → Cloudflare → Cerebras → SambaNova → DeepSeek → DeepInfra → Cohere)
 2. Rate-limited providers (after healthy, still usable)
 3. Down providers (excluded entirely)
 
@@ -227,6 +227,29 @@ If no model matches the alias + caller's keys + health state, the resolver retur
 | `deepseek-v4-flash` | fast, tool-use, long-context | 131K |
 | `deepseek-v4-pro` | reasoning, tool-use, long-context | 131K |
 
+### DeepInfra
+
+| modelId | capabilities | context |
+|---|---|---|
+| `meta-llama/Meta-Llama-3.3-70B-Instruct` | fast, tool-use, long-context | 131K |
+| `meta-llama/Meta-Llama-3.1-405B-Instruct` | reasoning, tool-use, long-context | 131K |
+| `meta-llama/Meta-Llama-3.1-8B-Instruct` | fast, tool-use | 131K |
+| `deepseek-ai/DeepSeek-V3` | reasoning, tool-use, long-context | 131K |
+| `deepseek-ai/DeepSeek-R1` | reasoning, tool-use | 131K |
+| `Qwen/Qwen3-32B` | reasoning, tool-use, long-context | 131K |
+| `Qwen/Qwen2.5-Coder-32B-Instruct` | fast, tool-use | 32K |
+| `mistralai/Mistral-Small-3.1-24B-Instruct` | fast, tool-use | 32K |
+
+### Cohere
+
+| modelId | capabilities | context |
+|---|---|---|
+| `command-a-plus-05-2026` | tool-use | 131K |
+| `command-a-reasoning-08-2025` | reasoning, tool-use, long-context | 262K |
+| `command-r-plus-08-2024` | tool-use, long-context | 131K |
+| `command-r-08-2024` | fast, tool-use, long-context | 131K |
+| `command-a-03-2025` | tool-use, long-context | 131K |
+
 ---
 
 ## Keys & Security
@@ -249,6 +272,8 @@ FreeRouter is **BYOK-only** — users supply their own provider API keys. The SD
 | Mistral | `api_...` or `Hv...` |
 | SambaNova | Standard API key |
 | DeepSeek | Standard API key |
+| DeepInfra | Standard API key |
+| Cohere | Standard API key (trial: 1K calls/month)
 
 ### Fingerprinting
 
