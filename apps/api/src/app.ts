@@ -1,22 +1,23 @@
 import { createFreeRouter } from "@freerouter/sdk"
 import { Hono } from "hono"
 import { cors } from "hono/cors"
-import { loadEnv } from "./env"
+import type { loadEnv } from "./env"
 import { toOpenAiError } from "./mapping/errors"
-import { rateLimit } from "./middleware/rate-limit"
+import { configureRateLimit, rateLimit } from "./middleware/rate-limit"
 import { requestLogger } from "./middleware/request-logger"
 import { registerChatCompletions } from "./routes/chat-completions"
 import { registerHealth } from "./routes/health"
 import { registerModels } from "./routes/models"
 
-export function createApp(env?: ReturnType<typeof loadEnv>) {
+export function createApp(env: ReturnType<typeof loadEnv>) {
   const freerouter = createFreeRouter()
   const app = new Hono()
 
+  configureRateLimit(env.RATE_LIMIT_MAX, env.RATE_LIMIT_WINDOW_MS)
   app.use("*", requestLogger)
   app.use("*", rateLimit)
 
-  const e = env ?? loadEnv()
+  const e = env
   const origins = e.CORS_ORIGINS?.split(",") ?? "*"
   app.use(
     "/v1/*",
@@ -30,6 +31,8 @@ export function createApp(env?: ReturnType<typeof loadEnv>) {
         "X-OpenRouter-Key",
         "X-GitHub-Key",
         "X-Cloudflare-Key",
+        "X-Nvidia-Key",
+        "X-Cerebras-Key",
       ],
       exposeHeaders: ["Retry-After"],
     })
@@ -40,7 +43,7 @@ export function createApp(env?: ReturnType<typeof loadEnv>) {
     return c.json(body, status as Parameters<typeof c.json>[1])
   })
 
-  registerHealth(app)
+  registerHealth(app, freerouter)
   registerModels(app, freerouter)
   registerChatCompletions(app, freerouter)
 

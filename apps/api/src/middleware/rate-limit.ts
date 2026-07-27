@@ -6,17 +6,27 @@ interface Bucket {
 }
 
 const buckets = new Map<string, Bucket>()
-const LIMIT = 100
-const WINDOW_MS = 60_000
+
+let LIMIT = 100
+let WINDOW_MS = 60_000
+
+export function configureRateLimit(max: number, windowMs: number): void {
+  LIMIT = max
+  WINDOW_MS = windowMs
+}
+
 const CLEANUP_INTERVAL_MS = 300_000
 
-// periodic cleanup of expired entries
 setInterval(() => {
   const now = Date.now()
   for (const [key, bucket] of buckets) {
     if (now > bucket.resetAt) buckets.delete(key)
   }
 }, CLEANUP_INTERVAL_MS).unref()
+
+export function resetRateLimitBuckets(): void {
+  buckets.clear()
+}
 
 export async function rateLimit(c: Context, next: Next) {
   const ip =

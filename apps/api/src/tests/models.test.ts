@@ -1,9 +1,10 @@
 import { describe, expect, test } from "bun:test"
 import { createApp } from "../app"
+import { testEnv } from "./helper"
 
 describe("GET /v1/models", () => {
   test("returns 200 with model list", async () => {
-    const app = createApp()
+    const app = createApp(testEnv)
     const res = await app.request("/v1/models")
     expect(res.status).toBe(200)
     const body = await res.json()

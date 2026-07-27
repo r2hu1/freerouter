@@ -1,5 +1,6 @@
 import { describe, expect, spyOn, test } from "bun:test"
 import { createApp } from "../app"
+import { testEnv } from "./helper"
 
 describe("requestLogger", () => {
   test("logs do not contain raw key material", async () => {
@@ -8,7 +9,7 @@ describe("requestLogger", () => {
       logs.push(args.join(" "))
     })
 
-    const app = createApp()
+    const app = createApp(testEnv)
     await app.request("/v1/chat/completions", {
       method: "POST",
       headers: {

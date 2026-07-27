@@ -1,7 +1,12 @@
+import type { FreeRouter } from "@freerouter/sdk"
 import type { Hono } from "hono"
 
-export function registerHealth(app: Hono) {
+export function registerHealth(app: Hono, freerouter: FreeRouter) {
   app.get("/health", (c) => {
-    return c.json({ status: "ok" })
+    const health = freerouter.healthFor({})
+    return c.json({
+      status: "ok",
+      providers: health,
+    })
   })
 }
