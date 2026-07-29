@@ -115,10 +115,8 @@ export function Hero() {
             Like OpenRouter, but for free models
           </div>
 
-          <h1 className="text-4xl sm:text-5xl leading-[1.08] font-medium tracking-tight">
-            Route across free LLMs
-            <br />
-            with a{" "}
+          <h1 className="text-4xl sm:text-5xl max-w-xl leading-[1.08] font-medium tracking-tight">
+            Route across free LLMs with a{" "}
             <span className="relative inline-block text-fd-primary">
               single API
               <svg
@@ -143,7 +141,7 @@ export function Hero() {
             free LLM providers through one OpenAI-compatible API.
           </p>
 
-          <div className="mt-8 flex flex-col sm:flex-row items-center gap-3">
+          <div className="mt-8 flex sm:items-center gap-3">
             <Link
               href="/docs"
               className="inline-flex items-center gap-2 rounded-xl bg-fd-primary text-fd-primary-foreground px-5 py-2.5 font-medium shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.97] transition-transform duration-150 ease-out text-sm cursor-pointer"
@@ -159,12 +157,12 @@ export function Hero() {
             </Link>
           </div>
 
-          <div className="mt-12 flex flex-wrap items-center">
+          <div className="mt-12 grid grid-cols-2 gap-x-6 gap-y-5 sm:flex sm:flex-wrap sm:gap-0">
             {stats.map(([value, label], i) => (
               <div
                 key={label}
-                className={`flex flex-col gap-0.5 pr-8 ${
-                  i > 0 ? "pl-8 border-l border-fd-border" : ""
+                className={`flex flex-col gap-0.5 sm:pr-8 ${
+                  i > 0 ? "sm:pl-8 sm:border-l sm:border-fd-border" : ""
                 }`}
               >
                 <span className="font-mono text-lg font-semibold">{value}</span>
