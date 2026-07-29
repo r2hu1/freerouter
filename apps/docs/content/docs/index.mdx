@@ -1,13 +1,47 @@
 ---
-title: Hello World
-description: Your first document
+title: FreeRouter
+description: Completely free ($0 cost) routing across free LLM models and providers. Like OpenRouter, but for free models.
 ---
 
-Welcome to the docs! You can start writing documents in `/content/docs`.
+FreeRouter routes LLM requests across 13 free model providers  -  all at $0 cost  -  with automatic failover, per-key health isolation, and OpenAI-compatible HTTP endpoints.
 
-## What is Next?
+import { Package, Server } from "lucide-react";
 
 <Cards>
-  <Card title="Learn more about Next.js" href="https://nextjs.org/docs" />
-  <Card title="Learn more about Fumadocs" href="https://fumadocs.dev" />
+  <Card
+    icon={<Package />}
+    title="@freerouter/sdk"
+    href="/docs/sdk"
+    description="TypeScript SDK - BYOK routing layer compatible with Vercel AI SDK v7. ~87 free models across 13 providers."
+  />
+  <Card
+    icon={<Server />}
+    title="@freerouter/api"
+    href="/docs/api"
+    description="HTTP API Server - OpenAI-compatible REST endpoints wrapping the SDK. Bring your own free provider keys."
+  />
 </Cards>
+
+## Packages
+
+| Package           | Description                                                                                       |
+| ----------------- | ------------------------------------------------------------------------------------------------- |
+| `@freerouter/sdk` | Core SDK  -  model registry, alias resolution, health tracking, failover LanguageModelV4 wrapper    |
+| `@freerouter/api` | HTTP API  -  Hono server exposing OpenAI-compatible `/v1/chat/completions`, `/v1/models`, `/health` |
+| `@freerouter/db`  | Database-backed health stores (coming soon)                                                       |
+
+## Quick Links
+
+- [SDK Installation](/docs/sdk)  -  Install, quickstart, first request
+- [SDK Usage Guide](/docs/sdk/usage)  -  Streaming, structured output, multi-user
+- [SDK Core Concepts](/docs/sdk/guides)  -  Aliases, resolution, provider priority
+- [SDK API Reference](/docs/sdk/reference)  -  `createFreeRouter()`, `languageModel()`, types
+- [SDK Providers](/docs/sdk/providers)  -  All 13 providers with 87+ model tables
+- [API Installation](/docs/api)  -  Clone, run, first request
+- [API Usage Guide](/docs/api/usage)  -  OpenAI SDK, Vercel AI SDK, streaming
+- [API Routes](/docs/api/routes)  -  Full request/response schemas
+- [API Reference](/docs/api/reference)  -  Auth, errors, deployment
+
+## Source
+
+- GitHub: [github.com/anomalyco/freerouter](https://github.com/anomalyco/freerouter)
