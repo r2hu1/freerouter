@@ -1,0 +1,297 @@
+---
+title: API Reference
+description: Complete API surface for @freerouter/sdk  -  createFreeRouter, FreeRouter methods, types, error handling, health tracking, and key fingerprinting. All free models, $0 cost.
+---
+
+import { TypeTable } from 'fumadocs-ui/components/type-table'
+
+## createFreeRouter()
+
+Creates a shared FreeRouter instance. Can be safely shared across concurrent requests. Holds no credential state.
+
+```ts title="Usage"
+import { createFreeRouter } from "@freerouter/sdk"
+
+// Default in-memory health store
+const freerouter = createFreeRouter()
+
+// Custom persistent health store
+const freerouter = createFreeRouter({
+  healthStore: myRedisStore,
+})
+```
+
+### FreeRouterConfig
+
+<TypeTable
+  type={{
+    healthStore: {
+      description: "Custom health store for persisting provider health state across restarts.",
+      type: "HealthStore",
+      default: "createMemoryHealthStore()",
+    },
+  }}
+/>
+
+### Returns
+
+An object with three methods described below.
+
+---
+
+## FreeRouter Methods
+
+### `languageModel()`
+
+Returns a `LanguageModelV4` (from `@ai-sdk/provider`) with transparent failover across providers. Compatible with `generateText`, `streamText`, `generateObject`, and all Vercel AI SDK v7 functions.
+
+```ts title="Usage"
+const model = freerouter.languageModel("free:auto", {
+  groq: process.env.GROQ_API_KEY,
+  google: process.env.GOOGLE_API_KEY,
+})
+```
+
+<TypeTable
+  type={{
+    alias: {
+      description: "Capability-based routing alias. Format: `free:${string}`.",
+      type: '"free:auto" | "free:fast" | "free:reasoning" | "free:long-context" | "free:vision" | "free:tool-use"',
+    },
+    keys: {
+      description: "Raw API keys keyed by provider. Only providers with keys are considered during resolution.",
+      type: "Partial<Record<ProviderId, string>>",
+    },
+  }}
+/>
+
+<Callout type="warn" title="Key requirement">
+  Providers without a matching key are skipped during resolution. Pass only providers you have keys for.
+</Callout>
+
+---
+
+### `models()`
+
+Returns the full model catalog  -  all known models across all 13 providers.
+
+```ts title="Usage"
+const allModels = freerouter.models()
+// [
+//   {
+//     provider: "groq",
+//     modelId: "llama-3.3-70b-versatile",
+//     capabilities: ["fast", "tool-use"],
+//     contextWindow: 131072,
+//     free: true,
+//   },
+//   ...
+// ]
+```
+
+### `ModelInfo`
+
+<TypeTable
+  type={{
+    provider: { description: "Provider identifier.", type: "ProviderId" },
+    modelId: { description: "Provider-specific model identifier.", type: "string" },
+    capabilities: { description: "Capability tags for alias matching.", type: "Capability[]" },
+    contextWindow: { description: "Maximum context window in tokens.", type: "number" },
+    free: { description: "Always true  -  FreeRouter only tracks free models.", type: "true" },
+    deprecated: { description: "If true, excluded from alias resolution.", type: "boolean", default: "undefined" },
+  }}
+/>
+
+### `Capability`
+
+```ts
+type Capability = "fast" | "reasoning" | "long-context" | "vision" | "tool-use"
+```
+
+---
+
+### `healthFor()`
+
+Returns a health snapshot scoped to the given keys. Never exposes another user's health state.
+
+```ts title="Usage"
+const health = freerouter.healthFor({ groq: "my-groq-key" })
+// {
+//   groq: {
+//     state: "healthy",
+//     consecutiveFailures: 0,
+//   }
+// }
+```
+
+### `ProviderHealth`
+
+<TypeTable
+  type={{
+    state: { description: "Current health state.", type: '"healthy" | "rate-limited" | "down"' },
+    retryAfter: { description: "Epoch timestamp (ms) when retry is allowed. Only set when rate-limited.", type: "number | undefined" },
+    consecutiveFailures: { description: "Number of consecutive failures since last success.", type: "number" },
+  }}
+/>
+
+---
+
+## Health Tracking
+
+Health is tracked per `(provider, keyFingerprint)` pair. Two users with different Groq keys have completely independent health entries.
+
+### State machine
+
+```
+healthy ──rate-limit──▶ rate-limited ──retry-after──▶ healthy
+healthy ──3× error────▶ down ──10s cooldown──▶ healthy (half-open)
+```
+
+| State | Trigger | Behavior |
+|-------|---------|----------|
+| **healthy** | Normal operation | Single success resets failure counter |
+| **rate-limited** | HTTP 429 response | Excluded until `retryAfter` (from `Retry-After` header or 60s default) |
+| **down** | 3 consecutive non-rate-limit errors | Excluded for 10s cooldown, then half-open (allowed one retry) |
+
+### HealthStore Interface
+
+Implement for persistent storage across restarts:
+
+```ts title="Custom health store"
+import { createFreeRouter } from "@freerouter/sdk"
+import type { HealthStore, HealthKey, ProviderHealth } from "@freerouter/sdk"
+
+const redisStore: HealthStore = {
+  get(key: HealthKey): ProviderHealth {
+    // Fetch from Redis keyed by `${key.provider}:${key.keyFingerprint}`
+  },
+  recordSuccess(key: HealthKey): void {
+    // Write healthy state to Redis
+  },
+  recordFailure(key: HealthKey, kind: "rate-limit" | "error", retryAfterMs?: number): void {
+    // Write degraded state to Redis with optional retry-after
+  },
+}
+
+const freerouter = createFreeRouter({ healthStore: redisStore })
+```
+
+### In-memory defaults
+
+- **Unseen keys**: Returned as `{ state: "healthy", consecutiveFailures: 0 }`
+- **recordSuccess()**: Resets to healthy with 0 failures
+- **recordFailure("rate-limit")**: Sets `"rate-limited"` with `retryAfter = now + retryAfterMs` (default 60s)
+- **recordFailure("error")**: At 3+ consecutive → sets `"down"` with 10s cooldown
+
+---
+
+## Error Handling
+
+### Error classes
+
+```ts
+class FreeRouterError extends Error {
+  readonly provider: string    // Provider that failed (e.g. "groq")
+  readonly cause?: unknown     // Underlying error
+}
+
+class FreeRouterAllProvidersFailedError extends FreeRouterError {
+  readonly errors: FreeRouterError[]  // Failure chain, one per provider tried
+}
+```
+
+### Error handling example
+
+```ts title="Catching provider errors"
+import { FreeRouterAllProvidersFailedError } from "@freerouter/sdk"
+
+try {
+  const { text } = await generateText({ model, prompt })
+} catch (err) {
+  if (err instanceof FreeRouterAllProvidersFailedError) {
+    console.error(`All ${err.errors.length} providers failed:`)
+    for (const e of err.errors) {
+      console.error(`  - ${e.provider}: ${e.message}`)
+    }
+  }
+}
+```
+
+### Failover behavior
+
+<TypeTable
+  type={{
+    "Non-streaming (doGenerate)": {
+      description: "Try each provider in priority order. First success returns. All fail → throws `FreeRouterAllProvidersFailedError`.",
+      type: "transparent",
+    },
+    "Streaming (doStream)": {
+      description: "Failover before first token only (transparent). Mid-stream errors propagate to caller.",
+      type: "partial failover",
+    },
+  }}
+/>
+
+### Timeouts
+
+| Timeout | Value | Description |
+|---------|-------|-------------|
+| Provider call | 20,000ms | Max time for a single provider `doGenerate` / `doStream` call |
+| First stream chunk | 15,000ms | Max wait for the first byte from a streaming provider |
+
+---
+
+## Key Fingerprinting
+
+Every raw API key is SHA-256 hashed on receipt. The first 16 hex characters form a stable, non-reversible `fingerprint` used for health tracking.
+
+```ts title="fingerprintKey()"
+import { fingerprintKey } from "@freerouter/sdk"
+
+const fp = fingerprintKey("sk-abc123")
+// => "a1b2c3d4e5f6g7h8" (16 hex characters)
+```
+
+| Property | Description |
+|----------|-------------|
+| **Deterministic** | Same key → same fingerprint every time |
+| **Non-reversible** | Raw key cannot be recovered from fingerprint |
+| **Safe for logging** | Raw keys never appear in health snapshots, error messages, or debug output |
+
+---
+
+## Types
+
+### FreeRouterKeys
+
+```ts title="FreeRouterKeys"
+type FreeRouterKeys = Partial<Record<ProviderId, string>>
+```
+
+### HealthKey
+
+```ts title="HealthKey"
+interface HealthKey {
+  provider: ProviderId
+  keyFingerprint: string
+}
+```
+
+### ProviderId
+
+```ts title="ProviderId"
+type ProviderId =
+  | "groq" | "google" | "cloudflare" | "openrouter" | "nvidia"
+  | "cerebras" | "together" | "fireworks" | "mistral" | "sambanova"
+  | "deepseek" | "deepinfra" | "cohere"
+```
+
+### Exported values
+
+| Export | Kind | Description |
+|--------|------|-------------|
+| `createFreeRouter` | function | Factory for creating a FreeRouter instance |
+| `createMemoryHealthStore` | function | Default in-memory health store factory |
+| `fingerprintKey` | function | SHA-256-based API key fingerprinting |
+| `FreeRouterError` | class | Single-provider error |
+| `FreeRouterAllProvidersFailedError` | class | All-providers-exhausted error |
