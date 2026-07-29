@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "fumadocs-full-documentation": {
+      "source": "hellojowet/skills",
+      "sourceType": "github",
+      "skillPath": "skills/fumadocs-full-documentation/SKILL.md",
+      "computedHash": "8ac153fa2e545dc6385ddc8c9406a9bdee860398f77e3e1cba0d137b2679affd"
+    }
+  }
+}
