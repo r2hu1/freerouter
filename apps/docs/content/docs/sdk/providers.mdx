@@ -1,0 +1,198 @@
+---
+title: Provider Models
+description: Complete reference of all 87 free models ($0 cost) across 13 providers, with model IDs, capabilities, and context window sizes.
+---
+
+## Groq
+
+Key format: `gsk_...`  -  [Get one](https://console.groq.com)
+
+| modelId | capabilities | context |
+|---------|-------------|---------|
+| `llama-3.3-70b-versatile` | fast, tool-use | 131K |
+| `llama-3.1-8b-instant` | fast, tool-use | 131K |
+| `llama-4-scout-17b-16e-instruct` ⚠️ preview | fast, tool-use | 131K |
+| `llama-4-maverick-17b-128e-instruct` ⚠️ preview | fast, tool-use, vision | 131K |
+
+---
+
+## Google Gemini
+
+Key format: `AIza...`  -  [Get one](https://aistudio.google.com)
+
+| modelId | capabilities | context |
+|---------|-------------|---------|
+| `gemini-2.5-flash` | fast, vision, tool-use, long-context | 1M |
+| `gemini-2.5-flash-lite` | fast, tool-use | 1M |
+| `gemini-2.5-pro` | reasoning, vision, tool-use, long-context | 1M |
+| `gemini-3.6-flash` ⚠️ preview | fast, vision, tool-use, long-context | 1M |
+| `gemini-3.5-flash` ⚠️ preview | fast, vision, tool-use, long-context | 1M |
+
+---
+
+## NVIDIA NIM
+
+Key format: `nvapi-...`  -  [Get one](https://build.nvidia.com)
+
+| modelId | capabilities | context |
+|---------|-------------|---------|
+| `deepseek-ai/deepseek-v4-pro` | reasoning, tool-use, long-context | 1M |
+| `deepseek-ai/deepseek-v4-flash` | reasoning, tool-use, long-context | 1M |
+| `z-ai/glm-5.2` | reasoning, tool-use, long-context | 1M |
+| `minimaxai/minimax-m3` | reasoning, tool-use, long-context | 1M |
+| `moonshotai/kimi-k2.6` | reasoning, tool-use, long-context | 262K |
+| `nvidia/nemotron-4` | reasoning, tool-use, long-context | 262K |
+| `qwen/qwen3.6-27b` | fast, tool-use | 131K |
+
+---
+
+## OpenRouter (free models)
+
+Key format: Standard API key  -  [Get one](https://openrouter.ai)
+
+| modelId | capabilities | context |
+|---------|-------------|---------|
+| `nvidia/nemotron-3-ultra-550b-a55b:free` | reasoning, tool-use, long-context | 1M |
+| `nvidia/nemotron-3-super-120b-a12b:free` | reasoning, tool-use, long-context | 262K |
+| `google/gemma-4-31b-it:free` | vision, tool-use | 262K |
+| `google/gemma-4-26b-a4b-it:free` | vision, tool-use | 262K |
+| `poolside/laguna-m.1:free` | tool-use, long-context | 262K |
+| `poolside/laguna-xs-2.1:free` | tool-use | 262K |
+| `cohere/north-mini-code:free` | tool-use | 262K |
+| `qwen/qwen3-next-80b-a3b-instruct:free` | tool-use, long-context | 262K |
+| `nvidia/nemotron-3-nano-30b-a3b:free` | fast, tool-use | 262K |
+
+---
+
+## Cloudflare Workers AI
+
+Key format: `account_id:api_token`  -  [Get one](https://dash.cloudflare.com)
+
+| modelId | capabilities | context |
+|---------|-------------|---------|
+| `@cf/meta/llama-3.3-70b-instruct-fp8-fast` | fast, tool-use, long-context | 24K |
+| `@cf/meta/llama-3.1-8b-instruct-fp8` | fast, tool-use | 32K |
+| `@cf/meta/llama-4-scout-17b-16e-instruct` | fast, tool-use | 131K |
+| `@cf/meta/llama-3.2-11b-vision-instruct` | vision, tool-use | 128K |
+| `@cf/meta/llama-3.2-3b-instruct` | fast | 80K |
+| `@cf/mistralai/mistral-small-3.1-24b-instruct` | fast, tool-use | 128K |
+| `@cf/qwen/qwen2.5-coder-32b-instruct` | fast, tool-use | 33K |
+| `@cf/qwen/qwq-32b` | reasoning | 24K |
+| `@cf/qwen/qwen3-30b-a3b-fp8` | fast, tool-use | 33K |
+| `@cf/deepseek-ai/deepseek-r1-distill-qwen-32b` | reasoning | 80K |
+| `@cf/google/gemma-4-26b-a4b-it` | tool-use, long-context | 256K |
+| `@cf/nvidia/nemotron-3-120b-a12b` | tool-use, long-context | 256K |
+| `@cf/openai/gpt-oss-120b` | tool-use, reasoning | 128K |
+| `@cf/openai/gpt-oss-20b` | fast, tool-use | 128K |
+| `@cf/moonshotai/kimi-k2.7-code` | tool-use, long-context | 262K |
+| `@cf/zai-org/glm-5.2` | reasoning, tool-use, long-context | 262K |
+| `@cf/aisingapore/gemma-sea-lion-v4-27b-it` | tool-use, long-context | 128K |
+| `@cf/ibm-granite/granite-4.0-h-micro` | tool-use | 131K |
+| `@cf/meta/llama-guard-3-8b` | tool-use | 131K |
+
+---
+
+## Together AI
+
+Key format: Standard API key
+
+| modelId | capabilities | context |
+|---------|-------------|---------|
+| `meta-llama/Llama-3.3-70B-Instruct-Turbo-Free` | fast, tool-use, long-context | 131K |
+| `mistralai/Mixtral-8x22B-Instruct-v0.1` | fast, tool-use, long-context | 65K |
+| `deepseek-ai/DeepSeek-R1-Distill-Llama-70B-free` | reasoning, tool-use, long-context | 131K |
+| `Qwen/Qwen3-32B` | reasoning, tool-use, long-context | 131K |
+
+---
+
+## Fireworks AI
+
+Key format: Standard API key
+
+| modelId | capabilities | context |
+|---------|-------------|---------|
+| `accounts/fireworks/models/llama-v3p3-70b-instruct` | fast, tool-use, long-context | 131K |
+| `accounts/fireworks/models/firefunction-v2` | tool-use | 131K |
+| `accounts/fireworks/models/qwen3-32b` | reasoning, tool-use, long-context | 131K |
+| `accounts/fireworks/models/deepseek-r1` | reasoning | 131K |
+
+---
+
+## Mistral AI
+
+Key format: `api_...`  -  [Get one](https://console.mistral.ai)
+
+| modelId | capabilities | context |
+|---------|-------------|---------|
+| `mistral-small-latest` | fast, tool-use, long-context | 32K |
+| `mistral-nemo-latest` | fast, tool-use | 128K |
+| `codestral-latest` | tool-use | 256K |
+| `mistral-large-latest` | reasoning, tool-use, long-context | 128K |
+
+---
+
+## Cerebras
+
+Key format: Standard API key
+
+| modelId | capabilities | context |
+|---------|-------------|---------|
+| `llama-3.3-70b` | fast, tool-use | 131K |
+| `llama-3.1-8b` | fast, tool-use | 131K |
+| `qwen3-32b` | reasoning, tool-use, long-context | 131K |
+| `qwen3-235b` | reasoning, tool-use, long-context | 131K |
+
+---
+
+## SambaNova
+
+Key format: Standard API key
+
+| modelId | capabilities | context |
+|---------|-------------|---------|
+| `Meta-Llama-3.3-70B-Instruct` | fast, tool-use, long-context | 131K |
+| `Meta-Llama-3.1-8B-Instruct` | fast, tool-use | 131K |
+| `DeepSeek-V3.1-0324` | reasoning, tool-use, long-context | 131K |
+| `Qwen3-32B` | reasoning, tool-use, long-context | 131K |
+
+---
+
+## DeepSeek
+
+Key format: Standard API key
+
+| modelId | capabilities | context |
+|---------|-------------|---------|
+| `deepseek-v4-flash` | fast, tool-use, long-context | 131K |
+| `deepseek-v4-pro` | reasoning, tool-use, long-context | 131K |
+
+---
+
+## DeepInfra
+
+Key format: Standard API key
+
+| modelId | capabilities | context |
+|---------|-------------|---------|
+| `meta-llama/Meta-Llama-3.3-70B-Instruct` | fast, tool-use, long-context | 131K |
+| `meta-llama/Meta-Llama-3.1-405B-Instruct` | reasoning, tool-use, long-context | 131K |
+| `meta-llama/Meta-Llama-3.1-8B-Instruct` | fast, tool-use | 131K |
+| `deepseek-ai/DeepSeek-V3` | reasoning, tool-use, long-context | 131K |
+| `deepseek-ai/DeepSeek-R1` | reasoning, tool-use | 131K |
+| `Qwen/Qwen3-32B` | reasoning, tool-use, long-context | 131K |
+| `Qwen/Qwen2.5-Coder-32B-Instruct` | fast, tool-use | 32K |
+| `mistralai/Mistral-Small-3.1-24B-Instruct` | fast, tool-use | 32K |
+
+---
+
+## Cohere
+
+Key format: Standard API key  -  [Get one](https://dashboard.cohere.com) (1K free calls/month)
+
+| modelId | capabilities | context |
+|---------|-------------|---------|
+| `command-a-plus-05-2026` | tool-use | 131K |
+| `command-a-reasoning-08-2025` | reasoning, tool-use, long-context | 262K |
+| `command-r-plus-08-2024` | tool-use, long-context | 131K |
+| `command-r-08-2024` | fast, tool-use, long-context | 131K |
+| `command-a-03-2025` | tool-use, long-context | 131K |
