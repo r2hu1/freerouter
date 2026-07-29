@@ -2,6 +2,8 @@
 
 Open-source AI gateway that routes requests across free AI providers through a single OpenAI-compatible API. Integrate once, let FreeRouter handle provider selection, failover, rate limits, and API differences.
 
+![FreeRouter](assets/opengraph.png)
+
 ## Architecture
 
 ![FreeRouter Architecture](assets/diagram.png)
