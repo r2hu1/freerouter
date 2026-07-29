@@ -1,0 +1,304 @@
+---
+title: API Routes
+description: Detailed reference for all HTTP endpoints  -  /health, /v1/models, and /v1/chat/completions with request/response schemas. Entirely free ($0 cost).
+---
+
+import { Tabs, Tab } from 'fumadocs-ui/components/tabs'
+import { TypeTable } from 'fumadocs-ui/components/type-table'
+
+---
+
+## `GET /health`
+
+Returns server health status and a provider health snapshot for the keys passed via headers.
+
+### Request
+
+No parameters. Provider keys passed via `X-{Provider}-Key` headers are used for health introspection.
+
+### Response
+
+```json title="200 OK"
+{
+  "status": "ok",
+  "providers": {
+    "groq": {
+      "state": "healthy",
+      "consecutiveFailures": 0
+    }
+  }
+}
+```
+
+<Callout type="info" title="Scoped health">
+  Health state is returned only for the keys you pass via headers. Other users' health is never exposed.
+</Callout>
+
+---
+
+## `GET /v1/models`
+
+Returns all known models in OpenAI format. Includes 6 capability aliases and ~87 concrete provider models.
+
+### Response
+
+```json title="200 OK"
+{
+  "object": "list",
+  "data": [
+    {
+      "id": "free:auto",
+      "object": "model",
+      "created": 1710000000,
+      "owned_by": "freerouter"
+    },
+    {
+      "id": "groq/llama-3.3-70b-versatile",
+      "object": "model",
+      "created": 1710000000,
+      "owned_by": "groq"
+    }
+  ]
+}
+```
+
+### Included models
+
+| Type | Count | Example |
+|------|-------|---------|
+| Aliases | 6 | `free:auto`, `free:fast`, `free:reasoning`, `free:long-context`, `free:vision`, `free:tool-use` |
+| Concrete models | ~87 | `groq/llama-3.3-70b-versatile`, `google/gemini-2.5-flash`, ... |
+
+Concrete models use the format `{provider}/{modelId}` (e.g. `groq/llama-3.3-70b-versatile`).
+
+---
+
+## `POST /v1/chat/completions`
+
+Main completion endpoint. Fully OpenAI-compatible  -  works with any OpenAI SDK client, the Vercel AI SDK, or raw HTTP requests.
+
+### Parameters
+
+<TypeTable
+  type={{
+    model: { description: "Model alias (e.g. `free:auto`) or pinned model (e.g. `groq/llama-3.3-70b-versatile`).", type: "string", default: "(required)" },
+    messages: { description: "Array of message objects with `role` and `content`.", type: "array", default: "(required)" },
+    stream: { description: "Enable SSE streaming response.", type: "boolean", default: "false" },
+    temperature: { description: "Sampling temperature (0–2). Lower = more deterministic.", type: "number", default: "1.0" },
+    max_tokens: { description: "Maximum number of tokens in the response.", type: "number" },
+    tools: { description: "Array of tool/function definitions.", type: "array" },
+    tool_choice: { description: "Tool selection mode.", type: '"none" | "auto" | "required" | { type: "function", function: { name } }', default: '"auto"' },
+  }}
+/>
+
+### Message roles
+
+| Role | Description |
+|------|-------------|
+| `system` | System prompt for behavior control |
+| `user` | User message. `content` can be a string or array of content parts (text, image_url) |
+| `assistant` | Assistant response. Can include `tool_calls` |
+| `tool` | Tool result. Must include `tool_call_id` referencing the original call |
+
+### Request body example
+
+```json title="Request"
+{
+  "model": "free:auto",
+  "messages": [
+    { "role": "system", "content": "You are a helpful assistant." },
+    { "role": "user", "content": "What's the weather in Tokyo?" }
+  ],
+  "stream": false,
+  "temperature": 0.7,
+  "max_tokens": 1024,
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "get_weather",
+        "description": "Get current weather for a city",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "location": { "type": "string", "description": "City name" }
+          },
+          "required": ["location"]
+        }
+      }
+    }
+  ],
+  "tool_choice": "auto"
+}
+```
+
+### Responses
+
+<Tabs items={["Non-Streaming (200)", "Streaming (SSE)"]}>
+  <Tab value="Non-Streaming (200)">
+
+  ```json title="200 OK"
+  {
+    "id": "chatcmpl-abc123def",
+    "object": "chat.completion",
+    "created": 1710000000,
+    "model": "free:auto",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "Let me check the weather in Tokyo for you."
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "promptTokens": 25,
+      "completionTokens": 12,
+      "totalTokens": 37
+    }
+  }
+  ```
+  </Tab>
+  <Tab value="Streaming (SSE)">
+
+  OpenAI-compatible Server-Sent Events. Each line is a `data:` event:
+
+  ```
+  data: {"id":"chatcmpl-abc","object":"chat.completion.chunk","choices":[{"index":0,"delta":{"role":"assistant"},"finish_reason":null}]}
+
+  data: {"id":"chatcmpl-abc","object":"chat.completion.chunk","choices":[{"index":0,"delta":{"content":"Let"},"finish_reason":null}]}
+
+  data: {"id":"chatcmpl-abc","object":"chat.completion.chunk","choices":[{"index":0,"delta":{"content":" me"},"finish_reason":null}]}
+
+  data: {"id":"chatcmpl-abc","object":"chat.completion.chunk","choices":[{"index":0,"delta":{"content":" check"},"finish_reason":null}]}
+
+  data: [DONE]
+  ```
+
+  <Callout type="info" title="Streaming event types">
+    - Initial chunk: `delta.role: "assistant"`
+    - Text chunks: `delta.content: "..."` (partial)
+    - Tool call chunks: `delta.tool_calls: [...]` (with `function.arguments` deltas)
+    - Final chunk: `finish_reason: "stop"` (or `"tool_calls"`)
+    - Termination: `data: [DONE]`
+  </Callout>
+  </Tab>
+</Tabs>
+
+### Pinned model usage
+
+Instead of an alias, pass a concrete model ID to pin to a specific provider:
+
+```json title="Pinned model request"
+{
+  "model": "groq/llama-3.3-70b-versatile",
+  "messages": [
+    { "role": "user", "content": "Hello!" }
+  ]
+}
+```
+
+Pinned models skip alias resolution and go directly to the specified provider.
+
+---
+
+## Client Examples
+
+<Tabs items={["OpenAI SDK", "Vercel AI SDK", "cURL"]}>
+  <Tab value="OpenAI SDK">
+
+  ```ts title="openai-client.ts"
+  import OpenAI from "openai"
+
+  const client = new OpenAI({
+    baseURL: "http://localhost:3000/v1",
+    apiKey: "unused",
+  })
+
+  // Non-streaming
+  const response = await client.chat.completions.create(
+    {
+      model: "free:auto",
+      messages: [{ role: "user", content: "Hello!" }],
+    },
+    {
+      headers: {
+        "X-Groq-Key": process.env.GROQ_API_KEY,
+        "X-Google-Key": process.env.GOOGLE_API_KEY,
+      },
+    }
+  )
+
+  console.log(response.choices[0].message.content)
+
+  // Streaming
+  const stream = await client.chat.completions.create(
+    { model: "free:auto", messages, stream: true },
+    { headers: { "X-Groq-Key": process.env.GROQ_API_KEY } }
+  )
+
+  for await (const chunk of stream) {
+    process.stdout.write(chunk.choices[0]?.delta?.content ?? "")
+  }
+  ```
+  </Tab>
+  <Tab value="Vercel AI SDK">
+
+  ```ts title="ai-sdk-client.ts"
+  import { generateText, streamText } from "ai"
+  import { createOpenAICompatible } from "@ai-sdk/openai-compatible"
+
+  const provider = createOpenAICompatible({
+    name: "freerouter",
+    baseURL: "http://localhost:3000/v1",
+  })
+
+  // Non-streaming
+  const { text } = await generateText({
+    model: provider("free:auto"),
+    headers: { "X-Groq-Key": process.env.GROQ_API_KEY },
+    prompt: "Hello!",
+  })
+
+  // Streaming
+  const { textStream } = await streamText({
+    model: provider("free:auto"),
+    headers: { "X-Groq-Key": process.env.GROQ_API_KEY },
+    prompt: "Hello!",
+  })
+
+  for await (const chunk of textStream) {
+    process.stdout.write(chunk)
+  }
+  ```
+  </Tab>
+  <Tab value="cURL">
+
+  Non-streaming:
+
+  ```bash
+  curl http://localhost:3000/v1/chat/completions \
+    -H "Content-Type: application/json" \
+    -H "X-Groq-Key: gsk_..." \
+    -d '{
+      "model": "free:auto",
+      "messages": [{"role": "user", "content": "Hello!"}]
+    }'
+  ```
+
+  Streaming:
+
+  ```bash
+  curl -N http://localhost:3000/v1/chat/completions \
+    -H "Content-Type: application/json" \
+    -H "X-Groq-Key: gsk_..." \
+    -d '{
+      "model": "free:auto",
+      "messages": [{"role": "user", "content": "Count to 5"}],
+      "stream": true
+    }'
+  ```
+  </Tab>
+</Tabs>
