@@ -13,7 +13,6 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@freerouter/ui": "workspace:*",
     "cnfast": "^0.0.8",
     "fumadocs-core": "16.13.0",
     "fumadocs-mdx": "15.2.0",
