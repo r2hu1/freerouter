@@ -5,7 +5,7 @@ Open-source AI gateway that routes requests across free AI providers through a s
 <img src="assets/opengraph.svg" alt="FreeRouter" width="100%">
 
 <p align="center">
-  <a href="freerouter.vercel.app">📖 Docs</a>
+  <a href="https://freerouter.vercel.app">📖 Docs</a>
   &nbsp;·&nbsp;
   <a href="https://www.npmjs.com/package/@freerouter/sdk">📦 @freerouter/sdk</a>
 </p>
