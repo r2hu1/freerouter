@@ -1,0 +1,14 @@
+{
+  "title": "@freerouter/api",
+  "description": "HTTP API server",
+  "icon": "Server",
+  "root": true,
+  "pages": [
+    "---Getting Started---",
+    "index",
+    "usage",
+    "---Reference---",
+    "routes",
+    "reference"
+  ]
+}
