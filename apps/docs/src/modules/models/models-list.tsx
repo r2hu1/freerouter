@@ -56,7 +56,7 @@ export function ModelsList() {
             key={p}
             onClick={() => toggleProvider(p)}
             className={cn(
-              "rounded-full px-3.5 border py-1.5 text-sm font-medium transition-all cursor-pointer",
+              "rounded-full px-3.5 border py-1.5 text-sm font-medium active:scale-[0.97] cursor-pointer",
               selectedProviders.has(p)
                 ? "bg-fd-primary text-fd-primary-foreground shadow-sm"
                 : "bg-transparent text-fd-secondary-foreground hover:brightness-90",
