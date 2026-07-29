@@ -1,0 +1,256 @@
+---
+title: Reference
+description: Authentication headers, error codes, environment variables, deployment, and configuration reference for the FreeRouter API. Uses only free providers  -  $0 cost.
+---
+
+import { TypeTable } from 'fumadocs-ui/components/type-table'
+
+## Authentication
+
+The API has **no built-in API key**. It is a stateless proxy  -  downstream provider authentication happens via per-provider HTTP headers.
+
+### Header mapping
+
+Each provider uses its own header for the API key:
+
+| Provider | Header |
+|----------|--------|
+| Groq | `X-Groq-Key` |
+| Google | `X-Google-Key` |
+| OpenRouter | `X-Openrouter-Key` |
+| Cloudflare | `X-Cloudflare-Key` |
+| NVIDIA NIM | `X-Nvidia-Key` |
+| Cerebras | `X-Cerebras-Key` |
+| Together AI | `X-Together-Key` |
+| Fireworks AI | `X-Fireworks-Key` |
+| Mistral AI | `X-Mistral-Key` |
+| SambaNova | `X-Sambanova-Key` |
+| DeepSeek | `X-Deepseek-Key` |
+| DeepInfra | `X-Deepinfra-Key` |
+| Cohere | `X-Cohere-Key` |
+
+### How it works
+
+1. Server reads provider headers from the incoming request
+2. Builds a `FreeRouterKeys` object with only the providers present in headers
+3. Passes keys to `freerouter.languageModel(alias, keys)`
+4. Resolution automatically excludes providers with no key
+
+### Security
+
+<Callout type="warn" title="Key protection">
+  - Keys are **never logged**  -  the request logger sanitizes all headers and paths
+  - Keys are **never stored** server-side
+  - Error messages **redact** key patterns matching known formats
+  - CORS allows all 13 provider key headers through
+</Callout>
+
+---
+
+## Error Responses
+
+All errors are returned in OpenAI-compatible format.
+
+### Error format
+
+```json title="Error response body"
+{
+  "error": {
+    "message": "All providers failed: groq: rate limit exceeded; google: Internal server error",
+    "type": "freerouter_all_providers_failed",
+    "code": 502
+  }
+}
+```
+
+### Status codes
+
+| HTTP Status | Error Type | Condition |
+|-------------|------------|-----------|
+| `400` | `invalid_request_error` | Invalid request body (Zod validation failure) |
+| `429` | `rate_limit_error` | IP-based rate limit exceeded |
+| `502` | `freerouter_all_providers_failed` | All candidate providers exhausted |
+| `502` | `freerouter_provider_error` | Single provider error |
+| `500` | `server_error` | Unexpected internal error |
+
+### 400  -  Invalid request
+
+```json title="400 Bad Request"
+{
+  "error": {
+    "message": "Validation failed: messages: Expected array, received string",
+    "type": "invalid_request_error",
+    "code": 400
+  }
+}
+```
+
+### 429  -  Rate limited
+
+Default: 100 requests per 60 seconds per IP. Response includes `Retry-After` header.
+
+```json title="429 Too Many Requests"
+{
+  "error": {
+    "message": "Rate limit exceeded. Retry after 42 seconds",
+    "type": "rate_limit_error",
+    "code": 429
+  }
+}
+```
+
+```text title="Response headers"
+Retry-After: 42
+```
+
+### 502  -  Provider errors
+
+```json title="502 Bad Gateway"
+{
+  "error": {
+    "message": "All providers failed: groq: rate limit exceeded; google: Internal server error",
+    "type": "freerouter_all_providers_failed",
+    "code": 502
+  }
+}
+```
+
+### Key redaction
+
+Known key patterns are replaced with `[REDACTED]` in error messages:
+
+| Pattern | Provider |
+|---------|----------|
+| `gsk_...` | Groq |
+| `sk-or-...` | OpenRouter |
+| `AIza...` | Google |
+| `nvapi-...` | NVIDIA NIM |
+| `CF...` | Cloudflare |
+| `ghp_...` / `github_pat_...` | GitHub (general precaution) |
+
+### Client-side error handling
+
+```ts title="Error handling example"
+import OpenAI from "openai"
+
+const client = new OpenAI({
+  baseURL: "http://localhost:3000/v1",
+  apiKey: "unused",
+})
+
+async function retryOnRateLimit(model: string, messages: any[], maxRetries = 3) {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      return await client.chat.completions.create(
+        { model, messages },
+        { headers: { "X-Groq-Key": process.env.GROQ_API_KEY } }
+      )
+    } catch (err: any) {
+      if (err.status === 429) {
+        const retryAfter = Number(err.headers?.get("Retry-After") ?? 5)
+        console.log(`Rate limited. Retrying after ${retryAfter}s...`)
+        await new Promise((r) => setTimeout(r, retryAfter * 1000))
+        continue
+      }
+      if (err.status === 502) {
+        throw new Error("All providers are down. Try again later.")
+      }
+      throw err
+    }
+  }
+  throw new Error("Max retries exceeded")
+}
+```
+
+---
+
+## Deployment
+
+### Environment variables
+
+<TypeTable
+  type={{
+    PORT: { description: "HTTP listen port.", type: "number", default: "3000" },
+    HOST: { description: "Listen address.", type: "string", default: '"0.0.0.0"' },
+    NODE_ENV: { description: "Runtime environment.", type: '"development" | "production" | "test"', default: '"development"' },
+    CORS_ORIGINS: { description: "Comma-separated allowed CORS origins.", type: "string", default: '"*"' },
+    RATE_LIMIT_MAX: { description: "Maximum requests per window per IP.", type: "number", default: "100" },
+    RATE_LIMIT_WINDOW_MS: { description: "Rate limit window duration in milliseconds.", type: "number", default: "60000" },
+  }}
+/>
+
+### Running the server
+
+```bash tab="Development"
+bun run apps/api/src/index.ts
+```
+
+```bash tab="Custom port"
+PORT=8080 bun run apps/api/src/index.ts
+```
+
+```bash tab="Custom host"
+HOST=127.0.0.1 bun run apps/api/src/index.ts
+```
+
+```bash tab="Production"
+NODE_ENV=production RATE_LIMIT_MAX=500 bun run apps/api/src/index.ts
+```
+
+### Graceful shutdown
+
+The server handles `SIGTERM` and `SIGINT` for clean teardown:
+
+```
+^C received. Shutting down gracefully...
+```
+
+### Rate limiting
+
+IP-based, in-memory sliding window.
+
+| Setting | Default | Notes |
+|---------|---------|-------|
+| `RATE_LIMIT_MAX` | 100 | Max requests per window per IP |
+| `RATE_LIMIT_WINDOW_MS` | 60000 | Window in ms |
+
+- IP determined by `x-forwarded-for` header → `x-real-ip` → remote address
+- 429 responses include `Retry-After` header
+- Stale buckets cleaned every 5 minutes
+
+### CORS
+
+Enabled on all `/v1/*` routes. Allow headers include all 13 provider key headers plus `Retry-After`.
+
+`CORS_ORIGINS` env var controls allowed origins (default: `*`).
+
+### Logging
+
+Per-request logging with automatic key sanitization:
+
+```text title="Log output"
+GET /v1/models 200 42ms
+POST /v1/chat/completions 200 1234ms
+```
+
+<Callout type="warn" title="Sanitization">
+  Any 8+ character alphanumeric token in log lines is automatically replaced with `[REDACTED]`. This catches API keys, tokens, and other sensitive strings.
+</Callout>
+
+### Testing
+
+```bash tab="Terminal"
+bun test --filter @freerouter/api
+```
+
+Test coverage includes:
+
+| Area | What's tested |
+|------|---------------|
+| Health | `GET /health` returns status and providers |
+| Models | `GET /v1/models` returns aliases + concrete models |
+| Chat completions | Non-streaming, streaming, alias, pinned model |
+| Authentication | Header extraction, partial keys |
+| Rate limiting | 429 response, retry-after header |
+| Error mapping | All error codes, key sanitization |
+| OpenAI SDK compatibility | End-to-end with official SDK |
