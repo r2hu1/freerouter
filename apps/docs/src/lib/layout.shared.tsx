@@ -1,6 +1,6 @@
 import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared";
 import { appName, gitConfig } from "./shared";
-import { Route, Split } from "lucide-react";
+import { Route, Split, Cpu } from "lucide-react";
 
 export function baseOptions(): BaseLayoutProps {
   return {
@@ -15,6 +15,18 @@ export function baseOptions(): BaseLayoutProps {
       ),
       transparentMode: "top",
     },
+    links: [
+      {
+        text: "Models",
+        url: "/models",
+        icon: <Cpu />,
+      },
+      {
+        text: "Docs",
+        url: "/docs",
+        icon: <Route />,
+      },
+    ],
     githubUrl: `https://github.com/${gitConfig.user}/${gitConfig.repo}`,
   };
 }
