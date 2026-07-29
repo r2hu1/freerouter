@@ -1,0 +1,124 @@
+---
+title: Installation
+description: Install @freerouter/sdk, set up API keys, and make your first completely free ($0 cost) LLM request.
+---
+
+@freerouter/sdk is a BYOK (Bring Your Own Key) routing layer for free LLM providers  -  all at $0 cost. Write code once  -  FreeRouter automatically fails over across 13 providers with ~87 free models. Like OpenRouter, but for free models. Implements `LanguageModelV4` from `@ai-sdk/provider`, compatible with Vercel AI SDK v7.
+
+<Cards>
+  <Card title="Installation" href="#installation" />
+  <Card title="Quickstart" href="#quickstart" />
+  <Card title="Usage Examples" href="/docs/sdk/usage" />
+  <Card title="API Reference" href="/docs/sdk/reference" />
+</Cards>
+
+---
+
+## Prerequisites
+
+| Requirement | Details |
+|-------------|---------|
+| Runtime | [Node.js](https://nodejs.org/) 18+ or [Bun](https://bun.sh) |
+| Package Manager | `npm`, `yarn`, `pnpm`, or `bun` |
+| API Key | At least one provider key ([Groq](https://console.groq.com), [Google](https://aistudio.google.com), etc.) |
+| AI SDK | `ai` (Vercel AI SDK v7)  -  installed automatically |
+
+---
+
+## Installation
+
+<Tabs items={["bun", "npm", "pnpm", "yarn"]}>
+  <Tab value="bun">
+
+  ```bash
+  bun add @freerouter/sdk
+  ```
+  </Tab>
+  <Tab value="npm">
+
+  ```bash
+  npm install @freerouter/sdk
+  ```
+  </Tab>
+  <Tab value="pnpm">
+
+  ```bash
+  pnpm add @freerouter/sdk
+  ```
+  </Tab>
+  <Tab value="yarn">
+
+  ```bash
+  yarn add @freerouter/sdk
+  ```
+  </Tab>
+</Tabs>
+
+<Callout type="info" title="Peer dependency">
+  `ai` (Vercel AI SDK v7) is a peer dependency and installs automatically. Explicit install: `bun add ai`.
+</Callout>
+
+---
+
+## Quickstart
+
+### 1. Set your API key
+
+```bash tab="Terminal"
+export GROQ_API_KEY="gsk_your_api_key_here"
+```
+
+<Callout type="warn" title="Never commit keys">
+  Store API keys in environment variables or `.env`. Never hardcode or commit raw keys.
+</Callout>
+
+### 2. Create your first app
+
+```ts title="index.ts"
+import { createFreeRouter } from "@freerouter/sdk"
+import { generateText } from "ai"
+
+const freerouter = createFreeRouter()
+
+const { text } = await generateText({
+  model: freerouter.languageModel("free:auto", {
+    groq: process.env.GROQ_API_KEY,
+  }),
+  prompt: "Explain quantum computing in one paragraph",
+})
+
+console.log(text)
+```
+
+### 3. Run it
+
+```bash tab="Terminal"
+bun run index.ts
+```
+
+### 4. Add more providers
+
+```ts title="index.ts"
+const { text } = await generateText({
+  model: freerouter.languageModel("free:auto", {
+    groq: process.env.GROQ_API_KEY,
+    google: process.env.GOOGLE_API_KEY,
+  }),
+  prompt: "Explain quantum computing",
+})
+```
+
+<Callout type="info" title="How it works">
+  Only providers with keys are considered during resolution. Providers without keys are skipped automatically.
+</Callout>
+
+---
+
+## Next Steps
+
+<Cards>
+  <Card title="Usage Guide" href="/docs/sdk/usage" description="Streaming, structured output, multi-user servers, and diagnostics." />
+  <Card title="Core Concepts" href="/docs/sdk/guides" description="Aliases, resolution pipeline, provider priority, and key formats." />
+  <Card title="API Reference" href="/docs/sdk/reference" description="Full API surface, types, error handling, and custom health store." />
+  <Card title="Provider Models" href="/docs/sdk/providers" description="Complete model tables for all 13 providers." />
+</Cards>
