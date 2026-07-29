@@ -1,0 +1,16 @@
+{
+  "title": "@freerouter/sdk",
+  "description": "TypeScript SDK",
+  "icon": "Package",
+  "root": true,
+  "pages": [
+    "---Getting Started---",
+    "index",
+    "usage",
+    "---Guides---",
+    "guides",
+    "---Reference---",
+    "reference",
+    "providers"
+  ]
+}
