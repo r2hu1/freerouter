@@ -1,0 +1,97 @@
+---
+title: Core Concepts
+description: Aliases, resolution pipeline, provider priority, and key format reference for completely free ($0 cost) model routing.
+---
+
+## Aliases
+
+Aliases map capability requirements to provider models. Pass any `free:${string}` alias to `languageModel()`.
+
+| Alias | Filter | Use case |
+|-------|--------|----------|
+| `free:auto` | none | Catch-all, anything that works |
+| `free:fast` | `fast` | Chat, low-latency Q&A |
+| `free:reasoning` | `reasoning` | Math, logic, complex analysis |
+| `free:long-context` | `long-context` | Document analysis, large context |
+| `free:vision` | `vision` | Image inputs |
+| `free:tool-use` | `tool-use` | Function/tool calling |
+
+```ts
+freerouter.languageModel("free:auto", keys)
+freerouter.languageModel("free:fast", keys)
+freerouter.languageModel("free:reasoning", keys)
+```
+
+<Callout type="info" title="Unknown aliases">
+  Any `free:${string}` that doesn't match a known capability resolves as `free:auto` (all models).
+</Callout>
+
+---
+
+## Resolution pipeline
+
+```
+alias → filter by capability
+  → exclude deprecated models
+  → exclude providers without key
+  → exclude down providers (unless cooldown expired)
+  → sort by priority
+  → try each until one succeeds
+```
+
+### Step by step
+
+1. **Capability filter**  -  maps alias to capability tag, queries registry
+2. **Deprecation filter**  -  removes models marked `deprecated: true`
+3. **Key filter**  -  removes providers where caller has no key
+4. **Health filter**  -  removes providers in `"down"` state (unless 10s cooldown expired)
+5. **Priority sort**  -  orders remaining candidates by provider priority
+6. **Failover loop**  -  tries each candidate until one succeeds or all fail
+
+---
+
+## Provider priority
+
+Providers are tried in this order (all else equal):
+
+| Priority | Provider | Models |
+|----------|----------|--------|
+| 1 | Groq | 4 |
+| 2 | Google Gemini | 5 |
+| 3 | NVIDIA NIM | 7 |
+| 4 | OpenRouter (free) | 9 |
+| 5 | Together AI | 4 |
+| 6 | Fireworks AI | 4 |
+| 7 | Mistral AI | 4 |
+| 8 | Cloudflare Workers AI | 19 |
+| 9 | Cerebras | 4 |
+| 10 | SambaNova | 4 |
+| 11 | DeepSeek | 2 |
+| 12 | DeepInfra | 8 |
+| 13 | Cohere | 5 |
+
+Rate-limited providers are deprioritized but still included. Down providers are excluded entirely.
+
+---
+
+## Key Format Reference
+
+| Provider | Key format | Get one |
+|----------|-----------|---------|
+| Groq | `gsk_...` | [console.groq.com](https://console.groq.com) |
+| Google Gemini | `AIza...` | [aistudio.google.com](https://aistudio.google.com) |
+| NVIDIA NIM | `nvapi-...` | [build.nvidia.com](https://build.nvidia.com) |
+| OpenRouter | `sk-or-...` | [openrouter.ai](https://openrouter.ai) |
+| Cloudflare | `account_id:api_token` | [dash.cloudflare.com](https://dash.cloudflare.com) |
+| Together AI | Standard key | [together.ai](https://together.ai) |
+| Fireworks AI | Standard key | [fireworks.ai](https://fireworks.ai) |
+| Mistral AI | `api_...` | [console.mistral.ai](https://console.mistral.ai) |
+| Cerebras | Standard key | [cloud.cerebras.ai](https://cloud.cerebras.ai) |
+| SambaNova | Standard key | [sambanova.ai](https://sambanova.ai) |
+| DeepSeek | Standard key | [platform.deepseek.com](https://platform.deepseek.com) |
+| DeepInfra | Standard key | [deepinfra.com](https://deepinfra.com) |
+| Cohere | Standard key | [dashboard.cohere.com](https://dashboard.cohere.com) |
+
+<Callout type="info" title="Security">
+  Keys are SHA-256 fingerprinted on receipt. Raw keys never appear in logs, error messages, or health state.
+</Callout>
