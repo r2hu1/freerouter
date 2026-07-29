@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   description:
     "Completely free ($0 cost) routing across free LLM models and providers. Like OpenRouter, but for free models.",
   openGraph: {
-    images: "/opengraph.png",
+    images: "/opengraph.svg",
   },
 };
 
