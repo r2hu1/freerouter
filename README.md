@@ -5,7 +5,6 @@ Open-source AI gateway that routes requests across free AI providers through a s
 <p align="center">
   <a href="https://www.npmjs.com/package/@freerouter/sdk"><img src="https://img.shields.io/npm/v/@freerouter/sdk?style=flat-square" alt="npm"></a>
   <a href="https://github.com/r2hu1/freerouter/blob/main/LICENSE"><img src="https://img.shields.io/github/license/r2hu1/freerouter?style=flat-square" alt="MIT"></a>
-  <a href="https://github.com/r2hu1/freerouter/actions"><img src="https://img.shields.io/github/actions/workflow/status/r2hu1/freerouter/test.yml?style=flat-square" alt="TEST"></a>
   <img src="https://img.shields.io/badge/cost-%240-brightgreen?style=flat-square" alt="$0 cost">
 </p>
 
