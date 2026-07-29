@@ -1,0 +1,131 @@
+---
+title: Usage Guide
+description: Real-world examples  -  OpenAI SDK, Vercel AI SDK, streaming, and compatibility reference. All at $0 cost using free providers.
+---
+
+import { Tabs, Tab } from 'fumadocs-ui/components/tabs'
+
+## OpenAI SDK
+
+Point the official OpenAI client at the FreeRouter base URL. Pass provider keys as request headers.
+
+```ts title="openai-sdk.ts"
+import OpenAI from "openai"
+
+const client = new OpenAI({
+  baseURL: "http://localhost:3000/v1",
+  apiKey: "unused", // FreeRouter doesn't check apiKey
+})
+
+const response = await client.chat.completions.create(
+  {
+    model: "free:auto",
+    messages: [{ role: "user", content: "Hello!" }],
+  },
+  {
+    headers: {
+      "X-Groq-Key": process.env.GROQ_API_KEY,
+    },
+  }
+)
+
+console.log(response.choices[0].message.content)
+```
+
+---
+
+## Vercel AI SDK
+
+Use `@ai-sdk/openai-compatible` or pass per-request headers directly.
+
+```ts title="ai-sdk.ts"
+import { generateText } from "ai"
+import { createOpenAICompatible } from "@ai-sdk/openai-compatible"
+
+const provider = createOpenAICompatible({
+  name: "freerouter",
+  baseURL: "http://localhost:3000/v1",
+})
+
+const { text } = await generateText({
+  model: provider("free:auto"),
+  headers: {
+    "X-Groq-Key": process.env.GROQ_API_KEY,
+    "X-Google-Key": process.env.GOOGLE_API_KEY,
+  },
+  prompt: "What is the meaning of life?",
+})
+
+console.log(text)
+```
+
+<Callout type="info" title="AI SDK compatibility">
+  The API maps OpenAI format to `LanguageModelV4` internally. Both `generateText` and `streamText` work.
+</Callout>
+
+---
+
+## Streaming
+
+<Tabs items={["cURL", "OpenAI SDK"]}>
+  <Tab value="cURL">
+
+  ```bash tab="Terminal"
+  curl -N http://localhost:3000/v1/chat/completions \
+    -H "Content-Type: application/json" \
+    -H "X-Groq-Key: gsk_..." \
+    -d '{
+      "model": "free:auto",
+      "messages": [{"role": "user", "content": "Count from 1 to 5"}],
+      "stream": true
+    }'
+  ```
+
+  Output:
+  ```
+  data: {"id":"chatcmpl-...","object":"chat.completion.chunk","choices":[{"index":0,"delta":{"role":"assistant"},"finish_reason":null}]}
+  data: {"id":"chatcmpl-...","object":"chat.completion.chunk","choices":[{"index":0,"delta":{"content":"1"},"finish_reason":null}]}
+  data: {"id":"chatcmpl-...","object":"chat.completion.chunk","choices":[{"index":0,"delta":{"content":"2"},"finish_reason":null}]}
+  data: [DONE]
+  ```
+  </Tab>
+  <Tab value="OpenAI SDK">
+
+  ```ts title="streaming.ts"
+  import OpenAI from "openai"
+
+  const client = new OpenAI({
+    baseURL: "http://localhost:3000/v1",
+    apiKey: "unused",
+  })
+
+  const stream = await client.chat.completions.create(
+    {
+      model: "free:auto",
+      messages: [{ role: "user", content: "Count from 1 to 5" }],
+      stream: true,
+    },
+    { headers: { "X-Groq-Key": process.env.GROQ_API_KEY } }
+  )
+
+  for await (const chunk of stream) {
+    process.stdout.write(chunk.choices[0]?.delta?.content ?? "")
+  }
+  ```
+  </Tab>
+</Tabs>
+
+---
+
+## Compatibility Matrix
+
+| Client | Setup |
+|--------|-------|
+| OpenAI JS/Python SDK | `baseURL: "http://localhost:3000/v1"`, keys as `headers` |
+| Vercel AI SDK (`ai`) | `createOpenAICompatible({ baseURL })` |
+| Any OpenAI-compatible client | Same `/v1/chat/completions` format |
+| cURL / HTTPie / Postman | Set provider key headers |
+
+<Callout type="info" title="No API key needed">
+  The API has **no API key of its own**. It's a stateless proxy  -  provider keys go in `X-{Provider}-Key` headers.
+</Callout>
