@@ -1,0 +1,102 @@
+---
+title: Installation
+description: Clone, install, and run the FreeRouter API server. Make your first completely free ($0 cost) request with cURL.
+---
+
+@freerouter/api is a completely free ($0 cost) HTTP API server wrapping `@freerouter/sdk` behind OpenAI-compatible endpoints. Routes exclusively across free providers. Built with [Hono](https://hono.dev/), runs on [Bun](https://bun.sh).
+
+<Cards>
+  <Card title="Installation" href="#installation" />
+  <Card title="Quickstart" href="#quickstart" />
+  <Card title="Usage Examples" href="/docs/api/usage" />
+  <Card title="API Routes" href="/docs/api/routes" />
+</Cards>
+
+---
+
+## Prerequisites
+
+| Requirement | Details |
+|-------------|---------|
+| Runtime | [Bun](https://bun.sh) 1.0+ |
+| Repository | Clone [github.com/anomalyco/freerouter](https://github.com/anomalyco/freerouter) |
+| API Key | At least one provider API key |
+
+---
+
+## Installation
+
+```bash tab="Terminal"
+git clone https://github.com/anomalyco/freerouter.git
+cd freerouter
+bun install
+```
+
+---
+
+## Quickstart
+
+### 1. Start the server
+
+```bash tab="Terminal"
+bun run apps/api/src/index.ts
+```
+
+<Callout type="info" title="Default port">
+  Server starts on `http://0.0.0.0:3000`. Override: `PORT=8080 bun run apps/api/src/index.ts`.
+</Callout>
+
+### 2. Make your first request
+
+```bash tab="Terminal"
+curl http://localhost:3000/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "X-Groq-Key: gsk_..." \
+  -d '{
+    "model": "free:auto",
+    "messages": [
+      {"role": "user", "content": "Hello! Who are you?"}
+    ]
+  }'
+```
+
+### 3. Check server health
+
+```bash tab="Terminal"
+curl http://localhost:3000/health
+```
+
+```json title="Response"
+{
+  "status": "ok",
+  "providers": {}
+}
+```
+
+<Callout type="info" title="BYOK headers">
+  Provider API keys go in HTTP headers, not the request body. See [Auth Reference](/docs/api/reference#authentication).
+</Callout>
+
+---
+
+## Available Endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/health` | Server and provider health |
+| `GET` | `/v1/models` | List all models and aliases |
+| `POST` | `/v1/chat/completions` | Chat completion (streaming optional) |
+
+<Callout type="info" title="OpenAI compatible">
+  All endpoints use OpenAI-compatible request/response formats. See [Routes](/docs/api/routes) for full schemas.
+</Callout>
+
+---
+
+## Next Steps
+
+<Cards>
+  <Card title="Usage Guide" href="/docs/api/usage" description="Examples with OpenAI SDK, Vercel AI SDK, and streaming." />
+  <Card title="API Routes" href="/docs/api/routes" description="Detailed request/response schemas for all endpoints." />
+  <Card title="Reference" href="/docs/api/reference" description="Authentication headers, error codes, environment variables." />
+</Cards>
