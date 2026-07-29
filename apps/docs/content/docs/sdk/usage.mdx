@@ -1,0 +1,117 @@
+---
+title: Usage Guide
+description: Real-world examples  -  streaming, structured output, multi-user BYOK servers, and diagnostics. All completely free ($0 cost).
+---
+
+## Streaming
+
+```ts title="streaming.ts"
+import { createFreeRouter } from "@freerouter/sdk"
+import { streamText } from "ai"
+
+const freerouter = createFreeRouter()
+
+const result = streamText({
+  model: freerouter.languageModel("free:fast", {
+    groq: process.env.GROQ_API_KEY,
+  }),
+  prompt: "Write a short poem about artificial intelligence",
+})
+
+for await (const delta of result.textStream) {
+  process.stdout.write(delta)
+}
+```
+
+---
+
+## Structured output
+
+```ts title="structured.ts"
+import { createFreeRouter } from "@freerouter/sdk"
+import { generateObject } from "ai"
+import { z } from "zod"
+
+const freerouter = createFreeRouter()
+
+const { object } = await generateObject({
+  model: freerouter.languageModel("free:auto", {
+    groq: process.env.GROQ_API_KEY,
+  }),
+  schema: z.object({
+    name: z.string(),
+    age: z.number(),
+    email: z.string().email(),
+  }),
+  prompt: "Extract name, age, and email from: John Doe, 28, john@example.com",
+})
+
+console.log(object)
+// { name: "John Doe", age: 28, email: "john@example.com" }
+```
+
+<Callout type="info" title="AI SDK Compatibility">
+  `generateObject` and `streamObject` work with any alias. The model resolves to a provider that supports the required capabilities.
+</Callout>
+
+---
+
+## Multi-user server (BYOK per request)
+
+Each user brings their own API keys. Health state is isolated per key fingerprint  -  user A's rate-limit never affects user B.
+
+```ts title="server.ts"
+import { createFreeRouter } from "@freerouter/sdk"
+import { generateText } from "ai"
+
+const freerouter = createFreeRouter()
+
+Bun.serve({
+  port: 3000,
+  async fetch(req) {
+    const { prompt } = await req.json()
+    const groqKey = req.headers.get("X-Groq-Key")
+    const googleKey = req.headers.get("X-Google-Key")
+
+    const keys: Record<string, string> = {}
+    if (groqKey) keys.groq = groqKey
+    if (googleKey) keys.google = googleKey
+
+    const { text } = await generateText({
+      model: freerouter.languageModel("free:auto", keys),
+      prompt,
+    })
+
+    return Response.json({ text })
+  },
+})
+```
+
+<Callout type="info" title="Key isolation">
+  Health is tracked per `(provider, keyFingerprint)` pair. Two users with different Groq keys have completely independent health entries.
+</Callout>
+
+---
+
+## Diagnostics
+
+```ts title="diagnostics.ts"
+import { createFreeRouter } from "@freerouter/sdk"
+
+const freerouter = createFreeRouter()
+
+// List all ~87 models
+console.table(
+  freerouter.models().map((m) => ({
+    provider: m.provider,
+    model: m.modelId,
+    capabilities: m.capabilities.join(", "),
+    context: `${(m.contextWindow / 1000).toFixed(0)}K`,
+  }))
+)
+
+// Check health for your keys (scoped  -  never leaks other users)
+const health = freerouter.healthFor({ groq: process.env.GROQ_API_KEY! })
+console.log(`Groq state: ${health.groq.state}`)
+// "healthy" | "rate-limited" | "down"
+```
