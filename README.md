@@ -1,7 +1,5 @@
 # FreeRouter - One API for all free AI providers
 
-Open-source AI gateway that routes requests across free AI providers through a single OpenAI-compatible API. Integrate once, let FreeRouter handle provider selection, failover, rate limits, and API differences.
-
 <p align="center">
   <a href="https://www.npmjs.com/package/@freerouter/sdk"><img src="https://img.shields.io/npm/v/@freerouter/sdk?style=flat-square" alt="npm"></a>
   <a href="https://github.com/r2hu1/freerouter/blob/main/LICENSE"><img src="https://img.shields.io/github/license/r2hu1/freerouter?style=flat-square" alt="MIT"></a>
@@ -15,6 +13,8 @@ Open-source AI gateway that routes requests across free AI providers through a s
   &nbsp;·&nbsp;
   <a href="https://www.npmjs.com/package/@freerouter/sdk">📦 @freerouter/sdk</a>
 </p>
+
+Open-source AI gateway that routes requests across free AI providers through a single OpenAI-compatible API. Integrate once, let FreeRouter handle provider selection, failover, rate limits, and API differences.
 
 ## Quick Start
 
