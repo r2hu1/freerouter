@@ -13,8 +13,9 @@
 </p>
 
 <h3 align="center">FreeRouter - One API for all free AI providers</h3>
-
-Open-source AI gateway that routes requests across free AI providers through a single OpenAI-compatible API. Integrate once, let FreeRouter handle provider selection, failover, rate limits, and API differences.
+<p align="center">
+    Open-source AI gateway that routes requests across free AI providers through a single OpenAI-compatible API. Integrate once, let FreeRouter handle provider selection, failover, rate limits, and API differences.
+</p>
 
 ## Quick Start
 
