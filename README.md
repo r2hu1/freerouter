@@ -6,15 +6,15 @@
   <img src="https://img.shields.io/badge/cost-%240-brightgreen?style=flat-square" alt="$0 cost">
 </p>
 
+<h3 align="center">FreeRouter - One API for all free AI providers</h3>
+<p align="center">
+    Open-source AI gateway that routes requests across free AI providers through a single OpenAI-compatible API. Integrate once, let FreeRouter handle provider selection, failover, rate limits, and API differences.
+</p>
+
 <p align="center">
   <a href="https://freerouter.vercel.app">📖 Docs</a>
   &nbsp;·&nbsp;
   <a href="https://www.npmjs.com/package/@freerouter/sdk">📦 @freerouter/sdk</a>
-</p>
-
-<h3 align="center">FreeRouter - One API for all free AI providers</h3>
-<p align="center">
-    Open-source AI gateway that routes requests across free AI providers through a single OpenAI-compatible API. Integrate once, let FreeRouter handle provider selection, failover, rate limits, and API differences.
 </p>
 
 ## Quick Start
