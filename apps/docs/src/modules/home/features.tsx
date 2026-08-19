@@ -52,35 +52,6 @@ export function Features() {
             )}
             style={{ animationDelay: `${i * 60}ms` }}
           >
-            {/* corner texture */}
-            <svg
-              className="pointer-events-none absolute -right-6 -top-6 h-28 w-28 text-fd-foreground/[0.04] transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6"
-              viewBox="0 0 100 100"
-              fill="none"
-            >
-              <circle
-                cx="50"
-                cy="50"
-                r="49"
-                stroke="currentColor"
-                strokeWidth="1"
-              />
-              <circle
-                cx="50"
-                cy="50"
-                r="34"
-                stroke="currentColor"
-                strokeWidth="1"
-              />
-              <circle
-                cx="50"
-                cy="50"
-                r="19"
-                stroke="currentColor"
-                strokeWidth="1"
-              />
-            </svg>
-
             {/* faint diagonal hairline accent */}
             <span
               className={cn(

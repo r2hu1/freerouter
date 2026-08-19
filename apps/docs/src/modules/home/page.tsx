@@ -5,7 +5,9 @@ export function HomePageModule() {
   return (
     <main className="flex-1">
       <Hero />
-      <Features />
+      <div className="px-5">
+        <Features />
+      </div>
     </main>
   );
 }

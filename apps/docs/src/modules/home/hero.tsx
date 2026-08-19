@@ -108,74 +108,71 @@ function RouterConsole() {
 export function Hero() {
   return (
     <section className="px-6 pt-18 pb-20 md:px-12 lg:px-20">
-      <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-16 items-center">
-        <div>
-          <div className="inline-flex items-center w-fit gap-1.5 rounded-full border border-fd-border bg-fd-secondary px-3.5 py-1 text-sm text-fd-muted-foreground mb-6">
-            <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
-            Like OpenRouter, but for free models
-          </div>
-
-          <h1 className="text-4xl sm:text-5xl max-w-xl leading-[1.08] font-medium tracking-tight">
-            Route across free LLMs with a{" "}
-            <span className="relative inline-block text-fd-primary">
-              single API
-              <svg
-                className="absolute -bottom-1.5 left-0 w-full text-fd-primary/40"
-                viewBox="0 0 200 8"
-                preserveAspectRatio="none"
-                fill="none"
-              >
-                <path
-                  d="M1 5.5C40 1.5 160 1.5 199 5.5"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </span>
-            .
-          </h1>
-
-          <p className="mt-6 text-base sm:text-lg text-fd-muted-foreground max-w-xl">
-            FreeRouter is the open-source AI gateway that routes requests across
-            free LLM providers through one OpenAI-compatible API.
-          </p>
-
-          <div className="mt-8 flex sm:items-center gap-3">
-            <Link
-              href="/docs"
-              className="inline-flex items-center gap-2 rounded-xl bg-fd-primary text-fd-primary-foreground px-5 py-2.5 font-medium shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.97] transition-transform duration-150 ease-out text-sm cursor-pointer"
-            >
-              Get started
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-            <Link
-              href="https://github.com/r2hu1/freerouter"
-              className="inline-flex items-center gap-2 rounded-xl bg-fd-secondary text-fd-secondary-foreground px-5 py-2.5 font-medium hover:brightness-90 active:scale-[0.97] transition-transform duration-150 ease-out text-sm cursor-pointer"
-            >
-              Github
-            </Link>
-          </div>
-
-          <div className="mt-12 grid grid-cols-2 gap-x-6 gap-y-5 sm:flex sm:flex-wrap sm:gap-0">
-            {stats.map(([value, label], i) => (
-              <div
-                key={label}
-                className={`flex flex-col gap-0.5 sm:pr-8 ${
-                  i > 0 ? "sm:pl-8 sm:border-l sm:border-fd-border" : ""
-                }`}
-              >
-                <span className="font-mono text-lg font-semibold">{value}</span>
-                <span className="text-xs uppercase tracking-wide text-fd-muted-foreground">
-                  {label}
-                </span>
-              </div>
-            ))}
-          </div>
+      <div className="text-center grid place-content-center">
+        <div className="inline-flex mx-auto items-center w-fit gap-1.5 rounded-full border border-fd-border bg-fd-secondary px-3.5 py-1 text-sm text-fd-muted-foreground mb-6">
+          <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+          Like OpenRouter, but for free models
         </div>
 
-        <RouterConsole />
+        <h1 className="text-4xl sm:text-5xl max-w-xl leading-[1.08] font-medium tracking-tight">
+          Route across free LLMs with a{" "}
+          <span className="relative inline-block text-fd-primary">
+            single API
+            <svg
+              className="absolute -bottom-1.5 left-0 w-full text-fd-primary/40"
+              viewBox="0 0 200 8"
+              preserveAspectRatio="none"
+              fill="none"
+            >
+              <path
+                d="M1 5.5C40 1.5 160 1.5 199 5.5"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+            </svg>
+          </span>
+        </h1>
+
+        <p className="mt-6 text-base sm:text-lg text-fd-muted-foreground max-w-xl">
+          FreeRouter is the open-source AI gateway that routes requests across
+          free LLM providers through one OpenAI-compatible API.
+        </p>
+
+        <div className="mt-8 flex items-center justify-center gap-3">
+          <Link
+            href="/docs"
+            className="inline-flex items-center gap-2 rounded-xl bg-fd-primary text-fd-primary-foreground px-5 py-2.5 font-medium shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.97] transition-transform duration-150 ease-out text-sm cursor-pointer"
+          >
+            Get started
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+          <Link
+            href="https://github.com/r2hu1/freerouter"
+            className="inline-flex items-center gap-2 rounded-xl bg-fd-secondary text-fd-secondary-foreground px-5 py-2.5 font-medium hover:brightness-90 active:scale-[0.97] transition-transform duration-150 ease-out text-sm cursor-pointer"
+          >
+            Github
+          </Link>
+        </div>
+
+        <div className="mt-12 grid grid-cols-2 gap-x-6 gap-y-5 mx-auto sm:flex sm:flex-wrap sm:gap-0">
+          {stats.map(([value, label], i) => (
+            <div
+              key={label}
+              className={`flex flex-col gap-0.5 sm:pr-8 ${
+                i > 0 ? "sm:pl-8 sm:border-l sm:border-fd-border" : ""
+              }`}
+            >
+              <span className="font-mono text-lg font-semibold">{value}</span>
+              <span className="text-xs uppercase tracking-wide text-fd-muted-foreground">
+                {label}
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
+
+      {/*<RouterConsole />*/}
     </section>
   );
 }
