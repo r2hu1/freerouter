@@ -114,7 +114,7 @@ export function App() {
                 variant="ghost"
                 size="lg"
                 className={[
-                  "relative justify-start gap-3 rounded-lg py-2.5 text-[15px]",
+                  "relative h-10 justify-start gap-3 rounded-lg py-2.5 text-[15px]",
                   active
                     ? "bg-secondary font-medium text-foreground before:absolute before:left-0 before:top-1/2 before:h-6 before:w-[3px] before:-translate-y-1/2 before:rounded-r-full before:bg-primary"
                     : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground",
