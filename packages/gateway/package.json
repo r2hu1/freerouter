@@ -1,0 +1,50 @@
+{
+  "name": "@freerouter/gateway",
+  "version": "0.1.0",
+  "description": "Local FreeRouter gateway: run a private OpenAI-compatible proxy with your own free-provider keys, served with a bundled dashboard. Invoke via `npx @freerouter/gateway serve`.",
+  "type": "module",
+  "bin": {
+    "freerouter-gateway": "dist/cli.js"
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "bun build ./src/bin.ts --packages=external --target node --format esm --outfile ./dist/cli.js && vite build --config vite.config.ts",
+    "build:cli": "bun build ./src/bin.ts --packages=external --target node --format esm --outfile ./dist/cli.js",
+    "build:web": "vite build --config vite.config.ts",
+    "dev": "bun run src/dev.ts",
+    "serve": "bun run src/bin.ts serve",
+    "lint": "biome lint .",
+    "format": "biome format --write .",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "@freerouter/sdk": "workspace:*",
+    "@hono/node-server": "^1.13.7",
+    "hono": "^4.12.32",
+    "zod": "^3.24.4"
+  },
+  "devDependencies": {
+    "@base-ui/react": "^1.7.0",
+    "@tailwindcss/vite": "^4.1.11",
+    "@ai-sdk/provider": "^4.0.3",
+    "@types/bun": "^1.3.14",
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "recharts": "^3.8.0",
+    "tailwind-merge": "^3.3.1",
+    "tailwindcss": "^4.1.11",
+    "tw-animate-css": "^1.3.2",
+    "typescript": "^5",
+    "vite": "^6.0.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
