@@ -1,9 +1,0 @@
-{
-  "extends": "@freerouter/typescript-config/react-library.json",
-  "compilerOptions": {
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "noEmit": true
-  },
-  "include": ["src"]
-}
