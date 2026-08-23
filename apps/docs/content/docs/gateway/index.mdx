@@ -1,0 +1,47 @@
+---
+title: FreeRouter Gateway
+description: Self-hosted, OpenAI-compatible gateway for free LLM providers — with a dashboard, encrypted key storage, gateway-key auth, and usage analytics.
+---
+
+`@freerouter/gateway` is a self-hosted server that wraps `@freerouter/sdk` in a deployable package. It exposes OpenAI-compatible `/v1/chat/completions` and `/v1/models` endpoints, stores your free-provider API keys **encrypted at rest**, issues *gateway keys* so clients never see provider secrets, and ships a bundled web dashboard for management and analytics.
+
+import { Server, Key, BarChart3, Settings2 } from "lucide-react";
+
+<Cards>
+  <Card title="Getting Started" href="/docs/gateway/getting-started" description="Install, run, and make your first request." icon={<Server />} />
+  <Card title="Configuration" href="/docs/gateway/configuration" description="Data directory, env vars, CORS, and encryption." icon={<Settings2 />} />
+  <Card title="Provider Keys" href="/docs/gateway/providers" description="Connect free-tier provider keys via the API." icon={<Key />} />
+  <Card title="Gateway Keys" href="/docs/gateway/gateway-keys" description="Issue and use gateway keys in clients." icon={<Key />} />
+  <Card title="Analytics" href="/docs/gateway/analytics" description="Usage summary, timeseries, and events." icon={<BarChart3 />} />
+  <Card title="API Reference" href="/docs/gateway/api" description="All management and proxy routes." icon={<Server />} />
+  <Card title="Development" href="/docs/gateway/development" description="Run the dev server with HMR and the Vite proxy." icon={<Settings2 />} />
+</Cards>
+
+## Why a gateway?
+
+- **One key for clients.** Issue a `fr-live-...` gateway key; clients use it instead of provider keys. Provider secrets stay server-side and encrypted.
+- **Bring your own free keys.** Connect Groq, Google, OpenRouter, and more — the gateway routes to them at $0 cost.
+- **Dashboard + analytics.** Manage providers, keys, and watch usage from a local web UI.
+- **OpenAI-compatible.** Any OpenAI SDK client works by pointing `baseURL` at the gateway.
+
+## Packages
+
+| Package | Description |
+| ------- | ----------- |
+| `@freerouter/sdk` | Core routing SDK (BYOK, failover, alias resolution). |
+| `@freerouter/api` | Stateless Hono server exposing OpenAI-compatible endpoints. |
+| `@freerouter/gateway` | Self-hosted gateway: SDK + encrypted key storage + dashboard + analytics + gateway-key auth. |
+
+## Quick Links
+
+- [Getting Started](/docs/gateway/getting-started) — install, run, first request
+- [Configuration](/docs/gateway/configuration) — `FREEROUTER_HOME`, CORS, encryption
+- [Provider Keys](/docs/gateway/providers) — connect free provider keys
+- [Gateway Keys](/docs/gateway/gateway-keys) — issue and use client keys
+- [Analytics](/docs/gateway/analytics) — usage endpoints
+- [API Reference](/docs/gateway/api) — every route
+- [Development](/docs/gateway/development) — `bun run dev` and route testing
+
+## Source
+
+- GitHub: [github.com/r2hu1/freerouter](https://github.com/r2hu1/freerouter)

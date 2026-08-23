@@ -21,7 +21,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { useEffect, useState } from "react"
-import { Area, AreaChart, XAxis, YAxis } from "recharts"
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import { PageHeader } from "@/components/PageHeader"
 import {
   type TimeseriesPoint,
@@ -44,10 +44,50 @@ function Stat({
 }: { title: string; value: string; sub?: string }) {
   return (
     <Card>
-      <CardContent className="p-4">
-        <div className="text-xs text-muted-foreground">{title}</div>
-        <div className="mt-1 text-2xl font-semibold">{value}</div>
-        {sub && <div className="text-xs text-muted-foreground">{sub}</div>}
+      <CardContent className="p-5">
+        <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          {title}
+        </div>
+        <div className="mt-2 text-2xl font-semibold tabular-nums tracking-tight">
+          {value}
+        </div>
+        {sub && <div className="mt-1 text-xs text-muted-foreground">{sub}</div>}
+      </CardContent>
+    </Card>
+  )
+}
+
+function Breakdown({
+  title,
+  data,
+}: {
+  title: string
+  data: Record<string, number>
+}) {
+  const entries = Object.entries(data)
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{title}</CardTitle>
+      </CardHeader>
+      <CardContent className="text-sm">
+        {entries.length === 0 ? (
+          <div className="text-muted-foreground">No data yet</div>
+        ) : (
+          <ul className="divide-y divide-border">
+            {entries.map(([k, v]) => (
+              <li
+                key={k}
+                className="flex items-center justify-between gap-3 py-2 first:pt-0 last:pb-0"
+              >
+                <span className="truncate text-foreground/90">{k}</span>
+                <Badge variant="secondary" className="tabular-nums">
+                  {v}
+                </Badge>
+              </li>
+            ))}
+          </ul>
+        )}
       </CardContent>
     </Card>
   )
@@ -141,22 +181,52 @@ export function Analytics() {
         <CardContent>
           <ChartContainer
             config={{ requests: { label: "Requests" } }}
-            className="h-56 w-full"
+            className="h-72 w-full"
           >
-            <AreaChart data={points}>
-              <XAxis dataKey="label" tickLine={false} axisLine={false} />
+            <AreaChart
+              data={points}
+              margin={{ top: 8, left: 4, right: 8, bottom: 0 }}
+            >
+              <defs>
+                <linearGradient id="fillRequests" x1="0" y1="0" x2="0" y2="1">
+                  <stop
+                    offset="0%"
+                    stopColor="var(--chart-1)"
+                    stopOpacity={0.25}
+                  />
+                  <stop
+                    offset="100%"
+                    stopColor="var(--chart-1)"
+                    stopOpacity={0}
+                  />
+                </linearGradient>
+              </defs>
+              <CartesianGrid
+                vertical={false}
+                stroke="var(--border)"
+                strokeOpacity={0.5}
+              />
+              <XAxis
+                dataKey="label"
+                tickLine={false}
+                axisLine={false}
+                tickMargin={8}
+                tick={{ fill: "var(--muted-foreground)", fontSize: 12 }}
+              />
               <YAxis
                 allowDecimals={false}
                 tickLine={false}
                 axisLine={false}
-                width={32}
+                width={36}
+                tick={{ fill: "var(--muted-foreground)", fontSize: 12 }}
               />
               <ChartTooltip content={<ChartTooltipContent />} />
               <Area
                 dataKey="requests"
                 type="monotone"
-                fill="var(--chart-1)"
                 stroke="var(--chart-1)"
+                strokeWidth={2}
+                fill="url(#fillRequests)"
               />
             </AreaChart>
           </ChartContainer>
@@ -164,54 +234,9 @@ export function Analytics() {
       </Card>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <Card>
-          <CardHeader>
-            <CardTitle>By provider</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-1 text-sm">
-            {Object.entries(summary.byProvider).length === 0 && (
-              <div className="text-muted-foreground">No data</div>
-            )}
-            {Object.entries(summary.byProvider).map(([k, v]) => (
-              <div key={k} className="flex justify-between">
-                <span>{k}</span>
-                <Badge variant="secondary">{v}</Badge>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>By alias</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-1 text-sm">
-            {Object.entries(summary.byAlias).length === 0 && (
-              <div className="text-muted-foreground">No data</div>
-            )}
-            {Object.entries(summary.byAlias).map(([k, v]) => (
-              <div key={k} className="flex justify-between">
-                <span>{k}</span>
-                <Badge variant="secondary">{v}</Badge>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>By model</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-1 text-sm">
-            {Object.entries(summary.byModel).length === 0 && (
-              <div className="text-muted-foreground">No data</div>
-            )}
-            {Object.entries(summary.byModel).map(([k, v]) => (
-              <div key={k} className="flex justify-between">
-                <span className="truncate">{k}</span>
-                <Badge variant="secondary">{v}</Badge>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
+        <Breakdown title="By provider" data={summary.byProvider} />
+        <Breakdown title="By alias" data={summary.byAlias} />
+        <Breakdown title="By model" data={summary.byModel} />
       </div>
 
       <Card>

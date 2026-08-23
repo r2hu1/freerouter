@@ -1,0 +1,80 @@
+---
+title: Provider Keys
+description: Connect free-tier provider API keys to the gateway so it can route requests at $0 cost.
+---
+
+The gateway needs at least one provider key to actually serve completions. Keys are sent in requests as `X-<Provider>-Key` headers (BYOK) or stored encrypted on the server and used automatically.
+
+---
+
+## Supported providers & header names
+
+Pass the key per-request via the matching header, or store it via the API/dashboard:
+
+| Provider | Header | Signup |
+| -------- | ------ | ------ |
+| Groq | `X-Groq-Key` | [console.groq.com](https://console.groq.com/keys) |
+| Google Gemini | `X-Google-Key` | [aistudio.google.com](https://aistudio.google.com/apikey) |
+| OpenRouter | `X-OpenRouter-Key` | [openrouter.ai](https://openrouter.ai/keys) |
+| Cloudflare | `X-Cloudflare-Key` | [dash.cloudflare.com](https://dash.cloudflare.com/profile/api-tokens) |
+| NVIDIA NIM | `X-Nvidia-Key` | [build.nvidia.com](https://build.nvidia.com/microservices) |
+| Cerebras | `X-Cerebras-Key` | [cloud.cerebras.ai](https://cloud.cerebras.ai/) |
+| Together | `X-Together-Key` | [api.together.xyz](https://api.together.xyz/settings/api-keys) |
+| Fireworks | `X-Fireworks-Key` | [fireworks.ai](https://fireworks.ai/api-keys) |
+| Mistral | `X-Mistral-Key` | [console.mistral.ai](https://console.mistral.ai/api-keys/) |
+| SambaNova | `X-SambaNova-Key` | [cloud.sambanova.ai](https://cloud.sambanova.ai/) |
+| DeepSeek | `X-DeepSeek-Key` | [platform.deepseek.com](https://platform.deepseek.com/api_keys) |
+| DeepInfra | `X-DeepInfra-Key` | [deepinfra.com](https://deepinfra.com/dash/api_keys) |
+| Cohere | `X-Cohere-Key` | [dashboard.cohere.com](https://dashboard.cohere.com/api-keys) |
+
+<Callout type="info" title="Stored vs per-request">
+  If you store a provider key on the server, the gateway uses it automatically — clients only need a gateway key. If you instead pass an `X-<Provider>-Key` header on a request, that overrides the stored key for that provider (useful for multi-tenant or testing).
+</Callout>
+
+---
+
+## Connect a key (stored, encrypted)
+
+```bash
+# 1. Get a session token (localhost only)
+TOK=$(curl -s -H "host: localhost" http://localhost:4141/v1/gateway/bootstrap \
+  | python3 -c "import sys,json;print(json.load(sys.stdin)['token'])")
+
+# 2. Store a provider key (encrypted at rest)
+curl -X POST -H "x-freerouter-session: $TOK" \
+  -H "Content-Type: application/json" \
+  -d '{"provider":"groq","key":"gsk_xxx","label":"my-groq"}' \
+  http://localhost:4141/v1/providers
+```
+
+List connected providers:
+
+```bash
+curl -H "x-freerouter-session: $TOK" http://localhost:4141/v1/providers
+```
+
+Remove one (by id from the list above):
+
+```bash
+curl -X DELETE -H "x-freerouter-session: $TOK" \
+  http://localhost:4141/v1/providers/<id>
+```
+
+<Callout type="warn" title="Never commit keys">
+  Provider keys are stored locally and encrypted. Do not put raw keys in code or version control. The dashboard "Connect a provider" form does the same `POST /v1/providers` call for you.
+</Callout>
+
+---
+
+## Use a key per-request (BYOK, no storage)
+
+Skip storage entirely and pass the key inline. The model must then be a concrete `provider/modelId`:
+
+```bash
+curl http://localhost:4141/v1/chat/completions \
+  -H "X-Groq-Key: gsk_xxx" \
+  -H "Content-Type: application/json" \
+  -d '{"model":"groq/llama-3.1-8b-instant","messages":[{"role":"user","content":"Hi"}]}'
+```
+
+See [SDK Providers](/docs/sdk/providers) for the full list of free model IDs per provider.

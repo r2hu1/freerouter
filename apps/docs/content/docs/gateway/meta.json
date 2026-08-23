@@ -1,0 +1,19 @@
+{
+  "title": "@freerouter/gateway",
+  "description": "Self-hosted OpenAI-compatible gateway with a dashboard, encrypted key storage, and analytics.",
+  "icon": "Key",
+  "root": true,
+  "pages": [
+    "---Getting Started---",
+    "index",
+    "getting-started",
+    "configuration",
+    "---Guides---",
+    "providers",
+    "gateway-keys",
+    "analytics",
+    "---Reference---",
+    "api",
+    "development"
+  ]
+}

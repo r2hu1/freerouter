@@ -1,0 +1,95 @@
+---
+title: Configuration
+description: Data directory, environment variables, the config file, CORS, and how provider keys are encrypted at rest.
+---
+
+The gateway keeps all state under a **home directory** and reads a small config file. Everything is local — nothing leaves your machine except the provider API calls you authorize.
+
+---
+
+## Data directory
+
+Set with the `FREEROUTER_HOME` environment variable, otherwise it defaults to `~/.freerouter`.
+
+```bash tab="Override"
+export FREEROUTER_HOME=/path/to/freerouter-data
+npx @freerouter/gateway serve
+```
+
+Files written there:
+
+| File | Purpose | Notes |
+| ---- | ------- | ----- |
+| `gateway.config.json` | Server settings | `chmod 600`, contains the encryption secret |
+| `provider_keys.json` | Encrypted provider keys | AES-256-GCM ciphertext |
+| `gateway_keys.json` | Issued gateway keys (hashed) | Only hashes + metadata stored |
+| `usage_events.jsonl` | Analytics events | One JSON object per request |
+
+<Callout type="warn" title="Protect the home directory">
+  `gateway.config.json` holds the master secret used to encrypt provider keys, and the gateway keys file holds credential metadata. Restrict access (the config file is written `0600`). Back it up if you want to preserve keys and analytics across machines.
+</Callout>
+
+---
+
+## Config file
+
+`gateway.config.json` is created automatically on first run. Fields:
+
+| Field | Type | Default | Description |
+| ----- | ---- | ------- | ----------- |
+| `port` | number | `4141` | Port the server binds |
+| `host` | string | `127.0.0.1` | Bind host (use `0.0.0.0` to expose on your network) |
+| `autoOpen` | boolean | `true` | Open the dashboard in a browser on start |
+| `corsOrigins` | string | `"*"` | CORS allowed origins (`*` or comma-separated list) |
+| `defaultAlias` | string | `"free:auto"` | Alias used when a client requests no/unknown model |
+| `masterSecret` | string | (generated) | Key-derivation secret for encrypting provider keys |
+| `gatewaySalt` | string | (generated) | Salt for gateway-key hashing |
+
+Edit it directly, or manage `port` / `host` / `autoOpen` / `corsOrigins` / `defaultAlias` via `PUT /v1/gateway/settings` (see [API Reference](/docs/gateway/api)).
+
+```bash tab="CLI flags override config"
+npx @freerouter/gateway serve --port 8080 --host 0.0.0.0 --no-open
+```
+
+| Flag | Shorthand | Effect |
+| ---- | --------- | ------ |
+| `--port <n>` | `-p <n>` | Bind port |
+| `--host <h>` | `-h <h>` | Bind host |
+| `--no-open` | — | Don't open a browser |
+
+---
+
+## Encryption at rest
+
+Provider keys are **never stored in plaintext**. They are encrypted with **AES-256-GCM** using a key derived from `masterSecret` + `gatewaySalt` (both in `gateway.config.json`). The gateway key shown to clients is a separate bearer credential; only its hash is persisted.
+
+<Callout type="info" title="Rotate by reset">
+  To wipe all local state (keys + analytics) and start fresh, run `npx @freerouter/gateway reset`. This deletes the four data files above.
+</Callout>
+
+---
+
+## CORS
+
+All `/v1/*` routes send CORS headers. By default `corsOrigins = "*"`. To lock it down to specific origins, set a comma-separated list:
+
+```json title="gateway.config.json"
+{ "corsOrigins": "https://app.example.com,https://dashboard.example.com" }
+```
+
+Allowed request headers include the standard ones plus provider BYOK headers (`X-Groq-Key`, `X-Google-Key`, …), `x-freerouter-session`, and `x-freerouter-test`. The latter flags a request as a connectivity test so it is excluded from analytics.
+
+---
+
+## CLI commands
+
+| Command | Description |
+| ------- | ----------- |
+| `serve` | Start the server (default). Auto-creates a gateway key if none exists. |
+| `init` | Create the config file at the home directory without starting. |
+| `reset` | Delete all local data files (config, keys, analytics). |
+
+```bash
+npx @freerouter/gateway init
+npx @freerouter/gateway reset
+```

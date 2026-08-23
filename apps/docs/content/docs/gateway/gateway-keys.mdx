@@ -1,0 +1,88 @@
+---
+title: Gateway Keys
+description: Issue gateway keys so clients authenticate without ever seeing provider secrets.
+---
+
+A **gateway key** (`fr-live-...`) is the bearer credential your applications send to the gateway. It is independent of provider keys: clients use the gateway key, and the gateway attaches the (encrypted, server-side) provider keys when calling upstream providers.
+
+---
+
+## Why gateway keys?
+
+- Clients never receive provider API keys.
+- You can issue/revoke per-application keys without touching provider accounts.
+- Analytics are attributed to requests authenticated by gateway key.
+
+---
+
+## Create a gateway key
+
+The first key is auto-generated on `serve` and printed to the console. Create more any time:
+
+```bash
+TOK=$(curl -s -H "host: localhost" http://localhost:4141/v1/gateway/bootstrap \
+  | python3 -c "import sys,json;print(json.load(sys.stdin)['token'])")
+
+# Returns the FULL key once (store it); GET afterwards returns only masked keys
+curl -X POST -H "x-freerouter-session: $TOK" \
+  -H "Content-Type: application/json" \
+  -d '{"label":"my-app"}' \
+  http://localhost:4141/v1/gateway/keys
+# => { "id": "gk_...", "label": "my-app", "key": "fr-live-9f3k...", "createdAt": 1710000000 }
+```
+
+<Callout type="warn" title="The full key is shown once">
+  `POST /v1/gateway/keys` returns the plaintext key in the response. `GET /v1/gateway/keys` returns only **masked** keys (`fr-live-…1234`) — safe to display in the dashboard, but not usable for auth. Store the full key immediately.
+</Callout>
+
+List (masked) and revoke:
+
+```bash
+curl -H "x-freerouter-session: $TOK" http://localhost:4141/v1/gateway/keys
+curl -X DELETE -H "x-freerouter-session: $TOK" http://localhost:4141/v1/gateway/keys/<id>
+```
+
+---
+
+## Authenticate a request
+
+Send the gateway key as a standard Bearer token. The gateway then uses stored provider keys automatically:
+
+```bash
+curl http://localhost:4141/v1/chat/completions \
+  -H "Authorization: Bearer fr-live-9f3k..." \
+  -H "Content-Type: application/json" \
+  -d '{"model":"free:auto","messages":[{"role":"user","content":"Hi"}]}'
+```
+
+In an OpenAI SDK client:
+
+```ts title="client.ts"
+import OpenAI from "openai"
+
+const client = new OpenAI({
+  baseURL: "http://localhost:4141/v1",
+  apiKey: "fr-live-9f3k...", // gateway key
+})
+
+const res = await client.chat.completions.create({
+  model: "free:auto",
+  messages: [{ role: "user", content: "Hi" }],
+})
+```
+
+---
+
+## Three ways to authenticate a completion
+
+| Method | Header | When to use |
+| ------ | ------ | ----------- |
+| Gateway key | `Authorization: Bearer fr-live-...` | Normal clients/apps. Provider keys stay server-side. |
+| Provider BYOK | `X-Groq-Key: gsk_...` | No stored key; pass the provider key inline (model must be `provider/modelId`). |
+| Session | `x-freerouter-session: <token>` | Management routes only (localhost bootstrapped); not for `/v1/chat/completions` from clients. |
+
+You can combine a gateway key **and** a provider BYOK header — the request header is used for that provider, overriding the stored key.
+
+<Callout type="info" title="Testing without polluting analytics">
+  Add `x-freerouter-test: 1` to any `/v1/chat/completions` request. The gateway processes it normally but does **not** record it in analytics (the dashboard "Test" button does this).
+</Callout>

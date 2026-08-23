@@ -5,7 +5,7 @@ description: Completely free ($0 cost) routing across free LLM models and provid
 
 FreeRouter routes LLM requests across 13 free model providers - all at $0 cost - with automatic failover, per-key health isolation, and OpenAI-compatible HTTP endpoints.
 
-import { Package, Server } from "lucide-react";
+import { Package, Server, Key } from "lucide-react";
 
 <Cards>
   <Card
@@ -20,6 +20,12 @@ import { Package, Server } from "lucide-react";
     href="/docs/api"
     description="HTTP API Server - OpenAI-compatible REST endpoints wrapping the SDK. Bring your own free provider keys."
   />
+  <Card
+    icon={<Key />}
+    title="@freerouter/gateway"
+    href="/docs/gateway"
+    description="Self-hosted gateway - OpenAI-compatible proxy with encrypted key storage, gateway-key auth, a dashboard, and analytics."
+  />
 </Cards>
 
 ## Packages
@@ -28,6 +34,7 @@ import { Package, Server } from "lucide-react";
 | ----------------- | ------------------------------------------------------------------------------------------------- |
 | `@freerouter/sdk` | Core SDK - model registry, alias resolution, health tracking, failover LanguageModelV4 wrapper    |
 | `@freerouter/api` | HTTP API - Hono server exposing OpenAI-compatible `/v1/chat/completions`, `/v1/models`, `/health` |
+| `@freerouter/gateway` | Self-hosted gateway - SDK + encrypted key storage + dashboard + analytics + gateway-key auth (run via `npx @freerouter/gateway serve`) |
 | `@freerouter/db`  | Database-backed health stores (coming soon)                                                       |
 
 ## Quick Links
@@ -41,6 +48,12 @@ import { Package, Server } from "lucide-react";
 - [API Usage Guide](/docs/api/usage) - OpenAI SDK, Vercel AI SDK, streaming
 - [API Routes](/docs/api/routes) - Full request/response schemas
 - [API Reference](/docs/api/reference) - Auth, errors, deployment
+- [Gateway Overview](/docs/gateway) - Self-hosted gateway with dashboard & analytics
+- [Gateway Getting Started](/docs/gateway/getting-started) - Install, run, first request
+- [Gateway Configuration](/docs/gateway/configuration) - Data dir, CORS, encryption
+- [Gateway Provider Keys](/docs/gateway/providers) - Connect free provider keys
+- [Gateway Keys](/docs/gateway/gateway-keys) - Issue & use client keys
+- [Gateway API Reference](/docs/gateway/api) - Every route
 
 ## Source
 

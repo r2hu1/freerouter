@@ -1,0 +1,93 @@
+---
+title: Analytics
+description: Inspect gateway usage — request counts, tokens, latency, and failures — via the analytics endpoints.
+---
+
+The gateway records one event per completion request (unless flagged with `x-freerouter-test: 1`). Three read-only endpoints summarize that data for the dashboard.
+
+All analytics routes require the session token (`x-freerouter-session`), obtained from `GET /v1/gateway/bootstrap` on localhost.
+
+---
+
+## `GET /v1/analytics/summary`
+
+Aggregate totals across all recorded events.
+
+```bash
+TOK=$(curl -s -H "host: localhost" http://localhost:4141/v1/gateway/bootstrap \
+  | python3 -c "import sys,json;print(json.load(sys.stdin)['token'])")
+
+curl -H "x-freerouter-session: $TOK" http://localhost:4141/v1/analytics/summary
+```
+
+Example response shape:
+
+```json title="200 OK"
+{
+  "totalRequests": 128,
+  "totalInputTokens": 24820,
+  "totalOutputTokens": 9120,
+  "totalLatencyMs": 182340,
+  "successCount": 121,
+  "errorCount": 7,
+  "byStatus": { "success": 121, "error": 7 }
+}
+```
+
+---
+
+## `GET /v1/analytics/timeseries`
+
+Bucketed counts over time. Use the `bucket` query param: `day` (default), `week`, or `month`.
+
+```bash
+curl -H "x-freerouter-session: $TOK" \
+  "http://localhost:4141/v1/analytics/timeseries?bucket=week"
+```
+
+```json title="200 OK"
+{
+  "points": [
+    { "bucket": "2026-08-18", "requests": 12, "tokens": 1840 },
+    { "bucket": "2026-08-19", "requests": 31, "tokens": 4022 }
+  ]
+}
+```
+
+---
+
+## `GET /v1/analytics/events`
+
+Most recent raw events (newest first). Limit with `limit` (default `100`).
+
+```bash
+curl -H "x-freerouter-session: $TOK" \
+  "http://localhost:4141/v1/analytics/events?limit=10"
+```
+
+```json title="200 OK"
+{
+  "events": [
+    {
+      "timestamp": 1710000123000,
+      "gatewayKeyId": "gk_...",
+      "alias": "free:auto",
+      "model": "groq/llama-3.1-8b-instant",
+      "status": "success",
+      "latencyMs": 412,
+      "inputTokens": 24,
+      "outputTokens": 11
+    }
+  ]
+}
+```
+
+<Callout type="info" title="Privacy">
+  Events attribute usage to a (hashed) gateway key id and the model/alias used — they never contain provider keys or message contents.
+</Callout>
+
+---
+
+## Resetting analytics
+
+Analytics live in `usage_events.jsonl` under the [data directory](/docs/gateway/configuration). Run `npx @freerouter/gateway reset` to clear it (and all other local state).

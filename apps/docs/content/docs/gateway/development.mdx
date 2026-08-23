@@ -1,0 +1,94 @@
+---
+title: Development
+description: Run the gateway locally with hot reload, test every route, and understand the dev server layout.
+---
+
+Use `bun run dev` for local development. It runs two processes behind one command: the Hono API and a Vite dev server for the dashboard.
+
+---
+
+## What runs
+
+| Process | Port | Role |
+| ------- | ---- | ---- |
+| Vite dev server | `5173` | Dashboard with React Fast Refresh (HMR) |
+| Hono API | OS-assigned free port | Serves `/v1/*` (proxy + management) |
+
+The API port is printed on startup:
+
+```
+🛰  API server:  http://localhost:64921
+🖥  Dashboard (dev): http://localhost:5173/
+```
+
+<Callout type="info" title="Two ports in dev">
+  In dev, the dashboard and API are on separate ports. The browser calls the API directly via the injected `VITE_API_BASE` (`http://127.0.0.1:<apiPort>`), and CORS allows `http://localhost:5173`.
+</Callout>
+
+---
+
+## Vite proxy
+
+`dev.ts` configures Vite to proxy `/v1` → the API port (`changeOrigin: true`). That means you can also hit the API **through the dashboard port**:
+
+```
+http://localhost:5173/v1/models
+http://localhost:5173/v1/gateway/bootstrap
+```
+
+This is handy for manual testing in a browser without remembering the API port. Direct use of the API port also works.
+
+---
+
+## Test every route
+
+A scripted smoke test (bash):
+
+```bash
+# start (in another shell)
+bun run dev
+
+# API port is printed in the startup log; capture it:
+API=$(grep -oE "localhost:[0-9]+" /tmp/dev.log | head -1 | cut -d: -f2)
+BASE="http://localhost:$API"
+
+# bootstrap -> session token (localhost only)
+TOK=$(curl -s -H "host: localhost" $BASE/v1/gateway/bootstrap \
+  | python3 -c "import sys,json;print(json.load(sys.stdin)['token'])")
+H="x-freerouter-session: $TOK"
+
+curl -s -o /dev/null -w "settings: %{http_code}\n"     -H "$H" $BASE/v1/gateway/settings
+curl -s -o /dev/null -w "providers: %{http_code}\n"    -H "$H" $BASE/v1/providers
+curl -s -o /dev/null -w "create gw key: %{http_code}\n" -X POST -H "$H" -H "Content-Type: application/json" -d '{"label":"test"}' $BASE/v1/gateway/keys
+curl -s -o /dev/null -w "analytics: %{http_code}\n"    -H "$H" $BASE/v1/analytics/summary
+curl -s -o /dev/null -w "models: %{http_code}\n"       $BASE/v1/models
+
+# proxy without a key -> 401; with a gateway key -> 502 (no provider key yet)
+GK=$(curl -s -X POST -H "$H" -H "Content-Type: application/json" -d '{"label":"gk"}' $BASE/v1/gateway/keys \
+  | python3 -c "import sys,json;print(json.load(sys.stdin)['key'])")
+curl -s -o /dev/null -w "chat (key): %{http_code}\n" -H "Authorization: Bearer $GK" -H "Content-Type: application/json" -H "x-freerouter-test: 1" \
+  -d '{"model":"free:auto","messages":[{"role":"user","content":"hi"}],"max_tokens":5}' $BASE/v1/chat/completions
+```
+
+Expected: management routes `200`, `/v1/models` `200`, chat `401` without a key and `502` with a key (until a provider key is connected, at which point it returns `200`).
+
+---
+
+## Build & typecheck
+
+```bash
+bun run build        # bundles CLI (dist/cli.js) + dashboard (dist/web)
+bun run build:web    # dashboard only
+bun run typecheck    # tsc --noEmit
+bun test             # storage + server tests
+```
+
+The production server (`bun run serve`) serves both the API and the built dashboard from a **single port** — no Vite proxy needed.
+
+---
+
+## Tips
+
+- Kill stale dev servers before restarting: `pkill -f "src/dev.ts"`.
+- The API uses an OS-assigned free port specifically to avoid colliding with a stale process holding the default `4141`.
+- Set `FREEROUTER_HOME` to a temp dir to keep dev data separate from your real keys.

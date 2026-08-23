@@ -1,0 +1,130 @@
+---
+title: Getting Started
+description: Install @freerouter/gateway, start the server, grab your gateway key, and make your first $0-cost request.
+---
+
+`@freerouter/gateway` runs a local OpenAI-compatible proxy plus a dashboard. Provider keys are stored encrypted on this machine; clients authenticate with a gateway key.
+
+---
+
+## 1. Install & run
+
+The published package is invoked with `npx` (no global install needed):
+
+```bash tab="npx (published)"
+npx @freerouter/gateway serve
+```
+
+During local development, use the workspace scripts instead:
+
+```bash tab="Local dev (monorepo)"
+# production-style single-port server (API + dashboard)
+bun run serve
+
+# development server with HMR (Vite on :5173, API on a free port)
+bun run dev
+```
+
+On first start with no gateway keys, the server auto-generates one and prints it:
+
+```
+🛰  FreeRouter Gateway running at http://127.0.0.1:4141
+   Dashboard: http://localhost:4141
+   Proxy:    POST http://localhost:4141/v1/chat/completions
+   Keys stored under: /Users/you/.freerouter
+
+🔑 Generated your first FreeRouter gateway key:
+   fr-live-9f3k...
+   Put this into any OpenAI-compatible client as the API key.
+```
+
+<Callout type="warn" title="Save the key">
+  The gateway key is shown **once** at creation. Store it somewhere safe (or re-create one later via the dashboard / API). Provider keys are encrypted at rest; the gateway key itself is the bearer credential for clients.
+</Callout>
+
+---
+
+## 2. Open the dashboard
+
+Visit [http://localhost:4141](http://localhost:4141). From there you can:
+
+- **Connect provider keys** (Groq, Google, OpenRouter, …) — encrypted and stored locally.
+- **Create gateway keys** for your applications.
+- **Watch analytics** (requests, tokens, latency, failures).
+- **Test** a provider connection directly.
+
+---
+
+## 3. Make your first request
+
+Use the gateway key as the OpenAI API key, pointing `baseURL` at the gateway:
+
+<Tabs items={["OpenAI SDK", "Vercel AI SDK", "cURL"]}>
+  <Tab value="OpenAI SDK">
+
+  ```ts title="client.ts"
+  import OpenAI from "openai"
+
+  const client = new OpenAI({
+    baseURL: "http://localhost:4141/v1",
+    apiKey: "fr-live-9f3k...", // your gateway key
+  })
+
+  const res = await client.chat.completions.create({
+    model: "free:auto",
+    messages: [{ role: "user", content: "Hello!" }],
+  })
+
+  console.log(res.choices[0].message.content)
+  ```
+
+  </Tab>
+  <Tab value="Vercel AI SDK">
+
+  ```ts title="client.ts"
+  import { generateText } from "ai"
+  import { createOpenAICompatible } from "@ai-sdk/openai-compatible"
+
+  const provider = createOpenAICompatible({
+    name: "freerouter",
+    baseURL: "http://localhost:4141/v1",
+    apiKey: "fr-live-9f3k...",
+  })
+
+  const { text } = await generateText({
+    model: provider("free:auto"),
+    prompt: "Hello!",
+  })
+  console.log(text)
+  ```
+
+  </Tab>
+  <Tab value="cURL">
+
+  ```bash
+  curl http://localhost:4141/v1/chat/completions \
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer fr-live-9f3k..." \
+    -d '{
+      "model": "free:auto",
+      "messages": [{"role": "user", "content": "Hello!"}]
+    }'
+  ```
+
+  </Tab>
+</Tabs>
+
+<Callout type="info" title="No provider key yet?">
+  The request returns `502` until you connect at least one provider key (via the dashboard or the API). Connect a key, then retry.
+</Callout>
+
+---
+
+## Next Steps
+
+<Cards>
+  <Card title="Connect Providers" href="/docs/gateway/providers" description="Add free-tier provider keys." />
+  <Card title="Gateway Keys" href="/docs/gateway/gateway-keys" description="Issue keys for your apps." />
+  <Card title="Configuration" href="/docs/gateway/configuration" description="Data dir, CORS, encryption." />
+  <Card title="API Reference" href="/docs/gateway/api" description="All routes." />
+</Cards>

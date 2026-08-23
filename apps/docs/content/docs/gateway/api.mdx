@@ -1,0 +1,134 @@
+---
+title: API Reference
+description: Full reference for every @freerouter/gateway route — management (session-authenticated) and the public OpenAI-compatible proxy.
+---
+
+All routes are mounted under `/v1`. CORS is enabled for every `/v1/*` request (see [Configuration](/docs/gateway/configuration)).
+
+import { Tabs, Tab } from 'fumadocs-ui/components/tabs'
+
+---
+
+## Authentication
+
+| Route group | Auth |
+| ----------- | ---- |
+| `GET /v1/gateway/bootstrap` | **localhost only** (no token; checks the `host` header) |
+| Management routes | `x-freerouter-session: <token>` (from bootstrap) |
+| Proxy routes (`/v1/models`, `/v1/chat/completions`) | gateway key (`Authorization: Bearer fr-live-...`) **or** provider BYOK header (`X-<Provider>-Key`) |
+
+<Tabs items={["Session token", "Gateway key", "Provider BYOK"]}>
+  <Tab value="Session token">
+
+  Bootstrap returns a session token usable for management routes. It is only returned when called from localhost.
+
+  ```bash
+  TOK=$(curl -s -H "host: localhost" http://localhost:4141/ \
+    | python3 -c "import sys,json;print(json.load(sys.stdin)['token'])")
+  # then: -H "x-freerouter-session: $TOK"
+  ```
+
+  </Tab>
+  <Tab value="Gateway key">
+
+  ```bash
+  -H "Authorization: Bearer fr-live-9f3k..."
+  ```
+
+  </Tab>
+  <Tab value="Provider BYOK">
+
+  ```bash
+  -H "X-Groq-Key: gsk_xxx"
+  ```
+
+  </Tab>
+</Tabs>
+
+---
+
+## Management routes
+
+### `GET /v1/gateway/bootstrap`
+
+localhost-only. Returns the session token and the provider catalog.
+
+```json title="200 OK"
+{ "token": "<session-token>", "providers": [ { "id": "groq", "name": "Groq", "signup": "https://console.groq.com/keys" } ] }
+```
+
+### `GET /v1/gateway/settings`
+
+Returns current server settings (port, host, autoOpen, corsOrigins, defaultAlias, providers).
+
+### `PUT /v1/gateway/settings`
+
+Patch settings. Body (all optional):
+
+```json
+{ "port": 4141, "host": "127.0.0.1", "autoOpen": true, "corsOrigins": "*", "defaultAlias": "free:auto" }
+```
+
+### `GET /v1/providers`
+
+Lists connected (stored, encrypted) provider keys.
+
+### `POST /v1/providers`
+
+Connect a provider key. Body:
+
+```json
+{ "provider": "groq", "key": "gsk_xxx", "label": "my-groq", "enabled": true }
+```
+
+Returns `201`.
+
+### `DELETE /v1/providers/:id`
+
+Remove a connected provider key.
+
+### `GET /v1/gateway/keys`
+
+Lists gateway keys (masked — `fr-live-…1234`).
+
+### `POST /v1/gateway/keys`
+
+Creates a gateway key. Returns the **full** key once. Body: `{ "label": "my-app" }`. Returns `201`.
+
+### `DELETE /v1/gateway/keys/:id`
+
+Revokes a gateway key.
+
+### `GET /v1/analytics/summary`
+
+See [Analytics](/docs/gateway/analytics).
+
+### `GET /v1/analytics/timeseries?bucket=day|week|month`
+
+### `GET /v1/analytics/events?limit=100`
+
+---
+
+## Proxy routes (public)
+
+### `GET /v1/models`
+
+OpenAI-format model list: 6 capability aliases (`free:auto`, `free:fast`, `free:reasoning`, `free:long-context`, `free:vision`, `free:tool-use`) plus concrete `provider/modelId` entries. No auth required.
+
+### `POST /v1/chat/completions`
+
+OpenAI-compatible chat completion. Authenticate with a gateway key or a provider BYOK header. Add `x-freerouter-test: 1` to skip analytics recording.
+
+Request body mirrors the OpenAI schema:
+
+```json title="Request"
+{
+  "model": "free:auto",
+  "messages": [{ "role": "user", "content": "Hello!" }],
+  "stream": false,
+  "temperature": 0.7,
+  "max_tokens": 1024
+}
+```
+
+`model` may be an alias (`free:auto`) or a pinned `provider/modelId`. Responses are standard non-streaming JSON or SSE (`stream: true`). See the [SDK API Routes](/docs/api/routes) for the full request/response schema and client examples.
