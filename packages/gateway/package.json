@@ -1,6 +1,6 @@
 {
   "name": "@freerouter/gateway",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Local FreeRouter gateway: run a private OpenAI-compatible proxy with your own free-provider keys, served with a bundled dashboard. Invoke via `npx @freerouter/gateway serve`.",
   "type": "module",
   "bin": {

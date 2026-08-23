@@ -37,7 +37,7 @@ npx @freerouter/gateway reset      # wipe local DB (keys + usage)
 
 Flags: `--port <n>`, `--host <host>`, `--no-open`.
 
-Environment: `PORT`, `FREEROUTER_HOME` (data dir override, default `~/.freerouter`).
+Environment: `FREEROUTER_HOME` (data dir override, default `~/.freerouter`).
 
 ## How it works
 
@@ -60,6 +60,23 @@ File-based, zero native dependencies (safe for `npx` on any Node ≥ 20):
 - `~/.freerouter/usage_events.jsonl` — append-only analytics events
 
 Provider keys are encrypted; the UI only ever shows a masked suffix.
+
+## Configuration
+
+Settings live in `~/.freerouter/gateway.config.json` and are editable from the
+**Settings** page (or by editing the file directly). Saving port, host, CORS
+origins, default alias, request logging, or auth **restarts the gateway
+automatically** to apply the change.
+
+| Setting | Default | Notes |
+| --- | --- | --- |
+| `port` | `4141` | Listen port. Applied on save (gateway restarts). |
+| `host` | `127.0.0.1` | Bind address. Use `0.0.0.0` to expose on the network. |
+| `corsOrigins` | `*` | Comma-separated origins allowed for the proxy. |
+| `defaultAlias` | `free:auto` | Model alias used for the default model. |
+| `requestLogging` | `true` | Log each request (method, path, status, latency) to the console. |
+| `requireGatewayKey` | `true` | Require a `fr-live-…` gateway key for `/v1/chat/completions`. Disable to allow anonymous access using stored provider keys. |
+| `autoOpen` | `true` | Open the dashboard in your browser on start. |
 
 ## Security
 
@@ -84,20 +101,23 @@ Provider keys are encrypted; the UI only ever shows a masked suffix.
 
 ## Dashboard
 
-Built with React + `@freerouter/ui` (shadcn-style), bundled into `dist/web` at
-publish time and served as static files — no dev server needed at runtime.
+Built with React + Tailwind (shadcn-style components), bundled with Vite into
+`dist/web` at publish time and served as static files from the same port as the
+API — no separate dev server at runtime.
 
-Pages: Onboarding, Providers, API Keys, Analytics (summary cards, requests
-time-series, breakdowns by provider/alias/model, failover & error log), Settings.
+Pages: **Onboarding** (mission, feature tour, and setup), **Providers**, **API
+Keys**, **Analytics** (summary cards, request time-series, breakdowns by
+provider/alias/model, per-request log), and **Settings**. The sidebar collapses
+to icons, and a header button opens `gateway.config.json` in your editor.
 
 ## Development
 
 ```bash
 bun install
-bun run build:cli     # bundle the Node CLI -> dist/cli.js
-bun run build:web     # build dashboard -> dist/web
+bun run build         # bundle the Node CLI + build dashboard -> dist/
 bun test              # storage + server integration tests
 bun run typecheck
+bun run dev           # live dev server (Vite HMR on :5173, API on the configured port)
 ```
 
 > Note: `packages/db` is currently an empty scaffold; this package implements its
