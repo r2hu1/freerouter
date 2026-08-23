@@ -37,6 +37,10 @@ curl http://localhost:4141/v1/chat/completions \
 
 Connect provider keys and manage everything from the dashboard at [http://localhost:4141](http://localhost:4141). Full guide: [Gateway Docs](https://freerouter.vercel.app/docs/gateway).
 
+<p align="center">
+  <video src="assets/demo-gateway.mp4" controls width="720"></video>
+</p>
+
 ### API Server
 
 ```bash
