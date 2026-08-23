@@ -25,12 +25,15 @@ https://github.com/user-attachments/assets/3b1b0d6b-27e4-46f2-865a-c1fa69dec3ac
 
 The gateway wraps the SDK in a deployable server with a dashboard, encrypted provider-key storage, gateway-key auth, and analytics — runnable with a single command.
 
-```bash
-# Start the gateway (API + dashboard on one port, keys stored encrypted)
-npx @freerouter/gateway serve
-# → prints a fr-live-... gateway key and opens http://localhost:4141
+- Start the gateway (API + dashboard on one port, keys stored encrypted)
 
-# Chat via the gateway key (provider keys stay server-side)
+```bash
+npx @freerouter/gateway serve
+```
+
+- Chat via the gateway key (provider keys stay server-side)
+
+```bash
 curl http://localhost:4141/v1/chat/completions \
   -H "Authorization: Bearer fr-live-..." \
   -H "Content-Type: application/json" \
