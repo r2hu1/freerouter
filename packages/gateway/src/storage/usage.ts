@@ -4,11 +4,6 @@ import type { UsageEvent, UsageStatus } from "./types"
 
 const USAGE_FILE = "usage_events.jsonl"
 
-// Rough equivalent paid-API rate (USD per 1M tokens) used only to show
-// "estimated cost saved" — free providers cost the user $0.
-const PAID_INPUT_PER_M = 0.15
-const PAID_OUTPUT_PER_M = 0.6
-
 export interface UsageInput {
   gatewayKeyId: string | null
   provider: string | null
@@ -68,7 +63,6 @@ export interface UsageSummary {
   outputTokens: number
   totalTokens: number
   avgLatencyMs: number
-  estimatedCostSavedUsd: number
   byProvider: Record<string, number>
   byAlias: Record<string, number>
   byModel: Record<string, number>
@@ -88,7 +82,6 @@ export async function querySummary(
     outputTokens: 0,
     totalTokens: 0,
     avgLatencyMs: 0,
-    estimatedCostSavedUsd: 0,
     byProvider: {},
     byAlias: {},
     byModel: {},
@@ -117,9 +110,6 @@ export async function querySummary(
       : 0
   summary.avgLatencyMs =
     summary.totalRequests > 0 ? latencySum / summary.totalRequests : 0
-  summary.estimatedCostSavedUsd =
-    (summary.inputTokens / 1_000_000) * PAID_INPUT_PER_M +
-    (summary.outputTokens / 1_000_000) * PAID_OUTPUT_PER_M
   return summary
 }
 

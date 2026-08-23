@@ -1,17 +1,17 @@
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart"
+} from "@/components/ui/chart";
 import {
   Table,
   TableBody,
@@ -19,120 +19,155 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { useEffect, useState } from "react"
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts"
-import { PageHeader } from "@/components/PageHeader"
+} from "@/components/ui/table";
+import { useEffect, useState } from "react";
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import { PageHeader } from "@/components/PageHeader";
 import {
   type TimeseriesPoint,
   type UsageEvent,
   type UsageSummary,
   api,
-} from "../api"
+} from "../api";
+import { DropdownMenu, DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  ArrowDown,
+  ArrowUp,
+  CheckCheck,
+  Clock,
+  FilterIcon,
+  ListFilter,
+  RadioTower,
+  RefreshCcw,
+} from "lucide-react";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { toast } from "@/components/ui/toast";
 
 function fmt(n: number): string {
-  return n.toLocaleString()
+  return n.toLocaleString();
 }
 function pct(n: number): string {
-  return `${(n * 100).toFixed(1)}%`
+  return `${(n * 100).toFixed(1)}%`;
 }
 
 function Stat({
   title,
   value,
   sub,
-}: { title: string; value: string; sub?: string }) {
+  icon,
+}: {
+  title: string;
+  value: string;
+  sub?: string;
+  icon?: React.ReactNode;
+}) {
   return (
-    <Card>
-      <CardContent className="p-5">
-        <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-          {title}
-        </div>
-        <div className="mt-2 text-2xl font-semibold tabular-nums tracking-tight">
+    <Card className="bg-background!">
+      <CardHeader>
+        <CardTitle className="flex items-center justify-between">
+          {title} {icon}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="text-lg uppercase tracking-wide text-foreground/80">
           {value}
         </div>
         {sub && <div className="mt-1 text-xs text-muted-foreground">{sub}</div>}
       </CardContent>
     </Card>
-  )
+  );
 }
 
 function Breakdown({
   title,
   data,
 }: {
-  title: string
-  data: Record<string, number>
+  title: string;
+  data: Record<string, number>;
 }) {
-  const entries = Object.entries(data)
+  const entries = Object.entries(data);
   return (
-    <Card>
+    <Card className="bg-background! pb-0">
       <CardHeader>
         <CardTitle>{title}</CardTitle>
       </CardHeader>
-      <CardContent className="text-sm">
-        {entries.length === 0 ? (
-          <div className="text-muted-foreground">No data yet</div>
-        ) : (
-          <ul className="divide-y divide-border">
-            {entries.map(([k, v]) => (
-              <li
-                key={k}
-                className="flex items-center justify-between gap-3 py-2 first:pt-0 last:pb-0"
-              >
-                <span className="truncate text-foreground/90">{k}</span>
-                <Badge variant="secondary" className="tabular-nums">
-                  {v}
-                </Badge>
-              </li>
-            ))}
-          </ul>
-        )}
+      <CardContent className="px-0">
+        <ScrollArea className="h-40">
+          {entries.length === 0 ? (
+            <div className="text-muted-foreground text-xs border border-dashed h-40 flex items-center justify-center rounded-lg">
+              No data yet.
+            </div>
+          ) : (
+            <ul className="divide-y divide-border">
+              {entries.map(([k, v]) => (
+                <li
+                  key={k}
+                  className="flex items-center px-4 justify-between gap-3 py-2 first:pt-0 last:pb-0"
+                >
+                  <span className="truncate text-foreground/90">{k}</span>
+                  <Badge variant="secondary" className="tabular-nums">
+                    {v}
+                  </Badge>
+                </li>
+              ))}
+            </ul>
+          )}
+        </ScrollArea>
       </CardContent>
     </Card>
-  )
+  );
 }
 
 export function Analytics() {
-  const [summary, setSummary] = useState<UsageSummary | null>(null)
-  const [points, setPoints] = useState<TimeseriesPoint[]>([])
-  const [events, setEvents] = useState<UsageEvent[]>([])
-  const [bucket, setBucket] = useState("day")
-  const [err, setErr] = useState<string | null>(null)
+  const [summary, setSummary] = useState<UsageSummary | null>(null);
+  const [points, setPoints] = useState<TimeseriesPoint[]>([]);
+  const [events, setEvents] = useState<UsageEvent[]>([]);
+  const [bucket, setBucket] = useState("day");
+  const [err, setErr] = useState<string | null>(null);
 
   async function refresh() {
+    toast.add({ title: "Loading analytics…", id: "analytics" });
     try {
       const [s, t, e] = await Promise.all([
         api.getSummary(),
         api.getTimeseries(bucket),
         api.getEvents(100),
-      ])
-      setSummary(s)
-      setPoints(t.points)
-      setEvents(e.events)
+      ]);
+      setSummary(s);
+      setPoints(t.points);
+      setEvents(e.events);
+      toast.update("analytics", { title: "Analytics loaded successfully" });
     } catch (err2) {
-      setErr(String(err2))
+      toast.update("analytics", { title: "Failed to load analytics" });
+      setErr(String(err2));
     }
   }
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: refresh is recreated each render; interval reset on bucket change is intended
   useEffect(() => {
-    refresh()
-    const id = setInterval(refresh, 5000)
-    return () => clearInterval(id)
-  }, [bucket])
+    refresh();
+    const id = setInterval(refresh, 5000);
+    return () => clearInterval(id);
+  }, [bucket]);
 
   if (err) {
     return (
       <div role="alert" className="text-sm text-destructive">
         Failed to load analytics: {err}
       </div>
-    )
+    );
   }
   if (!summary) {
     return (
       <div className="text-sm text-muted-foreground">Loading analytics…</div>
-    )
+    );
   }
 
   return (
@@ -141,44 +176,68 @@ export function Analytics() {
         title="Analytics"
         description="Live usage across your gateway."
         actions={
-          <fieldset className="flex gap-1" aria-label="Time range">
-            {["day", "week", "month"].map((b) => (
-              <Button
-                key={b}
-                size="sm"
-                variant={bucket === b ? "default" : "outline"}
-                aria-pressed={bucket === b}
-                onClick={() => setBucket(b)}
-              >
-                {b}
-              </Button>
-            ))}
-          </fieldset>
+          <>
+            <Select>
+              <SelectTrigger className="w-full bg-background! capitalize">
+                <SelectValue>
+                  <FilterIcon className="size-3.5" /> {bucket}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent align="center">
+                {["day", "week", "month"].map((b) => (
+                  <SelectItem
+                    key={b}
+                    value={b}
+                    className="capitalize"
+                    aria-pressed={bucket === b}
+                    onClick={() => setBucket(b)}
+                  >
+                    {b}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button size="icon" onClick={refresh}>
+              <RefreshCcw />
+            </Button>
+          </>
         }
       />
 
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
-        <Stat title="Requests" value={fmt(summary.totalRequests)} />
-        <Stat title="Tokens in" value={fmt(summary.inputTokens)} />
-        <Stat title="Tokens out" value={fmt(summary.outputTokens)} />
-        <Stat title="Success" value={pct(summary.successRate)} />
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+        <Stat
+          title="Requests"
+          value={fmt(summary.totalRequests)}
+          icon={<RadioTower className="size-4.5" />}
+        />
+        <Stat
+          title="Tokens in"
+          value={fmt(summary.inputTokens)}
+          icon={<ArrowDown className="size-4.5" />}
+        />
+        <Stat
+          title="Tokens out"
+          value={fmt(summary.outputTokens)}
+          icon={<ArrowUp className="size-4.5" />}
+        />
+        <Stat
+          title="Success"
+          value={pct(summary.successRate)}
+          icon={<CheckCheck className="size-4.5" />}
+        />
         <Stat
           title="Avg latency"
           value={`${Math.round(summary.avgLatencyMs)}ms`}
-        />
-        <Stat
-          title="Est. saved"
-          value={`$${summary.estimatedCostSavedUsd.toFixed(2)}`}
-          sub="vs paid APIs"
+          icon={<Clock className="size-4.5" />}
         />
       </div>
 
-      <Card>
+      <Card className="bg-background!">
         <CardHeader>
           <CardTitle>Requests over time</CardTitle>
           <CardDescription>Grouped by {bucket}</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="border-t pt-5">
           <ChartContainer
             config={{ requests: { label: "Requests" } }}
             className="h-72 w-full"
@@ -239,61 +298,63 @@ export function Analytics() {
         <Breakdown title="By model" data={summary.byModel} />
       </div>
 
-      <Card>
+      <Card className="pb-0">
         <CardHeader>
           <CardTitle>Recent events</CardTitle>
           <CardDescription>Failover and error log.</CardDescription>
         </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Time</TableHead>
-                <TableHead>Alias</TableHead>
-                <TableHead>Provider</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Latency</TableHead>
-                <TableHead>Error</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {events.length === 0 && (
+        <CardContent className="p-0 border-t">
+          <ScrollArea className="h-120">
+            <Table>
+              <TableHeader>
                 <TableRow>
-                  <TableCell colSpan={6} className="text-muted-foreground">
-                    No events yet.
-                  </TableCell>
+                  <TableHead>Time</TableHead>
+                  <TableHead>Alias</TableHead>
+                  <TableHead>Provider</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Latency</TableHead>
+                  <TableHead>Error</TableHead>
                 </TableRow>
-              )}
-              {events.map((e, i) => (
-                <TableRow key={`${e.timestamp}-${i}`}>
-                  <TableCell className="text-xs">
-                    {new Date(e.timestamp).toLocaleTimeString()}
-                  </TableCell>
-                  <TableCell>{e.alias}</TableCell>
-                  <TableCell>{e.provider ?? "—"}</TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={
-                        e.status === "success"
-                          ? "default"
-                          : e.status === "failover"
-                            ? "secondary"
-                            : "destructive"
-                      }
-                    >
-                      {e.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{e.latencyMs}ms</TableCell>
-                  <TableCell className="max-w-xs truncate text-xs text-muted-foreground">
-                    {e.errorMessage ?? ""}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {events.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-muted-foreground">
+                      No events yet.
+                    </TableCell>
+                  </TableRow>
+                )}
+                {events.map((e, i) => (
+                  <TableRow key={`${e.timestamp}-${i}`}>
+                    <TableCell className="text-xs">
+                      {new Date(e.timestamp).toLocaleTimeString()}
+                    </TableCell>
+                    <TableCell>{e.alias}</TableCell>
+                    <TableCell>{e.provider ?? "auto"}</TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={
+                          e.status === "success"
+                            ? "default"
+                            : e.status === "failover"
+                              ? "secondary"
+                              : "destructive"
+                        }
+                      >
+                        {e.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>{e.latencyMs}ms</TableCell>
+                    <TableCell className="max-w-xs truncate text-xs text-muted-foreground">
+                      {e.errorMessage ?? "-"}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </ScrollArea>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

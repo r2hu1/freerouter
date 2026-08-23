@@ -14,6 +14,7 @@ import { Keys } from "./pages/Keys";
 import { Onboarding } from "./pages/Onboarding";
 import { Providers } from "./pages/Providers";
 import { Settings } from "./pages/Settings";
+import { Toaster } from "./components/ui/toast";
 
 const Analytics = lazy(() =>
   import("./pages/Analytics").then((m) => ({ default: m.Analytics })),
@@ -98,9 +99,11 @@ export function App() {
 
       <aside className="flex w-72 shrink-0 flex-col border-r border-sidebar-border bg-background">
         <div className="flex h-16 items-center gap-2.5 border-b border-sidebar-border px-6">
-          <Logo className="size-7 text-primary" />
-          <span className="text-[17px] font-semibold tracking-tight">
-            FreeRouter
+          <div className="size-8 bg-foreground rounded-lg flex items-center justify-center">
+            <Logo className="size-3.5 text-background" />
+          </div>
+          <span className="text-[16px] font-medium tracking-tight">
+            FreeRouter Gateway
           </span>
         </div>
 
@@ -167,6 +170,7 @@ export function App() {
         )}
         {view === "settings" && <Settings />}
       </main>
+      <Toaster />
     </div>
   );
 }

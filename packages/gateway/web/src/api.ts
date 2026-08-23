@@ -42,7 +42,6 @@ export interface UsageSummary {
   outputTokens: number
   totalTokens: number
   avgLatencyMs: number
-  estimatedCostSavedUsd: number
   byProvider: Record<string, number>
   byAlias: Record<string, number>
   byModel: Record<string, number>
