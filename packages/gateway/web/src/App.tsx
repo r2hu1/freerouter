@@ -1,4 +1,4 @@
-import { FolderOpen } from "lucide-react";
+import { FolderOpen, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import {
   BarChartIcon,
@@ -58,6 +58,24 @@ export function App() {
   const [providers, setProviders] = useState<ProviderCatalog[]>([]);
   const mainRef = useRef<HTMLElement>(null);
   const firstRun = useRef(true);
+  const [collapsed, setCollapsed] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    try {
+      return window.localStorage.getItem("fr-sidebar-collapsed") === "1";
+    } catch {
+      return false;
+    }
+  });
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(
+        "fr-sidebar-collapsed",
+        collapsed ? "1" : "0",
+      );
+    } catch {
+      // ignore
+    }
+  }, [collapsed]);
 
   function navigate(v: View, replace = false) {
     const url = pathForView(v);
@@ -66,12 +84,25 @@ export function App() {
     setView(v);
   }
 
+  async function openConfig() {
+    try {
+      await api.openConfig();
+      toast.add({
+        title: "Config opened",
+        description: "gateway.config.json opened in your editor.",
+      });
+    } catch (e) {
+      toast.add({ title: "Error", description: String(e) });
+    }
+  }
+
   useEffect(() => {
     const onPop = () => setView(viewFromPath(window.location.pathname));
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
   }, []);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: bootstrap runs once; navigate is stable
   useEffect(() => {
     bootstrap()
       .then(async (b) => {
@@ -132,14 +163,36 @@ export function App() {
         Skip to content
       </a>
 
-      <aside className="flex w-72 shrink-0 flex-col border-r border-sidebar-border bg-background">
-        <div className="flex h-16 items-center gap-2.5 border-b border-sidebar-border px-6">
+      <aside
+        className={`flex shrink-0 flex-col border-r border-sidebar-border bg-background transition-[width] duration-200 ${
+          collapsed ? "w-[72px]" : "w-72"
+        }`}
+      >
+        <div
+          className={`flex h-16 items-center gap-2.5 border-b border-sidebar-border ${
+            collapsed ? "justify-center px-3" : "px-6 pr-4"
+          }`}
+        >
           <div className="size-8 bg-foreground rounded-lg flex items-center justify-center">
             <Logo className="size-3.5 text-background" />
           </div>
-          <span className="text-[16px] font-medium tracking-tight">
-            FreeRouter Gateway
-          </span>
+          {!collapsed && (
+            <span className="text-[16px] font-medium tracking-tight">
+              FreeRouter Gateway
+            </span>
+          )}
+          {!collapsed && (
+            <Button
+              variant="secondary"
+              size="icon"
+              title="Collapse sidebar"
+              aria-label="Collapse sidebar"
+              onClick={() => setCollapsed((c) => !c)}
+              className="ml-auto"
+            >
+              <PanelLeftClose className="size-4" />
+            </Button>
+          )}
         </div>
 
         <nav aria-label="Primary" className="flex flex-col gap-1 p-4">
@@ -152,53 +205,77 @@ export function App() {
                 variant="ghost"
                 size="lg"
                 className={[
-                  "relative h-10 justify-start gap-3 rounded-lg py-2.5 text-[15px]",
+                  "relative h-10 rounded-lg py-2.5 text-[15px]",
+                  collapsed ? "justify-center px-0" : "justify-start gap-3",
                   active
                     ? "bg-secondary font-medium text-foreground before:absolute before:left-0 before:top-1/2 before:h-6 before:w-[3px] before:-translate-y-1/2 before:rounded-r-full before:bg-primary"
                     : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground",
                 ].join(" ")}
                 aria-current={active ? "page" : undefined}
+                title={collapsed ? n.label : undefined}
                 onClick={() => navigate(n.id)}
               >
                 <Icon className="size-5" />
-                {n.label}
+                {!collapsed && n.label}
               </Button>
             );
           })}
         </nav>
 
         <div className="mt-auto flex flex-col gap-3 border-t border-sidebar-border px-4 py-3">
-          <span className="text-xs text-muted-foreground">
-            No servers in-between. Keys stay on this machine.
-          </span>
-          <div className="flex items-center gap-1 justify-between">
-            <div className="flex items-center gap-2">
+          {collapsed ? (
+            <div className="flex justify-center">
               <Button
-                variant="outline"
-                render={
-                  <a
-                    href="https://github.com/r2hu1/freerouter"
-                    target="_blank"
-                  />
-                }
+                variant="secondary"
+                size="icon"
+                title="Expand sidebar"
+                aria-label="Expand sidebar"
+                onClick={() => setCollapsed((c) => !c)}
               >
-                Github <GitFork />
-              </Button>
-              <Button
-                variant="outline"
-                render={
-                  <a
-                    href="https://freerouter.vercel.app/docs/gateway"
-                    target="_blank"
-                  />
-                }
-              >
-                Docs <ScrollText />
+                <PanelLeftOpen className="size-4" />
               </Button>
             </div>
+          ) : (
+            <>
+              <span className="text-xs text-muted-foreground">
+                No servers in-between. Keys stay on this machine.
+              </span>
+              <div className="flex items-center gap-1 justify-between">
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    render={
+                      // biome-ignore lint/a11y/useAnchorContent: link text is provided by the Button wrapper
+                      <a
+                        href="https://github.com/r2hu1/freerouter"
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label="GitHub"
+                      />
+                    }
+                  >
+                    Github <GitFork />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    render={
+                      // biome-ignore lint/a11y/useAnchorContent: link text is provided by the Button wrapper
+                      <a
+                        href="https://freerouter.vercel.app/docs/gateway"
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label="Documentation"
+                      />
+                    }
+                  >
+                    Docs <ScrollText />
+                  </Button>
+                </div>
 
-            <ThemeToggle />
-          </div>
+                <ThemeToggle />
+              </div>
+            </>
+          )}
         </div>
       </aside>
 
