@@ -66,10 +66,9 @@
         "freerouter-gateway": "dist/cli.js",
       },
       "dependencies": {
-        "@freerouter/sdk": "workspace:*",
+        "@freerouter/sdk": "^0.1.2",
         "@hono/node-server": "^1.13.7",
         "hono": "^4.12.32",
-        "lucide-react": "^1.33.0",
         "zod": "^3.24.4",
       },
       "devDependencies": {
@@ -83,6 +82,7 @@
         "@vitejs/plugin-react": "^4.3.4",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
+        "lucide-react": "^1.33.0",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
         "recharts": "^3.8.0",
