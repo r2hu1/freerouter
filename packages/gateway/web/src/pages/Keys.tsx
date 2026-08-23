@@ -21,8 +21,9 @@ import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/PageHeader";
 import { type GatewayKeyRecord, api } from "../api";
 import { toast } from "@/components/ui/toast";
-import { Copy, Plus } from "lucide-react";
+import { Copy, Key, Plus } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { EmptyState } from "@/components/EmptyState";
 
 export function Keys() {
   const [keys, setKeys] = useState<GatewayKeyRecord[]>([]);
@@ -127,30 +128,36 @@ export function Keys() {
           <CardDescription>Manage your gateway keys here.</CardDescription>
         </CardHeader>
         <CardContent className="px-0 border-t">
-          <ScrollArea className="h-120">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Label</TableHead>
-                  <TableHead>Key</TableHead>
-                  <TableHead>Last used</TableHead>
-                  <TableHead>Revoke</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {keys.map((k) => (
-                  <TableRow key={k.id}>
-                    <TableCell className="font-medium">{k.label}</TableCell>
-                    <TableCell className="font-mono text-xs">
-                      {k.maskedKey}
-                    </TableCell>
-                    <TableCell className="text-xs text-muted-foreground">
-                      {k.lastUsedAt
-                        ? new Date(k.lastUsedAt).toLocaleString()
-                        : "never"}
-                    </TableCell>
-                    <TableCell>
-                      {!k.revoked ? (
+          {keys.length === 0 ? (
+            <EmptyState
+              icon={<Key />}
+              title="No keys yet."
+              description="Create a key above to get started."
+            />
+          ) : (
+            <ScrollArea className="h-120">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Label</TableHead>
+                    <TableHead>Key</TableHead>
+                    <TableHead>Last used</TableHead>
+                    <TableHead>Revoke</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {keys.map((k) => (
+                    <TableRow key={k.id}>
+                      <TableCell className="font-medium">{k.label}</TableCell>
+                      <TableCell className="font-mono text-xs">
+                        {k.maskedKey}
+                      </TableCell>
+                      <TableCell className="text-xs text-muted-foreground">
+                        {k.lastUsedAt
+                          ? new Date(k.lastUsedAt).toLocaleString()
+                          : "never"}
+                      </TableCell>
+                      <TableCell>
                         <Button
                           variant="secondary"
                           size="sm"
@@ -158,17 +165,13 @@ export function Keys() {
                         >
                           Revoke
                         </Button>
-                      ) : (
-                        <Button variant="destructive" size="sm" disabled>
-                          Revoked
-                        </Button>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </ScrollArea>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </ScrollArea>
+          )}
         </CardContent>
       </Card>
     </div>

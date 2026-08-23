@@ -96,7 +96,7 @@ describe("gateway keys storage", () => {
     const after = await verifyGatewayKey(created.key)
     expect(after).toBeNull()
     const list = await listGatewayKeys()
-    expect(list[0]!.revoked).toBe(true)
+    expect(list.length).toBe(0)
   })
 })
 

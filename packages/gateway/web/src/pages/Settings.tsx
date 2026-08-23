@@ -1,68 +1,70 @@
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { useEffect, useState } from "react"
-import { PageHeader } from "@/components/PageHeader"
-import { type Settings as GatewaySettings, api } from "../api"
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useEffect, useState } from "react";
+import { PageHeader } from "@/components/PageHeader";
+import { type Settings as GatewaySettings, api } from "../api";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Save } from "lucide-react";
 
 export function Settings() {
-  const [settings, setSettings] = useState<GatewaySettings | null>(null)
+  const [settings, setSettings] = useState<GatewaySettings | null>(null);
   const [form, setForm] = useState({
     port: 4141,
     host: "127.0.0.1",
     corsOrigins: "*",
     defaultAlias: "free:auto",
     autoOpen: true,
-  })
-  const [saved, setSaved] = useState(false)
-  const [err, setErr] = useState<string | null>(null)
+  });
+  const [saved, setSaved] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
 
   useEffect(() => {
     api
       .getSettings()
       .then((s) => {
-        setSettings(s)
+        setSettings(s);
         setForm({
           port: s.port,
           host: s.host,
           corsOrigins: s.corsOrigins,
           defaultAlias: s.defaultAlias,
           autoOpen: s.autoOpen,
-        })
+        });
       })
-      .catch((e) => setErr(String(e)))
-  }, [])
+      .catch((e) => setErr(String(e)));
+  }, []);
 
   function update<K extends keyof typeof form>(k: K, v: (typeof form)[K]) {
-    setForm((f) => ({ ...f, [k]: v }))
-    setSaved(false)
+    setForm((f) => ({ ...f, [k]: v }));
+    setSaved(false);
   }
 
   async function save() {
-    setErr(null)
+    setErr(null);
     try {
-      await api.updateSettings(form)
-      setSaved(true)
+      await api.updateSettings(form);
+      setSaved(true);
     } catch (e) {
-      setErr(String(e))
+      setErr(String(e));
     }
   }
 
   if (!settings) {
     return (
       <div className="text-sm text-muted-foreground">Loading settings…</div>
-    )
+    );
   }
 
   return (
-    <div className="max-w-2xl space-y-6">
+    <div className="space-y-6">
       <PageHeader
         title="Settings"
         description="Gateway runtime configuration."
@@ -113,16 +115,17 @@ export function Settings() {
               onChange={(e) => update("defaultAlias", e.target.value)}
             />
           </div>
-          <label className="flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
+          <Label className="flex items-center gap-2 text-sm">
+            <Checkbox
               checked={form.autoOpen}
-              onChange={(e) => update("autoOpen", e.target.checked)}
+              onCheckedChange={(e) => update("autoOpen", e)}
             />
             Open dashboard in browser on start
-          </label>
+          </Label>
           <div>
-            <Button onClick={save}>Save settings</Button>
+            <Button onClick={save}>
+              Save settings <Save />
+            </Button>
             {saved && (
               <output
                 aria-live="polite"
@@ -157,5 +160,5 @@ export function Settings() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

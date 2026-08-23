@@ -14,7 +14,6 @@ export interface GatewayKeyRecord {
   maskedKey: string
   createdAt: number
   lastUsedAt: number | null
-  revoked: boolean
 }
 
 export interface ProviderCatalog {

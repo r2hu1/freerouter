@@ -1,6 +1,6 @@
-import type { ReactNode } from "react"
+import type { ReactNode } from "react";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 export function EmptyState({
   icon,
@@ -9,17 +9,17 @@ export function EmptyState({
   children,
   className,
 }: {
-  icon?: ReactNode
-  title: string
-  description?: string
-  children?: ReactNode
-  className?: string
+  icon?: ReactNode;
+  title: string;
+  description?: string;
+  children?: ReactNode;
+  className?: string;
 }) {
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border/70 px-6 py-10 text-center",
-        className
+        "flex flex-col items-center justify-center gap-1 rounded-xl px-6 py-10 text-center",
+        className,
       )}
     >
       {icon && (
@@ -31,5 +31,5 @@ export function EmptyState({
       )}
       {children}
     </div>
-  )
+  );
 }

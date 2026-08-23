@@ -139,7 +139,6 @@ export async function createGatewayKey(
     hashedKey: hashSecret(raw, cfg.gatewaySalt),
     createdAt: Date.now(),
     lastUsedAt: null,
-    revoked: false,
   }
   keys.push(record)
   await writeJson(GATEWAY_FILE, keys)
@@ -159,10 +158,9 @@ export async function listGatewayKeys(): Promise<
 
 export async function revokeGatewayKey(id: string): Promise<boolean> {
   const keys = await readJson<GatewayKeyRecord[]>(GATEWAY_FILE, [])
-  const target = keys.find((k) => k.id === id)
-  if (!target) return false
-  target.revoked = true
-  await writeJson(GATEWAY_FILE, keys)
+  const next = keys.filter((k) => k.id !== id)
+  if (next.length === keys.length) return false
+  await writeJson(GATEWAY_FILE, next)
   return true
 }
 
@@ -172,7 +170,7 @@ export async function verifyGatewayKey(
   const cfg = await loadConfig()
   const keys = await readJson<GatewayKeyRecord[]>(GATEWAY_FILE, [])
   const hashed = hashSecret(raw, cfg.gatewaySalt)
-  const match = keys.find((k) => k.hashedKey === hashed && !k.revoked)
+  const match = keys.find((k) => k.hashedKey === hashed)
   if (!match) return null
   match.lastUsedAt = Date.now()
   await writeJson(GATEWAY_FILE, keys)

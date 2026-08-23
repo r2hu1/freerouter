@@ -16,7 +16,6 @@ export interface GatewayKeyRecord {
   hashedKey: string
   createdAt: number
   lastUsedAt: number | null
-  revoked: boolean
 }
 
 export type UsageStatus = "success" | "error" | "failover"
