@@ -19,6 +19,24 @@
 
 ## Quick Start
 
+### Gateway (self-hosted, recommended)
+
+The gateway wraps the SDK in a deployable server with a dashboard, encrypted provider-key storage, gateway-key auth, and analytics — runnable with a single command.
+
+```bash
+# Start the gateway (API + dashboard on one port, keys stored encrypted)
+npx @freerouter/gateway serve
+# → prints a fr-live-... gateway key and opens http://localhost:4141
+
+# Chat via the gateway key (provider keys stay server-side)
+curl http://localhost:4141/v1/chat/completions \
+  -H "Authorization: Bearer fr-live-..." \
+  -H "Content-Type: application/json" \
+  -d '{"model":"free:auto","messages":[{"role":"user","content":"hello"}]}'
+```
+
+Connect provider keys and manage everything from the dashboard at [http://localhost:4141](http://localhost:4141). Full guide: [Gateway Docs](https://freerouter.vercel.app/docs/gateway).
+
 ### API Server
 
 ```bash
@@ -37,24 +55,6 @@ curl http://localhost:3000/v1/chat/completions \
   -H "x-groq-key: gsk_..." \
   -d '{"model":"free:auto","messages":[{"role":"user","content":"hello"}],"stream":true}'
 ```
-
-### Gateway (self-hosted, recommended)
-
-The gateway wraps the SDK in a deployable server with a dashboard, encrypted provider-key storage, gateway-key auth, and analytics — runnable with a single command.
-
-```bash
-# Start the gateway (API + dashboard on one port, keys stored encrypted)
-npx @freerouter/gateway serve
-# → prints a fr-live-... gateway key and opens http://localhost:4141
-
-# Chat via the gateway key (provider keys stay server-side)
-curl http://localhost:4141/v1/chat/completions \
-  -H "Authorization: Bearer fr-live-..." \
-  -H "Content-Type: application/json" \
-  -d '{"model":"free:auto","messages":[{"role":"user","content":"hello"}]}'
-```
-
-Connect provider keys and manage everything from the dashboard at [http://localhost:4141](http://localhost:4141). Full guide: [Gateway Docs](https://freerouter.vercel.app/docs/gateway).
 
 ### SDK (Node.js / Bun)
 
