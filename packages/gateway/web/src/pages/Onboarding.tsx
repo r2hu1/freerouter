@@ -1,20 +1,82 @@
-import { CopyIcon } from "@/components/icons"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import {
+  ArrowUpRight,
+  BarChart3,
+  BookOpen,
+  Network,
+  Plug,
+  ShieldCheck,
+} from "lucide-react";
+import { CopyIcon, Logo } from "@/components/icons";
+import {
+  BarChartIcon,
+  KeyIcon,
+  PlugIcon,
+  SettingsIcon,
+} from "@/components/icons";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { useState } from "react"
-import { type ProviderCatalog, api } from "../api"
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
+import { type ProviderCatalog, api } from "../api";
+
+const DOCS_URL = "https://freerouter.vercel.app/docs/gateway";
+
+const FEATURES = [
+  {
+    icon: ShieldCheck,
+    title: "Private by design",
+    body: "Provider keys are encrypted at rest (AES-256-GCM) and stored only on this machine (chmod 600). No account, no telemetry, no cloud.",
+  },
+  {
+    icon: Network,
+    title: "One endpoint, many providers",
+    body: "Route across Groq, Google Gemini, OpenRouter, Cerebras and more from a single OpenAI-compatible URL.",
+  },
+  {
+    icon: Plug,
+    title: "Drop-in OpenAI compatible",
+    body: "Point any OpenAI client, SDK, or app at the gateway with your gateway key. Aliases like free:auto pick the best free model.",
+  },
+  {
+    icon: BarChart3,
+    title: "Analytics & BYOK",
+    body: "Per-key usage analytics, and bring-your-own-key headers for per-request provider keys.",
+  },
+];
+
+const TOUR = [
+  {
+    icon: BarChartIcon,
+    title: "Analytics",
+    body: "Track request volume, token usage, success rate, and latency across all your gateway keys.",
+  },
+  {
+    icon: PlugIcon,
+    title: "Providers",
+    body: "Add, view, and manage the free-provider keys the gateway routes through.",
+  },
+  {
+    icon: KeyIcon,
+    title: "API Keys",
+    body: "Create gateway keys for your clients, copy them, and revoke them anytime.",
+  },
+  {
+    icon: SettingsIcon,
+    title: "Settings",
+    body: "Set the listen port, host, CORS, default model alias, request logging, and auth.",
+  },
+];
 
 function CopyField({ value, label }: { value: string; label?: string }) {
-  const [copied, setCopied] = useState(false)
+  const [copied, setCopied] = useState(false);
   return (
     <div className="space-y-1">
       {label && <Label>{label}</Label>}
@@ -23,9 +85,9 @@ function CopyField({ value, label }: { value: string; label?: string }) {
         <Button
           variant="secondary"
           onClick={() => {
-            navigator.clipboard.writeText(value)
-            setCopied(true)
-            setTimeout(() => setCopied(false), 1500)
+            navigator.clipboard.writeText(value);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 1500);
           }}
         >
           {copied ? "Copied" : <CopyIcon />}
@@ -36,71 +98,112 @@ function CopyField({ value, label }: { value: string; label?: string }) {
         {copied ? "Copied to clipboard" : ""}
       </output>
     </div>
-  )
+  );
 }
 
 export function Onboarding({
   providers,
   onDone,
 }: {
-  providers: ProviderCatalog[]
-  onDone: () => void
+  providers: ProviderCatalog[];
+  onDone: () => void;
 }) {
-  const [selected, setSelected] = useState(providers[0]?.id ?? "groq")
-  const [key, setKey] = useState("")
-  const [added, setAdded] = useState<string[]>([])
-  const [gatewayKey, setGatewayKey] = useState("")
-  const [busy, setBusy] = useState(false)
-  const [err, setErr] = useState<string | null>(null)
+  const [selected, setSelected] = useState(providers[0]?.id ?? "groq");
+  const [key, setKey] = useState("");
+  const [added, setAdded] = useState<string[]>([]);
+  const [gatewayKey, setGatewayKey] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
 
   async function addProvider() {
-    if (!key.trim()) return
-    setBusy(true)
-    setErr(null)
+    if (!key.trim()) return;
+    setBusy(true);
+    setErr(null);
     try {
-      await api.addProvider(selected, key.trim())
-      setAdded((a) => [...a, selected])
-      setKey("")
+      await api.addProvider(selected, key.trim());
+      setAdded((a) => [...a, selected]);
+      setKey("");
     } catch (e) {
-      setErr(String(e))
+      setErr(String(e));
     } finally {
-      setBusy(false)
+      setBusy(false);
     }
   }
 
   async function generateKey() {
-    setBusy(true)
-    setErr(null)
+    setBusy(true);
+    setErr(null);
     try {
-      const k = await api.createKey("default")
-      setGatewayKey(k.key)
+      const k = await api.createKey("default");
+      setGatewayKey(k.key);
     } catch (e) {
-      setErr(String(e))
+      setErr(String(e));
     } finally {
-      setBusy(false)
+      setBusy(false);
     }
   }
 
   const origin =
     typeof window !== "undefined"
       ? window.location.origin
-      : "http://localhost:4141"
+      : "http://localhost:4141";
   const snippet = `curl ${origin}/v1/chat/completions \\
   -H "Authorization: Bearer ${gatewayKey || "fr-live-..."}" \\
   -H "Content-Type: application/json" \\
-  -d '{"model":"free:auto","messages":[{"role":"user","content":"Hello"}]}'`
+  -d '{"model":"free:auto","messages":[{"role":"user","content":"Hello"}]}'`;
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold">
-          Welcome to FreeRouter Gateway
+    <div className="mx-auto max-w-4xl space-y-10 flex items-center justify-center flex-col h-[90vh]">
+      {/* Hero */}
+      <section className="flex flex-col items-center text-center">
+        <div className="mb-4 flex size-14 items-center justify-center rounded-2xl bg-foreground">
+          <Logo className="size-7 text-background" />
+        </div>
+        <h1 className="text-3xl font-semibold tracking-tight">
+          FreeRouter Gateway
         </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Connect your free provider keys, then point any OpenAI-compatible
-          client at this gateway. Your keys stay on this machine.
+        <p className="mt-3 max-w-xl text-sm text-muted-foreground">
+          Everyone should have access to free AI without juggling API keys,
+          provider dashboards, or a different client for every model. FreeRouter
+          Gateway puts every free model behind one private, OpenAI-compatible
+          endpoint — running entirely on your machine.
         </p>
-      </div>
+        <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+          <a href={DOCS_URL} target="_blank" rel="noreferrer">
+            <Button>
+              Read the docs <BookOpen />
+            </Button>
+          </a>
+          <a
+            href="https://github.com/r2hu1/freerouter"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <Button variant="outline">
+              View on GitHub <ArrowUpRight />
+            </Button>
+          </a>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section aria-label="Features" className="grid gap-4 sm:grid-cols-2">
+        {FEATURES.map((f) => {
+          const Icon = f.icon;
+          return (
+            <div
+              key={f.title}
+              className="rounded-xl border border-sidebar-border bg-card p-4"
+            >
+              <div className="mb-2 flex size-9 items-center justify-center rounded-lg bg-secondary text-primary">
+                <Icon className="size-5" />
+              </div>
+              <h3 className="text-sm font-medium">{f.title}</h3>
+              <p className="mt-1 text-xs text-muted-foreground">{f.body}</p>
+            </div>
+          );
+        })}
+      </section>
 
       {err && (
         <div
@@ -110,85 +213,6 @@ export function Onboarding({
           {err}
         </div>
       )}
-
-      <Card>
-        <CardHeader>
-          <CardTitle>1. Connect free providers</CardTitle>
-          <CardDescription>
-            Add API keys for the free-tier providers you want to route across.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <div className="flex flex-wrap gap-2">
-            <div className="space-y-1">
-              <Label htmlFor="onboard-provider">Provider</Label>
-              <select
-                id="onboard-provider"
-                value={selected}
-                onChange={(e) => setSelected(e.target.value)}
-                className="h-9 rounded-md border border-input bg-background px-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
-              >
-                {providers.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <Input
-              placeholder="Paste API key…"
-              aria-label="API key"
-              value={key}
-              onChange={(e) => setKey(e.target.value)}
-              className="flex-1"
-            />
-            <Button onClick={addProvider} disabled={busy}>
-              Add
-            </Button>
-          </div>
-          {added.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {added.map((id) => (
-                <Badge key={id} variant="secondary">
-                  {providers.find((p) => p.id === id)?.name ?? id}
-                </Badge>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>2. Your gateway key</CardTitle>
-          <CardDescription>
-            Put this into any OpenAI-compatible client. It is shown only once.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          {!gatewayKey ? (
-            <Button onClick={generateKey} disabled={busy}>
-              Generate gateway key
-            </Button>
-          ) : (
-            <>
-              <CopyField value={gatewayKey} label="Gateway API key" />
-              <div className="space-y-1">
-                <Label>Test snippet</Label>
-                <pre className="overflow-auto rounded-md bg-muted p-3 text-xs">
-                  {snippet}
-                </pre>
-              </div>
-            </>
-          )}
-        </CardContent>
-      </Card>
-
-      <div className="flex justify-end">
-        <Button size="lg" onClick={onDone} disabled={!gatewayKey}>
-          Open dashboard →
-        </Button>
-      </div>
     </div>
-  )
+  );
 }

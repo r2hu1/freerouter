@@ -31,13 +31,46 @@ const NAV: { id: View; label: string; icon: typeof BarChartIcon }[] = [
   { id: "settings", label: "Settings", icon: SettingsIcon },
 ];
 
+function viewFromPath(pathname: string): View {
+  const p = pathname.replace(/^\/+/, "").replace(/\/+$/, "");
+  if (
+    p === "analytics" ||
+    p === "providers" ||
+    p === "keys" ||
+    p === "settings" ||
+    p === "onboarding"
+  ) {
+    return p;
+  }
+  return "analytics";
+}
+
+function pathForView(v: View): string {
+  return v === "analytics" ? "/" : `/${v}`;
+}
+
 export function App() {
   const [ready, setReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [view, setView] = useState<View>("analytics");
+  const [view, setView] = useState<View>(() =>
+    viewFromPath(window.location.pathname),
+  );
   const [providers, setProviders] = useState<ProviderCatalog[]>([]);
   const mainRef = useRef<HTMLElement>(null);
   const firstRun = useRef(true);
+
+  function navigate(v: View, replace = false) {
+    const url = pathForView(v);
+    if (replace) window.history.replaceState({}, "", url);
+    else window.history.pushState({}, "", url);
+    setView(v);
+  }
+
+  useEffect(() => {
+    const onPop = () => setView(viewFromPath(window.location.pathname));
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
 
   useEffect(() => {
     bootstrap()
@@ -45,7 +78,7 @@ export function App() {
         setProviders(b.providers);
         const [p, k] = await Promise.all([api.getProviders(), api.getKeys()]);
         if (p.providers.length === 0 && k.keys.length === 0) {
-          setView("onboarding");
+          navigate("onboarding", true);
         }
         setReady(true);
       })
@@ -125,7 +158,7 @@ export function App() {
                     : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground",
                 ].join(" ")}
                 aria-current={active ? "page" : undefined}
-                onClick={() => setView(n.id)}
+                onClick={() => navigate(n.id)}
               >
                 <Icon className="size-5" />
                 {n.label}

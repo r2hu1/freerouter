@@ -77,7 +77,7 @@ function Stat({
       </CardHeader>
       <CardContent>
         <div className="text-lg uppercase tracking-wide text-foreground/80">
-          {value}
+          {value ?? "—"}
         </div>
         {sub && <div className="mt-1 text-xs text-muted-foreground">{sub}</div>}
       </CardContent>
@@ -133,7 +133,6 @@ export function Analytics() {
   const [err, setErr] = useState<string | null>(null);
 
   async function refresh() {
-    toast.add({ title: "Loading analytics…", id: "analytics" });
     try {
       const [s, t, e] = await Promise.all([
         api.getSummary(),
@@ -143,9 +142,7 @@ export function Analytics() {
       setSummary(s);
       setPoints(t.points);
       setEvents(e.events);
-      toast.update("analytics", { title: "Analytics loaded successfully" });
     } catch (err2) {
-      toast.update("analytics", { title: "Failed to load analytics" });
       setErr(String(err2));
     }
   }
@@ -197,7 +194,13 @@ export function Analytics() {
                 ))}
               </SelectContent>
             </Select>
-            <Button size="icon" onClick={refresh}>
+            <Button
+              size="icon"
+              onClick={() => {
+                refresh();
+                toast.add({ title: "Reloaded Analytics", id: "analytics" });
+              }}
+            >
               <RefreshCcw />
             </Button>
           </>
