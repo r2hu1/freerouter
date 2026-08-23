@@ -9,28 +9,28 @@ const MODELS: ModelInfo[] = [
     modelId: "accounts/fireworks/models/llama-v3p3-70b-instruct",
     capabilities: ["fast", "tool-use", "long-context"],
     contextWindow: 131072,
-    free: true,
+    free: false,
   },
   {
     provider: "fireworks",
     modelId: "accounts/fireworks/models/firefunction-v2",
     capabilities: ["fast", "tool-use"],
     contextWindow: 32768,
-    free: true,
+    free: false,
   },
   {
     provider: "fireworks",
     modelId: "accounts/fireworks/models/qwen3-32b",
     capabilities: ["reasoning", "tool-use", "long-context"],
     contextWindow: 131072,
-    free: true,
+    free: false,
   },
   {
     provider: "fireworks",
     modelId: "accounts/fireworks/models/deepseek-r1",
     capabilities: ["reasoning", "tool-use"],
     contextWindow: 16384,
-    free: true,
+    free: false,
   },
 ]
 

@@ -6,20 +6,6 @@ const NVIDIA_BASE_URL = "https://integrate.api.nvidia.com/v1"
 const MODELS: ModelInfo[] = [
   {
     provider: "nvidia",
-    modelId: "deepseek-ai/deepseek-v4-pro",
-    capabilities: ["reasoning", "tool-use", "long-context"],
-    contextWindow: 131072,
-    free: true,
-  },
-  {
-    provider: "nvidia",
-    modelId: "deepseek-ai/deepseek-v4-flash",
-    capabilities: ["reasoning", "tool-use", "long-context"],
-    contextWindow: 131072,
-    free: true,
-  },
-  {
-    provider: "nvidia",
     modelId: "mistralai/mistral-nemotron",
     capabilities: ["tool-use", "fast"],
     contextWindow: 131072,
@@ -41,9 +27,30 @@ const MODELS: ModelInfo[] = [
   },
   {
     provider: "nvidia",
-    modelId: "z-ai/glm-5.2",
+    modelId: "nvidia/nemotron-3-ultra-550b-a55b",
     capabilities: ["reasoning", "tool-use", "long-context"],
-    contextWindow: 262144,
+    contextWindow: 1000000,
+    free: true,
+  },
+  {
+    provider: "nvidia",
+    modelId: "nvidia/nemotron-3.5-lightning-30b-a3b",
+    capabilities: ["reasoning", "tool-use", "fast", "long-context"],
+    contextWindow: 1000000,
+    free: true,
+  },
+  {
+    provider: "nvidia",
+    modelId: "nvidia/nvidia-nemotron-nano-9b-v2",
+    capabilities: ["tool-use", "fast"],
+    contextWindow: 131072,
+    free: true,
+  },
+  {
+    provider: "nvidia",
+    modelId: "deepseek-ai/deepseek-v4-flash-0731",
+    capabilities: ["reasoning", "tool-use", "long-context"],
+    contextWindow: 131072,
     free: true,
   },
   {

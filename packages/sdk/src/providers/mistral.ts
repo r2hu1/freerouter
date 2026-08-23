@@ -6,14 +6,7 @@ const MODELS: ModelInfo[] = [
     provider: "mistral",
     modelId: "mistral-small-latest",
     capabilities: ["fast", "tool-use"],
-    contextWindow: 32768,
-    free: true,
-  },
-  {
-    provider: "mistral",
-    modelId: "open-mistral-nemo",
-    capabilities: ["fast", "tool-use"],
-    contextWindow: 128000,
+    contextWindow: 256000,
     free: true,
   },
   {
@@ -28,6 +21,20 @@ const MODELS: ModelInfo[] = [
     modelId: "mistral-large-latest",
     capabilities: ["reasoning", "tool-use", "long-context"],
     contextWindow: 128000,
+    free: true,
+  },
+  {
+    provider: "mistral",
+    modelId: "ministral-8b-latest",
+    capabilities: ["fast", "vision", "tool-use"],
+    contextWindow: 128000,
+    free: true,
+  },
+  {
+    provider: "mistral",
+    modelId: "mistral-medium-latest",
+    capabilities: ["reasoning", "tool-use", "long-context"],
+    contextWindow: 256000,
     free: true,
   },
 ]

@@ -9,7 +9,7 @@ const MODELS: ModelInfo[] = [
     modelId: "deepseek-chat",
     capabilities: ["fast", "tool-use", "long-context"],
     contextWindow: 131072,
-    free: true,
+    free: false,
     deprecated: true,
   },
   {
@@ -17,7 +17,7 @@ const MODELS: ModelInfo[] = [
     modelId: "deepseek-reasoner",
     capabilities: ["reasoning", "tool-use", "long-context"],
     contextWindow: 131072,
-    free: true,
+    free: false,
     deprecated: true,
   },
   {
@@ -25,14 +25,14 @@ const MODELS: ModelInfo[] = [
     modelId: "deepseek-v4-flash",
     capabilities: ["fast", "tool-use", "long-context"],
     contextWindow: 131072,
-    free: true,
+    free: false,
   },
   {
     provider: "deepseek",
     modelId: "deepseek-v4-pro",
     capabilities: ["reasoning", "tool-use", "long-context"],
     contextWindow: 131072,
-    free: true,
+    free: false,
   },
 ]
 

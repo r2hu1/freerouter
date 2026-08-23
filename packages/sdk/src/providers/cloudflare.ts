@@ -114,13 +114,6 @@ const MODELS: ModelInfo[] = [
   },
   {
     provider: "cloudflare",
-    modelId: "@cf/deepseek-ai/deepseek-r1-distill-qwen-32b",
-    capabilities: ["reasoning"],
-    contextWindow: 80000,
-    free: true,
-  },
-  {
-    provider: "cloudflare",
     modelId: "@cf/openai/gpt-oss-120b",
     capabilities: ["tool-use", "reasoning"],
     contextWindow: 128000,

@@ -12,7 +12,7 @@ export interface ModelInfo {
   modelId: string
   capabilities: Capability[]
   contextWindow: number
-  free: true
+  free: boolean
   deprecated?: boolean
 }
 

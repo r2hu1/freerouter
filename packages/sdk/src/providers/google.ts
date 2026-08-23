@@ -21,6 +21,13 @@ const MODELS: ModelInfo[] = [
     modelId: "gemini-2.5-pro",
     capabilities: ["reasoning", "vision", "tool-use", "long-context"],
     contextWindow: 1048576,
+    free: false,
+  },
+  {
+    provider: "google",
+    modelId: "gemini-3.5-flash",
+    capabilities: ["fast", "vision", "tool-use", "long-context"],
+    contextWindow: 1048576,
     free: true,
   },
   {
@@ -29,15 +36,13 @@ const MODELS: ModelInfo[] = [
     capabilities: ["fast", "vision", "tool-use", "long-context"],
     contextWindow: 1048576,
     free: true,
-    deprecated: true,
   },
   {
     provider: "google",
-    modelId: "gemini-3.5-flash",
-    capabilities: ["fast", "vision", "tool-use", "long-context"],
+    modelId: "gemini-3.1-flash-lite-preview",
+    capabilities: ["fast", "tool-use", "long-context"],
     contextWindow: 1048576,
     free: true,
-    deprecated: true,
   },
 ]
 

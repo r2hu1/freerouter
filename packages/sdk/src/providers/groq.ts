@@ -5,7 +5,7 @@ const MODELS: ModelInfo[] = [
   {
     provider: "groq",
     modelId: "llama-3.3-70b-versatile",
-    capabilities: ["fast", "tool-use"],
+    capabilities: ["fast", "tool-use", "long-context"],
     contextWindow: 131072,
     free: true,
   },
@@ -16,22 +16,33 @@ const MODELS: ModelInfo[] = [
     contextWindow: 131072,
     free: true,
   },
-
   {
     provider: "groq",
     modelId: "llama-4-scout-17b-16e-instruct",
-    capabilities: ["fast", "tool-use"],
+    capabilities: ["fast", "vision", "tool-use"],
     contextWindow: 131072,
     free: true,
-    deprecated: true,
   },
   {
     provider: "groq",
     modelId: "llama-4-maverick-17b-128e-instruct",
-    capabilities: ["fast", "tool-use", "vision"],
+    capabilities: ["fast", "vision", "reasoning", "tool-use"],
     contextWindow: 131072,
     free: true,
-    deprecated: true,
+  },
+  {
+    provider: "groq",
+    modelId: "openai/gpt-oss-120b",
+    capabilities: ["fast", "reasoning", "tool-use"],
+    contextWindow: 131072,
+    free: true,
+  },
+  {
+    provider: "groq",
+    modelId: "openai/gpt-oss-20b",
+    capabilities: ["fast", "reasoning", "tool-use"],
+    contextWindow: 131072,
+    free: true,
   },
 ]
 

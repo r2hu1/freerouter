@@ -65,8 +65,11 @@ export function resolveAlias(alias: Alias, ctx: ResolverContext): ModelInfo[] {
     ? ctx.registry.modelsWithCapability(cap)
     : ctx.registry.models()
 
+  const isFreeAlias = String(alias).startsWith("free:")
+
   return candidates
     .filter((m) => !m.deprecated)
+    .filter((m) => (isFreeAlias ? m.free === true : true))
     .filter((m) => ctx.keys[m.provider] !== undefined)
     .filter((m) => {
       const key = ctx.keys[m.provider]
