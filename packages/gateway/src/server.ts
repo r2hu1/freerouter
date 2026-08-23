@@ -61,11 +61,20 @@ export async function createApp() {
     c.header("Access-Control-Allow-Headers", allowHeaders.join(", "))
     c.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
     c.header("Access-Control-Expose-Headers", "Retry-After")
-    if (c.req.method === "OPTIONS") {
-      return c.body(null, 204)
-    }
-    await next()
-  })
+  if (c.req.method === "OPTIONS") {
+       return c.body(null, 204)
+     }
+     await next()
+   })
+
+  if (cfg.requestLogging) {
+    app.use("/*", async (c, next) => {
+      const start = Date.now()
+      await next()
+      const ms = Date.now() - start
+      console.log(`${c.req.method} ${c.req.path} ${c.res.status} ${ms}ms`)
+    })
+  }
 
   app.onError((err, c) => {
     const { status, body } = toOpenAiError(err)

@@ -135,42 +135,40 @@ export function Keys() {
               description="Create a key above to get started."
             />
           ) : (
-            <ScrollArea className="h-120">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Label</TableHead>
-                    <TableHead>Key</TableHead>
-                    <TableHead>Last used</TableHead>
-                    <TableHead>Revoke</TableHead>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Label</TableHead>
+                  <TableHead>Key</TableHead>
+                  <TableHead>Last used</TableHead>
+                  <TableHead>Revoke</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {keys.map((k) => (
+                  <TableRow key={k.id}>
+                    <TableCell className="font-medium">{k.label}</TableCell>
+                    <TableCell className="font-mono text-xs">
+                      {k.maskedKey}
+                    </TableCell>
+                    <TableCell className="text-xs text-muted-foreground">
+                      {k.lastUsedAt
+                        ? new Date(k.lastUsedAt).toLocaleString()
+                        : "never"}
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => revoke(k.id)}
+                      >
+                        Revoke
+                      </Button>
+                    </TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {keys.map((k) => (
-                    <TableRow key={k.id}>
-                      <TableCell className="font-medium">{k.label}</TableCell>
-                      <TableCell className="font-mono text-xs">
-                        {k.maskedKey}
-                      </TableCell>
-                      <TableCell className="text-xs text-muted-foreground">
-                        {k.lastUsedAt
-                          ? new Date(k.lastUsedAt).toLocaleString()
-                          : "never"}
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          onClick={() => revoke(k.id)}
-                        >
-                          Revoke
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </ScrollArea>
+                ))}
+              </TableBody>
+            </Table>
           )}
         </CardContent>
       </Card>

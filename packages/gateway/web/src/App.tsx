@@ -1,3 +1,4 @@
+import { FolderOpen } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import {
   BarChartIcon,
@@ -14,7 +15,8 @@ import { Keys } from "./pages/Keys";
 import { Onboarding } from "./pages/Onboarding";
 import { Providers } from "./pages/Providers";
 import { Settings } from "./pages/Settings";
-import { Toaster } from "./components/ui/toast";
+import { toast, Toaster } from "@/components/ui/toast";
+import { GitFork, ScrollText } from "lucide-react";
 
 const Analytics = lazy(() =>
   import("./pages/Analytics").then((m) => ({ default: m.Analytics })),
@@ -132,11 +134,38 @@ export function App() {
           })}
         </nav>
 
-        <div className="mt-auto flex items-center justify-between gap-2 border-t border-sidebar-border px-4 py-3">
+        <div className="mt-auto flex flex-col gap-3 border-t border-sidebar-border px-4 py-3">
           <span className="text-xs text-muted-foreground">
-            Keys stay on this machine.
+            No servers in-between. Keys stay on this machine.
           </span>
-          <ThemeToggle />
+          <div className="flex items-center gap-1 justify-between">
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                render={
+                  <a
+                    href="https://github.com/r2hu1/freerouter"
+                    target="_blank"
+                  />
+                }
+              >
+                Github <GitFork />
+              </Button>
+              <Button
+                variant="outline"
+                render={
+                  <a
+                    href="https://freerouter.vercel.app/docs/gateway"
+                    target="_blank"
+                  />
+                }
+              >
+                Docs <ScrollText />
+              </Button>
+            </div>
+
+            <ThemeToggle />
+          </div>
         </div>
       </aside>
 

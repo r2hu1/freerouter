@@ -304,55 +304,53 @@ export function Analytics() {
           <CardDescription>Failover and error log.</CardDescription>
         </CardHeader>
         <CardContent className="p-0 border-t">
-          <ScrollArea className="h-120">
-            <Table>
-              <TableHeader>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Time</TableHead>
+                <TableHead>Alias</TableHead>
+                <TableHead>Provider</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Latency</TableHead>
+                <TableHead>Error</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {events.length === 0 && (
                 <TableRow>
-                  <TableHead>Time</TableHead>
-                  <TableHead>Alias</TableHead>
-                  <TableHead>Provider</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Latency</TableHead>
-                  <TableHead>Error</TableHead>
+                  <TableCell colSpan={6} className="text-muted-foreground">
+                    No events yet.
+                  </TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                {events.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={6} className="text-muted-foreground">
-                      No events yet.
-                    </TableCell>
-                  </TableRow>
-                )}
-                {events.map((e, i) => (
-                  <TableRow key={`${e.timestamp}-${i}`}>
-                    <TableCell className="text-xs">
-                      {new Date(e.timestamp).toLocaleTimeString()}
-                    </TableCell>
-                    <TableCell>{e.alias}</TableCell>
-                    <TableCell>{e.provider ?? "auto"}</TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={
-                          e.status === "success"
-                            ? "default"
-                            : e.status === "failover"
-                              ? "secondary"
-                              : "destructive"
-                        }
-                      >
-                        {e.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{e.latencyMs}ms</TableCell>
-                    <TableCell className="max-w-xs truncate text-xs text-muted-foreground">
-                      {e.errorMessage ?? "-"}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </ScrollArea>
+              )}
+              {events.map((e, i) => (
+                <TableRow key={`${e.timestamp}-${i}`}>
+                  <TableCell className="text-xs">
+                    {new Date(e.timestamp).toLocaleTimeString()}
+                  </TableCell>
+                  <TableCell>{e.alias}</TableCell>
+                  <TableCell>{e.provider ?? "auto"}</TableCell>
+                  <TableCell>
+                    <Badge
+                      variant={
+                        e.status === "success"
+                          ? "default"
+                          : e.status === "failover"
+                            ? "secondary"
+                            : "destructive"
+                      }
+                    >
+                      {e.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>{e.latencyMs}ms</TableCell>
+                  <TableCell className="max-w-xs truncate text-xs text-muted-foreground">
+                    {e.errorMessage ?? "-"}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
     </div>

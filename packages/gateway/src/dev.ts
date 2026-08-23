@@ -31,9 +31,13 @@ async function main(): Promise<void> {
   const cfg = await loadConfig()
 
   const app = await createApp()
-  // Let the OS assign a free port (port 0) so we never collide with a
-  // stale process holding the preferred port.
-  const apiServer = serve({ fetch: app.fetch, port: 0, hostname: cfg.host })
+  // Bind the configured port so the Settings page can actually move the
+  // listener; the dev server restarts on save to apply port/host changes.
+  const apiServer = serve({
+    fetch: app.fetch,
+    port: cfg.port,
+    hostname: cfg.host,
+  })
   const apiPort = (apiServer.address() as { port: number }).port
   const apiHost = "127.0.0.1"
   process.env.VITE_API_BASE = `http://${apiHost}:${apiPort}`

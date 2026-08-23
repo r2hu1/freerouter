@@ -1,7 +1,9 @@
+import { spawn } from "node:child_process"
 import type { Context, Hono } from "hono"
 import { z } from "zod"
 import { SESSION_TOKEN, isLocalhost, requireSession } from "../auth"
-import { loadConfig, saveConfig } from "../config"
+import { configPath, loadConfig, saveConfig } from "../config"
+import { restartGateway } from "../runtime"
 
 export const PROVIDER_CATALOG = [
   { id: "groq", name: "Groq", signup: "https://console.groq.com/keys" },
@@ -70,6 +72,8 @@ const SettingsSchema = z.object({
   autoOpen: z.boolean().optional(),
   corsOrigins: z.string().optional(),
   defaultAlias: z.string().optional(),
+  requestLogging: z.boolean().optional(),
+  requireGatewayKey: z.boolean().optional(),
 })
 
 export function registerGateway(app: Hono) {
@@ -90,6 +94,8 @@ export function registerGateway(app: Hono) {
       autoOpen: cfg.autoOpen,
       corsOrigins: cfg.corsOrigins,
       defaultAlias: cfg.defaultAlias,
+      requestLogging: cfg.requestLogging,
+      requireGatewayKey: cfg.requireGatewayKey,
       providers: PROVIDER_CATALOG,
     })
   })
@@ -102,6 +108,19 @@ export function registerGateway(app: Hono) {
     if (!parsed.success) {
       return c.json({ error: parsed.error.message }, 400)
     }
+    const before = await loadConfig()
+    const changed =
+      (parsed.data.port !== undefined && parsed.data.port !== before.port) ||
+      (parsed.data.host !== undefined &&
+        parsed.data.host !== before.host) ||
+      (parsed.data.corsOrigins !== undefined &&
+        parsed.data.corsOrigins !== before.corsOrigins) ||
+      (parsed.data.defaultAlias !== undefined &&
+        parsed.data.defaultAlias !== before.defaultAlias) ||
+      (parsed.data.requestLogging !== undefined &&
+        parsed.data.requestLogging !== before.requestLogging) ||
+      (parsed.data.requireGatewayKey !== undefined &&
+        parsed.data.requireGatewayKey !== before.requireGatewayKey)
     const saved = await saveConfig(parsed.data)
     return c.json({
       port: saved.port,
@@ -109,6 +128,35 @@ export function registerGateway(app: Hono) {
       autoOpen: saved.autoOpen,
       corsOrigins: saved.corsOrigins,
       defaultAlias: saved.defaultAlias,
+      requestLogging: saved.requestLogging,
+      requireGatewayKey: saved.requireGatewayKey,
+      requiresRestart: changed,
     })
+  })
+
+  app.post("/v1/gateway/restart", async (c) => {
+    if (!requireSession(c)) return c.json({ error: "forbidden" }, 403)
+    c.header("Connection", "close")
+    // Respond, then re-exec so the caller's request completes first.
+    queueMicrotask(() => restartGateway())
+    return c.json({ ok: true })
+  })
+
+  app.post("/v1/gateway/open-config", async (c) => {
+    if (!requireSession(c)) return c.json({ error: "forbidden" }, 403)
+    const path = configPath()
+    const platform = process.platform
+    const [cmd, args] =
+      platform === "darwin"
+        ? ["open", [path]]
+        : platform === "win32"
+          ? ["cmd", ["/c", "start", "", path]]
+          : ["xdg-open", [path]]
+    try {
+      spawn(cmd, args, { stdio: "ignore", detached: true }).unref()
+    } catch (e) {
+      return c.json({ error: String(e) }, 500)
+    }
+    return c.json({ ok: true, path })
   })
 }

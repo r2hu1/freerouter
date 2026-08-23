@@ -13,6 +13,8 @@ export interface GatewaySettings {
   autoOpen: boolean
   corsOrigins: string
   defaultAlias: string
+  requestLogging: boolean
+  requireGatewayKey: boolean
   masterSecret: string
   gatewaySalt: string
 }
@@ -23,6 +25,8 @@ const DEFAULTS: Omit<GatewaySettings, "masterSecret" | "gatewaySalt"> = {
   autoOpen: true,
   corsOrigins: "*",
   defaultAlias: "free:auto",
+  requestLogging: true,
+  requireGatewayKey: true,
 }
 
 const CONFIG_FILE = "gateway.config.json"

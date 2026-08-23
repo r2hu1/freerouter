@@ -28,6 +28,8 @@ export interface Settings {
   autoOpen: boolean
   corsOrigins: string
   defaultAlias: string
+  requestLogging: boolean
+  requireGatewayKey: boolean
   providers: ProviderCatalog[]
 }
 
@@ -144,5 +146,13 @@ export const api = {
 
   getSettings: () => request<Settings>("GET", "/v1/gateway/settings"),
   updateSettings: (patch: Partial<Settings>) =>
-    request<Settings>("PUT", "/v1/gateway/settings", patch),
+    request<Settings & { requiresRestart: boolean }>(
+      "PUT",
+      "/v1/gateway/settings",
+      patch,
+    ),
+  restartGateway: () =>
+    request<{ ok: boolean }>("POST", "/v1/gateway/restart"),
+  openConfig: () =>
+    request<{ ok: boolean; path: string }>("POST", "/v1/gateway/open-config"),
 }

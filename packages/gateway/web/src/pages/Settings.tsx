@@ -12,7 +12,8 @@ import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/PageHeader";
 import { type Settings as GatewaySettings, api } from "../api";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Save } from "lucide-react";
+import { FolderOpen, Save } from "lucide-react";
+import { toast } from "@/components/ui/toast";
 
 export function Settings() {
   const [settings, setSettings] = useState<GatewaySettings | null>(null);
@@ -22,8 +23,11 @@ export function Settings() {
     corsOrigins: "*",
     defaultAlias: "free:auto",
     autoOpen: true,
+    requestLogging: true,
+    requireGatewayKey: true,
   });
   const [saved, setSaved] = useState(false);
+  const [restarting, setRestarting] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
   useEffect(() => {
@@ -37,6 +41,8 @@ export function Settings() {
           corsOrigins: s.corsOrigins,
           defaultAlias: s.defaultAlias,
           autoOpen: s.autoOpen,
+          requestLogging: s.requestLogging,
+          requireGatewayKey: s.requireGatewayKey,
         });
       })
       .catch((e) => setErr(String(e)));
@@ -50,10 +56,33 @@ export function Settings() {
   async function save() {
     setErr(null);
     try {
-      await api.updateSettings(form);
+      const savedRes = await api.updateSettings(form);
       setSaved(true);
+      if (savedRes.requiresRestart) {
+        setRestarting(true);
+        await api.restartGateway();
+        setTimeout(() => {
+          if (import.meta.env.DEV) {
+            window.location.reload();
+          } else {
+            window.location.href = `http://${savedRes.host}:${savedRes.port}/`;
+          }
+        }, 1500);
+      }
     } catch (e) {
       setErr(String(e));
+    }
+  }
+
+  async function openConfig() {
+    try {
+      await api.openConfig();
+      toast.add({
+        title: "Config opened",
+        description: "gateway.config.json opened in your editor.",
+      });
+    } catch (e) {
+      toast.add({ title: "Error", description: String(e) });
     }
   }
 
@@ -68,6 +97,17 @@ export function Settings() {
       <PageHeader
         title="Settings"
         description="Gateway runtime configuration."
+        actions={
+          <Button
+            variant="outline"
+            title="Open config file"
+            aria-label="Open config file"
+            onClick={openConfig}
+          >
+            Open Config
+            <FolderOpen className="size-4" />
+          </Button>
+        }
       />
 
       {err && (
@@ -122,11 +162,25 @@ export function Settings() {
             />
             Open dashboard in browser on start
           </Label>
+          <Label className="flex items-center gap-2 text-sm">
+            <Checkbox
+              checked={form.requestLogging}
+              onCheckedChange={(e) => update("requestLogging", e)}
+            />
+            Log requests to the console
+          </Label>
+          <Label className="flex items-center gap-2 text-sm">
+            <Checkbox
+              checked={form.requireGatewayKey}
+              onCheckedChange={(e) => update("requireGatewayKey", e)}
+            />
+            Require a gateway key for /v1/chat/completions
+          </Label>
           <div>
-            <Button onClick={save}>
-              Save settings <Save />
+            <Button onClick={save} disabled={restarting}>
+              {restarting ? "Restarting…" : "Save settings"} <Save />
             </Button>
-            {saved && (
+            {saved && !restarting && (
               <output
                 aria-live="polite"
                 className="ml-3 text-sm text-muted-foreground"
@@ -136,7 +190,9 @@ export function Settings() {
             )}
           </div>
           <p className="text-xs text-muted-foreground">
-            Changing port/host takes effect after restarting the gateway.
+            Port, host, CORS, default alias, logging and auth changes restart
+            the gateway to take effect. If you change the port, reload the
+            dashboard at the new address afterwards.
           </p>
         </CardContent>
       </Card>

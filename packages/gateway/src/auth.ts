@@ -1,6 +1,7 @@
 import { randomBytes } from "node:crypto"
 import type { FreeRouterKeys, ProviderId } from "@freerouter/sdk"
 import type { Context } from "hono"
+import { loadConfig } from "./config"
 import {
   resolveKeysFromHeaders,
   resolveKeysFromStore,
@@ -42,6 +43,7 @@ export interface AuthResult {
 }
 
 export async function authenticateProxy(c: Context): Promise<AuthResult> {
+  const cfg = await loadConfig()
   const byok = resolveKeysFromHeaders(c.req.raw.headers)
   const bearer = extractBearer(c)
   let gatewayKeyId: string | null = null
@@ -69,7 +71,7 @@ export async function authenticateProxy(c: Context): Promise<AuthResult> {
   const storeKeys = await resolveKeysFromStore()
   const keys: FreeRouterKeys = { ...storeKeys, ...byok }
 
-  if (!bearer && Object.keys(byok).length === 0) {
+  if (cfg.requireGatewayKey && !gatewayKeyId) {
     return {
       gatewayKeyId: null,
       keys: {},
@@ -78,7 +80,7 @@ export async function authenticateProxy(c: Context): Promise<AuthResult> {
         body: {
           error: {
             message:
-              "Authentication required: provide a FreeRouter gateway key via Authorization: Bearer fr-live-..., or supply provider BYOK headers.",
+              "Gateway key required: send Authorization: Bearer fr-live-... (disable 'Require gateway key' in settings to allow anonymous access using stored keys).",
             type: "invalid_request_error",
           },
         },
