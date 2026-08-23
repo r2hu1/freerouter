@@ -21,6 +21,8 @@
 
 ### Gateway (self-hosted, recommended)
 
+https://github.com/user-attachments/assets/3b1b0d6b-27e4-46f2-865a-c1fa69dec3ac
+
 The gateway wraps the SDK in a deployable server with a dashboard, encrypted provider-key storage, gateway-key auth, and analytics — runnable with a single command.
 
 ```bash
@@ -36,10 +38,6 @@ curl http://localhost:4141/v1/chat/completions \
 ```
 
 Connect provider keys and manage everything from the dashboard at [http://localhost:4141](http://localhost:4141). Full guide: [Gateway Docs](https://freerouter.vercel.app/docs/gateway).
-
-<p align="center">
-  <video src="assets/demo-gateway.mp4" controls width="720"></video>
-</p>
 
 ### API Server
 
