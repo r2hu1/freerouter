@@ -16,6 +16,7 @@ export const PROVIDER_IDS: ProviderId[] = [
   "deepinfra",
   "cohere",
   "huggingface",
+  "zai"
 ]
 
 export const HEADER_MAP: Record<string, string> = {
@@ -33,6 +34,7 @@ export const HEADER_MAP: Record<string, string> = {
   deepinfra: "x-deepinfra-key",
   cohere: "x-cohere-key",
   huggingface: "x-huggingface-key",
+  zai: "x-zai-key",
 }
 
 export function resolveKeysFromHeaders(headers: Headers): FreeRouterKeys {

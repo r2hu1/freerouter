@@ -12,6 +12,7 @@ import { nvidiaAdapter } from "./nvidia"
 import { openrouterAdapter } from "./openrouter"
 import { sambanovaAdapter } from "./sambanova"
 import { togetherAdapter } from "./together"
+import { zaiAdapter } from "./zai"
 
 export function buildAdapters(): ProviderAdapter[] {
   return [
@@ -28,5 +29,6 @@ export function buildAdapters(): ProviderAdapter[] {
     deepseekAdapter(),
     deepinfraAdapter(),
     cohereAdapter(),
+    zaiAdapter(),
   ]
 }

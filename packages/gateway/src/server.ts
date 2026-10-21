@@ -34,6 +34,7 @@ const PROXY_HEADERS = [
   "X-DeepSeek-Key",
   "X-DeepInfra-Key",
   "X-Cohere-Key",
+  "X-Zai-Key",
 ]
 
 export async function createApp() {

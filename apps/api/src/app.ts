@@ -39,6 +39,7 @@ export function createApp(env: ReturnType<typeof loadEnv>) {
         "X-DeepSeek-Key",
         "X-DeepInfra-Key",
         "X-Cohere-Key",
+        "X-Zai-Key",
       ],
       exposeHeaders: ["Retry-After"],
     })

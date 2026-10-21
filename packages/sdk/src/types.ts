@@ -6,6 +6,7 @@ export type Capability =
   | "long-context"
   | "vision"
   | "tool-use"
+  
 
 export interface ModelInfo {
   provider: ProviderId
@@ -30,6 +31,7 @@ export type ProviderId =
   | "deepseek"
   | "deepinfra"
   | "cohere"
+  | "zai"
 
 export interface ProviderAdapter {
   id: ProviderId

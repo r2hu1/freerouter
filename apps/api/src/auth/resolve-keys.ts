@@ -14,6 +14,7 @@ const HEADER_MAP: Record<ProviderId, string> = {
   deepseek: "x-deepseek-key",
   deepinfra: "x-deepinfra-key",
   cohere: "x-cohere-key",
+  zai: "x-zai-key",
 }
 
 export function resolveKeysFromHeaders(headers: Headers): {
