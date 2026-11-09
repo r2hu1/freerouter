@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-  <a href="https://freerouter.vercel.app">📖 Docs</a>
+  <a href="https://freerouter.vercel.app">📖 Get Started</a>
   &nbsp;·&nbsp;
   <a href="https://www.npmjs.com/package/@freerouter/sdk">📦 @freerouter/sdk</a>
 </p>
